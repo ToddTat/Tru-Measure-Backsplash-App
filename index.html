@@ -1,8 +1,10 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html>
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Tru Measure Backsplash App — Version 1</title>
+<meta charset="utf-8"/><meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
+<!-- Tru Measure V1.7.4: 3x production PDF/DXF text -->
+<title>Tru Measure Digital Cutsheet App — V1.7.1</title>
 <style>
 :root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#111;background:#f5f5f5}
 *{box-sizing:border-box} body{margin:0}.app{max-width:760px;margin:auto;padding:18px}.card{background:white;border:1px solid #ddd;border-radius:16px;padding:18px;margin:12px 0}
@@ -111,173 +113,226 @@ svg{width:100%;height:auto;border:1px solid #ddd;border-radius:12px;background:w
 }
 
 .tmPdfSheet .tmPdfRelativePiece{flex:none!important;overflow:hidden!important}
+.detailSubsection{padding:10px 0 2px}.detailSubsection h3{margin-bottom:6px}.detailSubsection .detailAdd{margin-top:10px}
+/* V1.6.51: Piece Review is the working drawing. Keep it visible while Detail Adds are adjusted. */
+#livePiecePreview{position:static;top:auto;z-index:auto;box-shadow:none}
+#review h2{position:sticky;top:0;z-index:51;background:#fff;margin:0;padding:10px 0 4px}
+#review #drawing{position:sticky;top:44px;z-index:50;background:#fff;display:block;width:100%;max-height:min(500px,48vh);border:1px solid #bbb;border-radius:8px;box-shadow:0 3px 10px rgba(0,0,0,.10)}
+@media(max-width:520px){#review h2{top:0;padding-top:6px}#review #drawing{top:38px;max-height:38vh}}
+/* V1.7.1 — Tru Measure visual redesign. Functional logic intentionally unchanged. */
+:root{--tm-red:#d71920;--tm-black:#0b0b0c;--tm-charcoal:#171719;--tm-line:#d6d6d8;--tm-soft:#f3f3f4;--tm-white:#fff;color:#151515;background:#111}
+body{background:linear-gradient(180deg,#090909 0,#161616 240px,#ececee 240px,#f4f4f5 100%);min-height:100vh}
+.app{max-width:820px;padding:16px 18px 36px}
+.tmBrandHeader{background:#090909;color:#fff;border:1px solid #2c2c2f;border-top:5px solid var(--tm-red);border-radius:14px;padding:18px 20px 16px;margin:0 0 16px;box-shadow:0 10px 26px rgba(0,0,0,.24)}
+.tmBrandName{font-size:30px;line-height:1;font-weight:900;letter-spacing:1.5px}.tmBrandName span{color:var(--tm-red)}
+.tmBrandProduct{font-size:15px;font-weight:800;letter-spacing:2.2px;margin-top:7px}.tmBrandTag{font-size:12px;color:#c9c9cc;margin-top:7px;font-style:italic}
+.card{border:1px solid #d4d4d6;border-radius:12px;padding:20px;margin:14px 0;box-shadow:0 5px 18px rgba(0,0,0,.08)}
+h1{display:none}h2{font-size:20px;font-weight:900;letter-spacing:.45px;text-transform:uppercase;border-left:5px solid var(--tm-red);padding-left:10px;margin-bottom:16px}
+.muted{color:#666;font-size:13px}label{font-size:13px;font-weight:800;letter-spacing:.2px;color:#29292b}
+input,select,textarea{border:1px solid #a9a9ad!important;border-radius:7px!important;background:#fff!important;box-shadow:inset 0 1px 2px rgba(0,0,0,.04)}
+input:focus,select:focus,textarea:focus{outline:2px solid rgba(215,25,32,.22);border-color:var(--tm-red)!important}
+.btn{border-radius:7px;padding:13px 17px;background:#111;color:#fff;letter-spacing:.35px;box-shadow:none}.btn:hover{filter:brightness(1.12)}
+.btn:not(.secondary){border-bottom:3px solid var(--tm-red)}.secondary{background:#e8e8ea;color:#171719;border:1px solid #c8c8cb!important}
+.actions{gap:9px}.detailCard,.detailSection{border:1px solid #c8c8cb;border-radius:9px;background:#fafafa}.detailCard h3{font-weight:900;text-transform:uppercase;font-size:15px;letter-spacing:.6px}
+.detailCard .detailAdd{background:#111;border-bottom:3px solid var(--tm-red)}
+.notice{background:#f1f1f2;border-left:4px solid var(--tm-red);padding:8px;border-radius:4px}
+svg{border-radius:8px}#review h2{background:#fff;border-left:5px solid var(--tm-red);padding-left:10px}#review #drawing{border-color:#999}
+#jobHome{border-top:4px solid var(--tm-red)}
+@media(max-width:520px){.tmBrandName{font-size:25px}.tmBrandProduct{font-size:13px;letter-spacing:1.4px}.app{padding:10px}.card{padding:15px}}
 </style></head><body><div class="app">
-<h1>Tru Measure — Backsplash App</h1><div class="muted">Version 1 prototype • mobile-first</div>
-
-<section id="job" class="card"><h2>Job Setup</h2>
-<label>Work Order Number</label><input id="wo" inputmode="numeric">
-<label>Job Name</label><input id="jobname">
-<label>Job Number</label><input id="jobnum">
-<label>Stone Color</label><input id="stone">
+<header class="tmBrandHeader"><div class="tmBrandName">TRU <span>MEASURE</span></div><div class="tmBrandProduct">DIGITAL CUTSHEET APP</div><div class="tmBrandTag">When Millimeters Matter.</div></header>
+<section class="card" id="job"><h2>Job Setup</h2>
+<label>Work Order Number</label><input id="wo" inputmode="numeric"/>
+<label>Job Name</label><input id="jobname"/>
+<label>Job Number</label><input id="jobnum"/>
+<label>Stone Color</label><input id="stone"/>
 <label>Measurement Type</label><select id="type"><option>Backsplash</option><option>Install Backsplash</option></select>
-<label>Default Material Thickness</label><select id="thick"><option>3 cm</option><option>2 cm</option><option>Other</option></select>
-<label>Are all pieces this thickness?</label><select id="allsame"><option>Yes</option><option>No</option></select>
+<input id="thick" type="hidden" value=""/>
+<input id="jobThickOther" type="hidden" value=""/>
+<div id="jobThickOtherWrap" style="display:none"></div>
+<input id="allsame" type="hidden" value="Yes"/>
 <div class="actions">
 <button class="btn" id="continuePiece1Btn" type="button">Continue to Piece 1</button>
-<button class="btn secondary" type="button" onclick="document.getElementById('loadJobInputHome').click()">LOAD SAVED JOB</button>
+<button class="btn secondary" onclick="document.getElementById('loadJobInputHome').click()" type="button">LOAD SAVED JOB</button><button class="btn secondary" id="tmLoadTestJobBtn" onclick="tmLoadTestJob()" type="button">LOAD TEST JOB</button>
 </div></section>
-
-<section id="jobHome" class="card hidden">
+<section class="card hidden" id="jobHome">
 <h2>JOB HOME</h2>
-<div id="jobHomeInfo" class="notice"></div>
-<div id="jobHomeCount" class="muted" style="margin:12px 0"></div>
+<div class="notice" id="jobHomeInfo"></div>
+<div class="muted" id="jobHomeCount" style="margin:12px 0"></div>
 <div class="actions">
-  <button class="btn" type="button" onclick="addNewPieceFromHome()">Add New Piece</button>
-  <button class="btn secondary" type="button" onclick="viewAllPieces('jobHome')">View / Edit Completed Pieces</button>
-  <button class="btn" type="button" onclick="completeJobFromHome()">Complete Job — Prepare PDF + DXF</button>
+<button class="btn" onclick="addNewPieceFromHome()" type="button">Add New Piece</button>
+<button class="btn" onclick="viewAllPieces('jobHome')" type="button">View / Edit Completed Pieces</button>
+<button class="btn" onclick="completeJobFromHome()" type="button">Complete Job — Prepare PDF + DXF</button>
 </div>
 </section>
-<input id="loadJobInputHome" type="file" accept=".json,application/json" class="hidden" onchange="loadJobFile(this)">
-
-
-<section id="piece" class="card hidden"><h2 id="pieceTitle">Piece 1</h2>
-<div class="row"><div><label>Overall Length (in.)</label><input id="len" type="number" step=".0625"></div><div><label>Left Height (in.)</label><input id="ht" type="number" step=".0625"></div><div id="rightHeightWrap" class="hidden"><label>Confirm Right Height (in.)</label><input id="rightHt" type="number" step=".0625"><div class="muted">Required when plane adjustments are used.</div></div></div>
-<div id="pieceThickness" class="hidden"><label>Piece Thickness</label><select id="pthick"><option>3 cm</option><option>2 cm</option><option>Other</option></select></div>
-<div id="livePiecePreview" class="notice" style="margin:14px 0 18px;display:none">
+<input accept=".json,application/json" class="hidden" id="loadJobInputHome" onchange="loadJobFile(this)" type="file"/>
+<section class="card hidden" id="piece"><h2 id="pieceTitle">Piece 1</h2>
+<div class="row"><div><label>Overall Length (in.)</label><input id="len" min="0" oninput="refreshLivePieceDrawing()" required step=".0625" type="number"/></div><div><label>Left Height (in.)</label><input id="ht" min="0" oninput="refreshLivePieceDrawing()" required step=".0625" type="number"/></div><div class="hidden" id="rightHeightWrap"><label>Confirm Right Height (in.)</label><input id="rightHt" step=".0625" type="number"/><div class="muted">Required when plane adjustments are used.</div></div></div>
+<div id="pieceThickness">
+<label>Piece Thickness</label>
+<select id="pthick" onchange="tmPieceThicknessChanged(this)">
+<option selected="" value="">SELECT THICKNESS</option>
+<option value="3 cm">3 cm</option>
+<option value="2 cm">2 cm</option>
+<option value="Other">Other</option>
+</select>
+<div id="pthickOtherWrap" style="display:none;margin-top:10px">
+<label>ENTER THICKNESS</label>
+<input id="pthickOther" inputmode="text" onchange="tmValidateOtherThickness(this)" oninput="refreshLivePieceDrawing()" placeholder='e.g. 1.5 or 1 1/2"' type="text"/>
+</div>
+<div id="tmThicknessDefaultQuestion" class="hidden" style="margin-top:12px;padding:12px;border:2px solid #111;border-radius:8px;background:#fff">
+  <div id="tmThicknessDefaultQuestionText" style="font-weight:800;margin-bottom:10px">USE THIS AS THE DEFAULT THICKNESS FOR THE REMAINING PIECES?</div>
+  <div class="actions" style="margin-top:0">
+    <button class="btn" type="button" onclick="tmAnswerThicknessDefault(true)">YES — USE AS DEFAULT</button>
+    <button class="btn secondary" type="button" onclick="tmAnswerThicknessDefault(false)">NO — THIS PIECE ONLY</button>
+  </div>
+</div>
+</div>
+<div class="notice" id="livePiecePreview" style="margin:14px 0 18px;display:none">
 <strong>LIVE PIECE DRAWING</strong>
 <div class="muted" style="margin:4px 0 8px">Updates as overall dimensions and plane measurements are entered.</div>
-<svg id="liveDrawing" viewBox="0 0 900 500" style="width:100%;max-height:420px;background:#fff;border:1px solid #bbb;border-radius:8px"></svg>
+<svg id="liveDrawing" style="width:100%;max-height:420px;background:#fff;border:1px solid #bbb;border-radius:8px" viewbox="0 0 900 500"></svg>
 </div>
-<div id="bowPanel"><h3>PLANE ADJUSTMENTS</h3>
-<div class="notice" style="font-size:18px;font-weight:800;margin-bottom:8px">ESTABLISH THE BOTTOM PLANE FIRST, THEN THE TOP PLANE.</div>
-<details id="planeInstructions" style="margin-bottom:14px">
-  <summary style="cursor:pointer;font-weight:700;padding:8px 0">Plane Adjustment Instructions</summary>
-  <div class="muted" style="padding-top:6px"><strong>ALL HEIGHT MEASUREMENTS ARE TAKEN FROM THE ACTUAL BOTTOM PLANE.</strong><br>
-  1. The reference point is measured along the existing top plane.<br>
-  2. Enter the reference point from LEFT. For Point 2 and every additional point, enter its distance from LEFT and choose SAME HEIGHT, UP, or DOWN. Enter an amount only for UP/DOWN.<br>
-  3. Add outlets/cutouts after the plane adjustments are established.<br>
-  Bottom plane changes: enter Distance from LEFT + Direction (UP/DOWN) + Amount. No negative numbers required.<br>
-  Top plane adjustments: enter Distance from LEFT + Actual Height from the bottom plane. The reference point remains on the existing plane. Each additional point is calculated from the previous point. When complete, the top connects to the confirmed upper-right corner.</div>
-</details>
-<div id="bottomPlaneBlock"><h3>BOTTOM PLANE</h3><div class="muted">Establish the bottom plane first. Other details, including outlet heights, reference this finished bottom.</div><div id="bottomAdjustments"></div><button class="btn secondary" type="button" onclick="addAdjustment('Bottom')">+ ADD BOTTOM PLANE ADJUSTMENT</button></div>
-<div id="topPlaneBlock" style="margin-top:18px"><h3>TOP PLANE</h3><div class="muted">Establish the top plane after the bottom plane.</div><div id="adjustments"></div><button class="btn secondary" type="button" onclick="addAdjustment('Top')">+ ADD TOP PLANE ADJUSTMENT</button></div></div>
-
-<div id="pieceManagementActions" style="margin-top:18px;padding:14px;border:1px solid #999;border-radius:10px">
-  <div style="font-weight:700;margin-bottom:8px">PIECE CONTROLS</div>
-  <div class="muted" style="margin-bottom:10px">Clear the current piece and start its measurements over, or delete this piece completely.</div>
-  <div class="actions">
-    <button class="btn secondary" type="button" onclick="clearCurrentPiece()">CLEAR ALL PIECE INFO</button>
-    <button class="btn secondary" type="button" onclick="deleteCurrentPiece()">DELETE PIECE</button>
-  </div>
+<div id="pieceManagementActions" style="margin-top:8px;padding:6px 8px;border:1px solid #ccc;border-radius:8px;background:#fafafa">
+<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+<div style="font-size:12px;font-weight:800;letter-spacing:.04em">PIECE CONTROLS</div>
+<button class="btn secondary" onclick="clearCurrentPiece()" type="button" style="padding:6px 9px;font-size:12px">CLEAR PIECE</button>
+<button class="btn secondary" onclick="deleteCurrentPiece()" type="button" style="padding:6px 9px;font-size:12px">DELETE PIECE</button>
+</div>
 </div>
 <div id="addPieceDetailsAction" style="margin-top:22px;padding:16px;border:2px solid #111;border-radius:10px;text-align:center">
-  <div style="font-weight:700;margin-bottom:8px">Plane measurements complete?</div>
-  <button class="btn" type="button" style="width:100%;font-size:18px;padding:14px" onclick="review()">ADD PIECE DETAILS</button>
-  <div class="muted" style="margin-top:8px">Continue to polished edges, notches, radius corners, outlets/cutouts, Stop Polish, and piece notes.</div>
+<div style="font-weight:700;margin-bottom:8px">Plane measurements complete?</div>
+<button class="btn" onclick="review()" style="width:100%;font-size:18px;padding:14px" type="button">ADD PIECE DETAILS</button>
+<div class="muted" style="margin-top:8px">Continue to polished edges, notches, radius corners, outlets/cutouts, Stop Polish, and piece notes.</div>
 </div>
-<div class="actions"><button class="btn secondary" type="button" onclick="viewAllPieces('piece')">View Completed Pieces</button><button class="btn secondary" type="button" onclick="completeJobFromWork()">Complete Job</button></div></section>
-
-<section id="review" class="card hidden"><h2>Piece Review</h2>
+<div class="actions"><button class="btn secondary" onclick="viewAllPieces('piece')" type="button">View Completed Pieces</button><button class="btn secondary" onclick="completeJobFromWork()" type="button">Complete Job</button></div></section>
+<section class="card hidden" id="review"><h2>Piece Review</h2>
 <div class="notice">REFERENCE DRAWING — DO NOT SCALE — USE DIMENSIONS SHOWN</div>
-<svg id="drawing" viewBox="0 0 720 500"></svg>
-<div class="notice" style="margin-top:12px"><strong>ADD PIECE DETAILS</strong><br>Choose each type of detail below. Every section uses the same layout.</div>
+<svg id="drawing" viewbox="0 0 720 500"></svg>
+<div class="notice" style="margin-top:12px"><strong>ADD PIECE DETAILS</strong><br/>Choose each type of detail below. Every section uses the same layout.</div>
+<div class="detailsGrid" id="reviewExtras"><div class="detailCard">
+<h3>POLISHED EDGES</h3>
+<div class="muted">Designate the finished edges to be polished.</div><button class="btn detailAdd" id="tmPolishedEdgesLauncher" onclick="var e=document.getElementById('tmPolishedEdgesEntry');var o=e.style.display==='none';e.style.display=o?'block':'none';this.textContent=o?'CLOSE POLISHED EDGES':'+ ADD POLISHED EDGES';" type="button">+ ADD POLISHED EDGES</button><div id="tmPolishedEdgesEntry" style="display:none;margin-top:12px"><div class="row">
+<div><label>Top Edge</label><select id="topPol" onchange="refreshReviewDrawing()"><option value="No">Not Polished</option><option value="Yes">Polished</option></select></div>
+<div><label>Side Edges</label><select id="sidePol" onchange="refreshReviewDrawing()"><option value="None">None</option><option value="Left">Left</option><option value="Right">Right</option><option value="Both">Both</option></select></div>
+</div><div id="spSegmentControls" style="margin-top:12px"></div></div>
 
-<div id="reviewExtras" class="detailsGrid">
 
-<div class="detailCard">
-  <h3>POLISHED EDGES</h3>
-  <div class="muted">Designate the finished edges to be polished.</div>
-  <div class="row">
-    <div><label>Top Edge</label><select id="topPol" onchange="refreshReviewDrawing()"><option value="No">Not Polished</option><option value="Yes">Polished</option></select></div>
-    <div><label>Side Edges</label><select id="sidePol" onchange="refreshReviewDrawing()"><option value="None">None</option><option value="Left">Left</option><option value="Right">Right</option><option value="Both">Both</option></select></div>
-  </div>
-  <div id="spSegmentControls" style="margin-top:12px"></div>
+</div><div class="detailCard" id="bowPanel"><h3>PLANE ADJUSTMENTS</h3>
+<div class="notice" style="font-size:17px;font-weight:800;margin-bottom:8px">ESTABLISH THE BOTTOM PLANE FIRST, THEN THE TOP PLANE.</div>
+<button class="btn detailAdd" id="addPlaneAdjustmentBtn" onclick="tmOpenPlaneAdjustments()" type="button">+ ADD PLANE ADJUSTMENT</button>
+<div id="planeAdjustmentEntry" style="display:none;margin-top:12px">
+<details id="planeInstructions" style="margin-bottom:12px;background:#f7f7f7;border:1px solid #ddd;border-radius:8px;padding:8px 10px">
+<summary style="cursor:pointer;font-weight:700;padding:8px 0">Plane Adjustment Instructions</summary>
+<div class="muted" style="padding-top:6px"><strong>ALL HEIGHT MEASUREMENTS ARE TAKEN FROM THE ACTUAL BOTTOM PLANE.</strong><br/>
+  1. The reference point is measured along the existing top plane.<br/>
+  2. Enter the reference point from LEFT. For Point 2 and every additional point, enter its distance from LEFT and choose SAME HEIGHT, UP, or DOWN. Enter an amount only for UP/DOWN.<br/>
+  3. Add outlets/cutouts after the plane adjustments are established.<br/>
+  Bottom plane changes: enter Distance from LEFT + Direction (UP/DOWN) + Amount. No negative numbers required.<br/>
+  Top plane adjustments: enter Distance from LEFT + Actual Height from the bottom plane. The reference point remains on the existing plane. Each additional point is calculated from the previous point. When complete, the top connects to the confirmed upper-right corner.</div>
+</details>
+<div class="detailSubsection" id="bottomPlaneBlock"><h3>BOTTOM PLANE</h3><div class="muted">Establish the bottom plane first. Other details, including outlet heights, reference this finished bottom.</div><div id="bottomAdjustments"></div><button class="btn detailAdd" onclick="addAdjustment('Bottom')" type="button">+ ADD BOTTOM PLANE ADJUSTMENT</button></div>
+<div class="detailSubsection" id="topPlaneBlock" style="margin-top:18px"><h3>TOP PLANE</h3><div class="muted">Establish the top plane after the bottom plane.</div><div id="adjustments"></div><button class="btn detailAdd" onclick="addAdjustment('Top')" type="button">+ ADD TOP PLANE ADJUSTMENT</button></div>
 </div>
-
-<div id="notchPanel" class="detailCard">
-  <h3>NOTCHES</h3>
-  <div class="muted">Add and dimension any notch in the finished piece.</div>
-  <div id="notches"></div>
-  <button id="addNotchBtn" class="btn detailAdd" type="button" onclick="addNotch()">+ ADD NOTCH</button>
+</div><div class="detailCard" id="cutPanel">
+<h3>OUTLETS / CUTOUTS</h3>
+<div class="muted">Locate cutout centers from LEFT and from the adjusted BOTTOM.</div>
+<div id="outlets"></div>
+<button class="btn detailAdd" id="addOutletBtn" onclick="addOutlet()" type="button">+ ADD OUTLET / CUTOUT</button>
+</div><div class="detailCard">
+<h3>STOP POLISH</h3>
+<div class="muted">Add dimensioned Stop Polish locations and designate the polished side of each SP.</div>
+<div id="stopPolishes"></div>
+<button class="btn detailAdd" id="addSPBtn" onclick="addStopPolish()" type="button">+ ADD STOP POLISH</button>
+</div><div class="detailCard" id="faucetPanel">
+<h3>FAUCET HOLES</h3>
+<div class="muted">Add and dimension faucet holes in the finished piece.</div>
+<button class="btn detailAdd" id="openFaucetBtn" onclick="tmOpenFaucetEntry()" type="button">+ ADD FAUCET HOLES</button>
+<div id="tmFaucetEntry" style="display:none;margin-top:12px">
+<label>How many faucet holes?</label>
+<input id="tmFaucetCount" min="1" type="number" value="1"/>
+<button class="btn detailAdd" id="addFaucetHoleBtn" onclick="tmBuildFaucetHoles()" type="button">ENTER FAUCET HOLES</button>
+<div id="faucetHoles" style="margin-top:12px"></div>
+<div class="muted" id="tmFaucetStatus" style="margin-top:8px">No positioned faucet holes yet.</div>
 </div>
-
-<div id="radiusPanel" class="detailCard">
-  <h3>RADIUS CORNERS</h3>
-  <div id="radiusForceWarning" style="display:none;margin:8px 0;padding:9px 10px;border:2px solid #b26a00;border-radius:6px;font-weight:700;">RADIUS WARNING — Multiple radii are specified on this piece. Verify that adjoining radii fit the available space. If they do not, they will need to be forced to fit.</div>
-  <div class="muted">Add radius corners to the finished perimeter.</div>
-  <div id="radiusCorners"></div>
-  <button id="addRadiusBtn" class="btn detailAdd" type="button" onclick="addRadiusCorner()">+ ADD RADIUS CORNER</button>
+</div><div class="detailCard" id="notchPanel">
+<h3>NOTCHES</h3>
+<div class="muted">Add and dimension any notch in the finished piece.</div>
+<div id="notches"></div>
+<button class="btn detailAdd" id="addNotchBtn" onclick="addNotch()" type="button">+ ADD NOTCH</button>
+</div><div class="detailCard" id="radiusPanel">
+<h3>RADIUS CORNERS</h3>
+<div id="radiusForceWarning" style="display:none;margin:8px 0;padding:9px 10px;border:2px solid #b26a00;border-radius:6px;font-weight:700;">RADIUS WARNING — Multiple radii are specified on this piece. Verify that adjoining radii fit the available space. If they do not, they will need to be forced to fit.</div>
+<div class="muted">Add radius corners to the finished perimeter.</div>
+<div id="radiusCorners"></div>
+<button class="btn detailAdd" id="addRadiusBtn" onclick="addRadiusCorner()" type="button">+ ADD RADIUS CORNER</button>
+</div><div class="detailCard" id="topFitOffsetPanel">
+<h3>INSTALLATION FITTING OFFSET</h3>
+<div class="muted">Add a fabrication reduction from the true net top-edge measurement.</div>
+<button class="btn detailAdd" id="tmOffsetLauncher" onclick="tmOpenOffsetEntry()" type="button">+ ADD OFFSET</button>
+<div id="tmOffsetEntry" style="display:none;margin-top:10px">
+<label>Top Edge Fit Offset</label>
+<select id="topFitOffset" onchange="tmTopOffsetChanged();refreshReviewDrawing();refreshLivePieceDrawing()">
+<option selected="" value="">SELECT OFFSET</option>
+<option value="0">None</option>
+<option value="0.0625">1/16"</option>
+<option value="0.125">1/8"</option>
+<option value="custom">Custom</option>
+</select>
+<div id="topFitCustomWrap" style="display:none;margin-top:8px">
+<label>Custom Top Edge Offset (in.)</label>
+<input id="topFitCustom" min="0" oninput="refreshReviewDrawing();refreshLivePieceDrawing()" placeholder="Enter offset" step=".001" type="number"/>
 </div>
-
-<div id="cutPanel" class="detailCard">
-  <h3>OUTLETS / CUTOUTS</h3>
-  <div class="muted">Locate cutout centers from LEFT and from the adjusted BOTTOM.</div>
-  <div id="outlets"></div>
-  <button id="addOutletBtn" class="btn detailAdd" type="button" onclick="addOutlet()">+ ADD OUTLET / CUTOUT</button>
 </div>
-
-<div class="detailCard">
-  <h3>STOP POLISH</h3>
-  <div class="muted">Add dimensioned Stop Polish locations and designate the polished side of each SP.</div>
-  <div id="stopPolishes"></div>
-  <button id="addSPBtn" class="btn detailAdd" type="button" onclick="addStopPolish()">+ ADD STOP POLISH</button>
-</div>
-
-<div class="detailCard">
-  <h3>PIECE NOTES</h3>
-  <div class="muted">Add fabrication, programming, installation, or general notes.</div>
-  <div id="pieceNotes"></div>
-  <button id="addNoteBtn" class="btn detailAdd" type="button" onclick="addPieceNote()">+ ADD NOTE</button>
-</div>
-
-</div>
-<div class="actions"><button class="btn secondary" type="button" onclick="editPiece()">EDIT SHAPE</button><button class="btn secondary" type="button" onclick="viewAllPieces('review')">VIEW COMPLETED PIECES</button><button class="btn" type="button" onclick="approve()">APPROVE PIECE</button></div>
+</div><div class="detailCard">
+<h3>PIECE NOTES</h3>
+<div class="muted">Add fabrication, programming, installation, or general notes.</div>
+<div id="pieceNotes"></div>
+<button class="btn detailAdd" id="addNoteBtn" onclick="addPieceNote()" type="button">+ ADD NOTE</button>
+</div></div>
+<div class="actions"><button class="btn secondary" onclick="editPiece()" type="button">EDIT SHAPE</button><button class="btn secondary" onclick="viewAllPieces('review')" type="button">VIEW COMPLETED PIECES</button><button class="btn" onclick="approve()" type="button">APPROVE PIECE</button></div>
 </section>
-
-<section id="finish" class="card hidden"><h2>Piece Approved</h2><div id="approvedCount" class="notice"></div>
+<section class="card hidden" id="finish"><h2>Piece Approved</h2><div class="notice" id="approvedCount"></div>
 <div class="actions"><button class="btn secondary" onclick="nextPiece()">Add Next Piece</button><button class="btn secondary" onclick="viewAllPieces('finish')">View Completed Pieces</button><button class="btn secondary" onclick="showJobHome()">Job Home</button><button class="btn" onclick="completeJob()">Complete Job</button></div></section>
-
-<section id="allPieces" class="card hidden"><h2>All Pieces</h2>
+<section class="card hidden" id="allPieces"><h2>All Pieces</h2>
 <div id="piecesSummary"></div>
 <div class="actions"><button class="btn secondary" onclick="closeAllPieces()">Back</button><button class="btn secondary" onclick="showJobHome()">Job Home</button><button class="btn" onclick="completeJob()">Complete Job</button></div></section>
-
-<section id="pieceView" class="card hidden"><h2 id="pieceViewTitle">Piece</h2>
+<section class="card hidden" id="pieceView"><h2 id="pieceViewTitle">Piece</h2>
 <div class="notice">REFERENCE DRAWING — DO NOT SCALE — USE DIMENSIONS SHOWN</div>
-<svg id="pieceViewDrawing" viewBox="0 0 720 500"></svg>
+<svg id="pieceViewDrawing" viewbox="0 0 720 500"></svg>
 <div class="actions">
-<button class="btn secondary" id="prevViewedPieceBtn" type="button" onclick="stepViewedPiece(-1)">← BACK</button>
+<button class="btn secondary" id="prevViewedPieceBtn" onclick="stepViewedPiece(-1)" type="button">← BACK</button>
 <button class="btn secondary" onclick="backToAllPieces()">ALL PIECES</button>
 <button class="btn" id="editViewedPieceBtn" type="button">EDIT PIECE</button>
-<button class="btn secondary" id="nextViewedPieceBtn" type="button" onclick="stepViewedPiece(1)">NEXT →</button>
-<button class="btn secondary" type="button" onclick="showJobHome()">JOB HOME</button>
+<button class="btn secondary" id="nextViewedPieceBtn" onclick="stepViewedPiece(1)" type="button">NEXT →</button>
+<button class="btn secondary" onclick="showJobHome()" type="button">JOB HOME</button>
 </div></section>
-
-<section id="pdfPreview" class="card hidden">
+<section class="card hidden" id="pdfPreview">
 <h2>PDF PREVIEW</h2>
 <div class="muted" style="margin-bottom:12px">Review the complete reference drawing before printing or saving it as a PDF.</div>
 <div id="pdfPreviewPages"></div>
 <div class="actions">
-<button class="btn secondary" type="button" onclick="closePDFPreview()">BACK</button>
-<button class="btn secondary" type="button" onclick="printPreviewPDF()">PRINT</button>
-<button class="btn" type="button" onclick="savePreviewPDF()">SAVE PDF</button>
-<button class="btn secondary" type="button" onclick="sendFilesToRecipient()">SEND TO RECIPIENT</button>
+<button class="btn secondary" onclick="closePDFPreview()" type="button">BACK</button>
+<button class="btn secondary" onclick="printPreviewPDF()" type="button">PRINT</button>
+<button class="btn" onclick="savePreviewPDF()" type="button">SAVE PDF</button>
+<button class="btn secondary" onclick="openRecipientScreen()" type="button">SEND TO RECIPIENT</button>
 </div>
 </section>
-
-<section id="send" class="card hidden"><h2>Send Production Files</h2>
-<label>Recipient</label><input id="email" type="email" value="todd@rumfordstone.com">
-<div class="checks"><label><input type="checkbox" checked disabled> PDF reference drawing</label><label><input type="checkbox" checked disabled> DXF production file</label></div>
+<section class="card hidden" id="send"><h2>Send Production Files</h2>
+<label>Recipient</label><input id="email" type="email" value="todd@rumfordstone.com"/>
+<div class="checks"><label><input checked="" disabled="" type="checkbox"/> PDF reference drawing</label><label><input checked="" disabled="" type="checkbox"/> DXF production file</label></div>
 <div class="muted">Preview the PDF first. PRINT uses the device printer controls. SAVE PDF creates a PDF directly; on iPhone choose Save to Files from the Share sheet. Automatic email attachments require an email service/server.</div>
 <div class="actions">
 <button class="btn secondary" onclick="backFromProduction()">Back</button>
 <button class="btn secondary" onclick="saveJobFile()">SAVE JOB FILE</button>
 <button class="btn secondary" onclick="document.getElementById('loadJobInput').click()">LOAD JOB FILE</button>
 <button class="btn secondary" onclick="previewPDF()">PREVIEW PDF</button>
+<button class="btn secondary" onclick="tmUseLastTestDrawing()">USE LAST SAVED TEST DRAWING</button>
 <button class="btn" onclick="downloadDXFFiles()">DOWNLOAD DXF</button>
 <button class="btn" onclick="sendFilesToRecipient()">SEND FILES TO RECIPIENT</button>
 </div>
-<input id="loadJobInput" type="file" accept=".json,application/json" class="hidden" onchange="loadJobFile(this)">
-<div id="sendStatus" class="muted" style="margin-top:12px"></div></section>
+<input accept=".json,application/json" class="hidden" id="loadJobInput" onchange="loadJobFile(this)" type="file"/>
+<div class="muted" id="sendStatus" style="margin-top:12px"></div></section>
 </div>
 <script>
 const REAL_DXF = "  0\nSECTION\n  2\nHEADER\n  9\n$ACADVER\n  1\nAC1032\n  9\n$ACADMAINTVER\n  90\n55\n  9\n$DWGCODEPAGE\n  3\nansi_1252\n  9\n$TITLE\n  1\nVectorDraw Document\n  9\n$INSBASE\n  10\n0\n  20\n0\n  30\n0\n  9\n$EXTMIN\n  10\n-3.6262627766738769\n  20\n0.31815169067322946\n  30\n0\n  9\n$EXTMAX\n  10\n-0.0012627766738768642\n  20\n2.6931516906732296\n  30\n0\n  9\n$LIMMIN\n  10\n-3.9370078740157481\n  20\n-3.9370078740157481\n  9\n$LIMMAX\n  10\n3.9370078740157481\n  20\n3.9370078740157481\n  9\n$ORTHOMODE\n  70\n0\n  9\n$REGENMODE\n  70\n1\n  9\n$FILLMODE\n  70\n1\n  9\n$QTEXTMODE\n  70\n0\n  9\n$MIRRTEXT\n  70\n1\n  9\n$LTSCALE\n  40\n1\n  9\n$ATTMODE\n  70\n1\n  9\n$TEXTSIZE\n  40\n0.2\n  9\n$TRACEWID\n  40\n0.05\n  9\n$TEXTSTYLE\n  7\nautodim\n  9\n$CLAYER\n  8\n.Home.SINGLE HORIZONTAL NEW\n  9\n$CELTYPE\n  6\nBYLAYER\n  9\n$CECOLOR\n  62\n256\n  9\n$CELTSCALE\n  40\n1\n  9\n$DISPSILH\n  70\n0\n  9\n$DIMSCALE\n  40\n1\n  9\n$DIMASZ\n  40\n1.5\n  9\n$DIMEXO\n  40\n1.5\n  9\n$DIMRND\n  40\n0\n  9\n$DIMDLE\n  40\n0\n  9\n$DIMEXE\n  40\n1.5\n  9\n$DIMTP\n  40\n0\n  9\n$DIMTM\n  40\n0\n  9\n$DIMTXT\n  40\n2\n  9\n$DIMTSZ\n  40\n0.0\n  9\n$DIMTOL\n  70\n0\n  9\n$DIMLIM\n  70\n0\n  9\n$DIMTIH\n  70\n0\n  9\n$DIMGAP\n  40\n0.09\n  9\n$DIMTOH\n  70\n0\n  9\n$DIMSE1\n  70\n0\n  9\n$DIMSE2\n  70\n0\n  9\n$DIMTAD\n  70\n0\n  9\n$DIMZIN\n  70\n1\n  9\n$DIMBLK\n  1\nVDDIM_DEFAULT\n  9\n$DIMASO\n  70\n1\n  9\n$DIMSHO\n  70\n1\n  9\n$DIMPOST\n  1\n\n  9\n$DIMAPOST\n  1\n\n  9\n$DIMALT\n  70\n0\n  9\n$DIMBLK1\n  1\n\n  9\n$DIMBLK2\n  1\n\n  9\n$DIMSTYLE\n  2\nautodim\n  9\n$DIMCLRD\n  70\n8\n  9\n$DIMCLRE\n  70\n8\n  9\n$DIMCLRT\n  70\n8\n  9\n$DIMTFAC\n  40\n1\n  9\n$DIMSD1\n  70\n0\n  9\n$DIMSD2\n  70\n0\n  9\n$DIMTOLJ\n  70\n1\n  9\n$DIMTFILL\n  70\n0\n  9\n$DIMTFILLCLR\n  70\n0\n  9\n$DIMTXSTY\n  7\nautodim\n  9\n$DIMAUNIT\n  70\n0\n  9\n$DIMADEC\n  70\n2\n  9\n$DIMAZIN\n  70\n0\n  9\n$DIMLUNIT\n  70\n5\n  9\n$LUNITS\n  70\n2\n  9\n$LUPREC\n  70\n4\n  9\n$FILLETRAD\n  40\n0\n  9\n$AUNITS\n  70\n0\n  9\n$AUPREC\n  70\n0\n  9\n$MENU\n  1\n\n  9\n$ELEVATION\n  40\n0\n  9\n$PELEVATION\n  40\n0\n  9\n$THICKNESS\n  40\n0\n  9\n$ANGBASE\n  50\n0\n  9\n$ANGDIR\n  70\n0\n  9\n$PDMODE\n  70\n35\n  9\n$PDSIZE\n  40\n1\n  9\n$PLINEWID\n  40\n0\n  9\n$SPLFRAME\n  70\n0\n  9\n$SPLINETYPE\n  70\n6\n  9\n$SPLINESEGS\n  70\n8\n  9\n$HANDSEED\n  5\n              2A6\n  9\n$SURFTAB1\n  70\n6\n  9\n$SURFTAB2\n  70\n6\n  9\n$SURFTYPE\n  70\n6\n  9\n$SURFU\n  70\n6\n  9\n$SURFV\n  70\n6\n  9\n$UCSBASE\n  2\n\n  9\n$UCSNAME\n  2\n\n  9\n$UCSORG\n  10\n0\n  20\n0\n  30\n0\n  9\n$UCSXDIR\n  10\n1\n  20\n0\n  30\n0\n  9\n$UCSYDIR\n  10\n0\n  20\n1\n  30\n0\n  9\n$UCSORGTOP\n  10\n0\n  20\n0\n  30\n0\n  9\n$UCSORGBOTTOM\n  10\n0\n  20\n0\n  30\n0\n  9\n$UCSORGLEFT\n  10\n0\n  20\n0\n  30\n0\n  9\n$UCSORGRIGHT\n  10\n0\n  20\n0\n  30\n0\n  9\n$UCSORGFRONT\n  10\n0\n  20\n0\n  30\n0\n  9\n$UCSORGBACK\n  10\n0\n  20\n0\n  30\n0\n  9\n$PUCSBASE\n  2\n\n  9\n$PUCSNAME\n  2\n\n  9\n$PUCSXDIR\n  10\n1\n  20\n0\n  30\n0\n  9\n$PUCSYDIR\n  10\n0\n  20\n1\n  30\n0\n  9\n$PUCSORGTOP\n  10\n0\n  20\n0\n  30\n0\n  9\n$PUCSORGBOTTOM\n  10\n0\n  20\n0\n  30\n0\n  9\n$PUCSORGLEFT\n  10\n0\n  20\n0\n  30\n0\n  9\n$PUCSORGRIGHT\n  10\n0\n  20\n0\n  30\n0\n  9\n$PUCSORGFRONT\n  10\n0\n  20\n0\n  30\n0\n  9\n$PUCSORGBACK\n  10\n0\n  20\n0\n  30\n0\n  9\n$USERI1\n  70\n0\n  9\n$USERI2\n  70\n0\n  9\n$USERI3\n  70\n0\n  9\n$USERI4\n  70\n0\n  9\n$USERI5\n  70\n0\n  9\n$USERR1\n  40\n0\n  9\n$USERR2\n  40\n0\n  9\n$USERR3\n  40\n0\n  9\n$USERR4\n  40\n0\n  9\n$USERR5\n  40\n0\n  9\n$TILEMODE\n  70\n1\n  9\n$PINSBASE\n  10\n0\n  20\n0\n  30\n0\n  9\n$LWDISPLAY\n  290\n0\n  9\n$INSUNITS\n  70\n1\n  9\n$MEASUREMENT\n  70\n1\n  0\nENDSEC\n  0\nSECTION\n  2\nCLASSES\n  0\nCLASS\n  1\nACDBDICTIONARYWDFLT\n  2\nAcDbDictionaryWithDefault\n  3\nObjectDBX Classes\n  90\n0\n  91\n1\n  280\n0\n  281\n0\n  0\nCLASS\n  1\nIMAGEDEF\n  2\nAcDbRasterImageDef\n  3\nISM\n  90\n0\n  91\n1\n  280\n0\n  281\n0\n  0\nCLASS\n  1\nIMAGE\n  2\nAcDbRasterImage\n  3\nISM\n  90\n127\n  91\n1\n  280\n0\n  281\n1\n  0\nCLASS\n  1\nIMAGEDEF_REACTOR\n  2\nAcDbRasterImageDefReactor\n  3\nObjectDBX Classes\n  90\n1\n  91\n1\n  280\n0\n  281\n0\n  0\nCLASS\n  1\nACDBPLACEHOLDER\n  2\nAcDbPlaceHolder\n  3\nObjectDBX Classes\n  90\n0\n  91\n1\n  280\n0\n  281\n0\n  0\nCLASS\n  1\nLAYOUT\n  2\nAcDbLayout\n  3\nObjectDBX Classes\n  90\n0\n  91\n1\n  280\n0\n  281\n0\n  0\nCLASS\n  1\nARCALIGNEDTEXT\n  2\nAcDbArcAlignedText\n  3\nATEXT|AutoCAD Express Tool|expresstools@autodesk.com\n  90\n0\n  91\n1\n  280\n0\n  281\n1\n  0\nCLASS\n  1\nMESH\n  2\nAcDbSubDMesh\n  3\nObjectDBX Classes\n  90\n0\n  91\n2\n  280\n0\n  281\n1\n  0\nCLASS\n  1\nVISUALSTYLE\n  2\nAcDbVisualStyle\n  3\nObjectDBX Classes\n  90\n4095\n  91\n24\n  280\n0\n  281\n0\n  0\nENDSEC\n  0\nSECTION\n  2\nTABLES\n  0\nTABLE\n  2\nVPORT\n  5\n260\n  330\n0\n  100\nAcDbSymbolTable\n  70\n2\n  0\nVPORT\n  5\n261\n  330\n260\n  100\nAcDbSymbolTableRecord\n  100\nAcDbViewportTableRecord\n  2\n*Active\n  70\n0\n  10\n0\n  20\n0\n  11\n1\n  21\n1\n  12\n-1.8137627766738769\n  22\n1.5056516906732296\n  13\n0\n  23\n0\n  14\n1\n  24\n1\n  15\n1\n  25\n1\n  16\n0\n  26\n0\n  36\n1\n  17\n0\n  27\n0\n  37\n0\n  40\n2.375\n  41\n1\n  42\n50\n  43\n0\n  44\n0\n  50\n0\n  51\n0\n  71\n0\n  72\n100\n  73\n1\n  74\n3\n  75\n0\n  76\n0\n  77\n0\n  78\n0\n  281\n0\n  65\n1\n  110\n0\n  120\n0\n  130\n0\n  111\n1\n  121\n0\n  131\n0\n  112\n0\n  122\n1\n  132\n0\n  79\n0\n  146\n0\n  0\nENDTAB\n  0\nTABLE\n  2\nLTYPE\n  5\n262\n  330\n0\n  100\nAcDbSymbolTable\n  70\n32\n  0\nLTYPE\n  5\n222\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nCENTER\n  70\n0\n  3\nCenter ____ _ ____ _ ____ _ ____ _ ____ _ ____\n  72\n65\n  73\n4\n  40\n2\n  49\n1.25\n  74\n0\n  49\n-0.25\n  74\n0\n  49\n0.25\n  74\n0\n  49\n-0.25\n  74\n0\n  0\nLTYPE\n  5\n223\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nDASHDOT\n  70\n0\n  3\nDashdot __ . __ . __ . __ . __ . __ . __ . __\n  72\n65\n  73\n4\n  40\n1\n  49\n0.5\n  74\n0\n  49\n-0.25\n  74\n0\n  49\n0\n  74\n0\n  49\n-0.25\n  74\n0\n  0\nLTYPE\n  5\n224\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nDASHED\n  70\n0\n  3\nDashed __ __ __ __ __ __ __ __ __ __ __ __ __ _\n  72\n65\n  73\n2\n  40\n0.75\n  49\n0.5\n  74\n0\n  49\n-0.25\n  74\n0\n  0\nLTYPE\n  5\n225\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nHIDDEN\n  70\n0\n  3\nHidden __ __ __ __ __ __ __ __ __ __ __ __ __ __\n  72\n65\n  73\n2\n  40\n0.375\n  49\n0.25\n  74\n0\n  49\n-0.125\n  74\n0\n  0\nLTYPE\n  5\n226\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nHIDDEN2\n  70\n0\n  3\nHidden2 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n  72\n65\n  73\n2\n  40\n0.1875\n  49\n0.125\n  74\n0\n  49\n-0.0625\n  74\n0\n  0\nLTYPE\n  5\n227\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nBORDER\n  70\n0\n  3\nBorder __ __ . __ __ . __ __ . __ __ . __ __ .\n  72\n65\n  73\n6\n  40\n1.75\n  49\n0.5\n  74\n0\n  49\n-0.25\n  74\n0\n  49\n0.5\n  74\n0\n  49\n-0.25\n  74\n0\n  49\n0\n  74\n0\n  49\n-0.25\n  74\n0\n  0\nLTYPE\n  5\n228\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nBORDER2\n  70\n0\n  3\nBorder2 __.__.__.__.__.__.__.__.__.__.__.\n  72\n65\n  73\n6\n  40\n0.875\n  49\n0.25\n  74\n0\n  49\n-0.125\n  74\n0\n  49\n0.25\n  74\n0\n  49\n-0.125\n  74\n0\n  49\n0\n  74\n0\n  49\n-0.125\n  74\n0\n  0\nLTYPE\n  5\n229\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nBORDERX2\n  70\n0\n  3\nBorderx2  ____  ____  .  ____  ____  .  ___\n  72\n65\n  73\n6\n  40\n3.5\n  49\n1\n  74\n0\n  49\n-0.5\n  74\n0\n  49\n1\n  74\n0\n  49\n-0.5\n  74\n0\n  49\n0\n  74\n0\n  49\n-0.5\n  74\n0\n  0\nLTYPE\n  5\n22A\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nCENTER2\n  70\n0\n  3\nCenter2  ___ _ ___ _ ___ _ ___ _ ___ _ ___\n  72\n65\n  73\n4\n  40\n1.125\n  49\n0.75\n  74\n0\n  49\n-0.125\n  74\n0\n  49\n0.125\n  74\n0\n  49\n-0.125\n  74\n0\n  0\nLTYPE\n  5\n22B\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nCENTERX2\n  70\n0\n  3\nCenterx2  ________  __  ________  __  _____\n  72\n65\n  73\n4\n  40\n4\n  49\n2.5\n  74\n0\n  49\n-0.5\n  74\n0\n  49\n0.5\n  74\n0\n  49\n-0.5\n  74\n0\n  0\nLTYPE\n  5\n22C\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nDASHDOT2\n  70\n0\n  3\nDashdot2  _._._._._._._._._._._._._._._.\n  72\n65\n  73\n4\n  40\n0.5\n  49\n0.25\n  74\n0\n  49\n-0.125\n  74\n0\n  49\n0\n  74\n0\n  49\n-0.125\n  74\n0\n  0\nLTYPE\n  5\n22D\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nDASHDOTX2\n  70\n0\n  3\nDashdotx2 ____  .  ____  .  ____  .  ___\n  72\n65\n  73\n4\n  40\n2\n  49\n1\n  74\n0\n  49\n-0.5\n  74\n0\n  49\n0\n  74\n0\n  49\n-0.5\n  74\n0\n  0\nLTYPE\n  5\n22E\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nDASHED2\n  70\n0\n  3\nDashed2 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n  72\n65\n  73\n2\n  40\n0.375\n  49\n0.25\n  74\n0\n  49\n-0.125\n  74\n0\n  0\nLTYPE\n  5\n22F\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nDASHEDX2\n  70\n0\n  3\nDashedx2 ____  ____  ____  ____  ____  ___\n  72\n65\n  73\n2\n  40\n1.5\n  49\n1\n  74\n0\n  49\n-0.5\n  74\n0\n  0\nLTYPE\n  5\n230\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nDIVIDE\n  70\n0\n  3\nDivide ____ . . ____ . . ____ . . ____ . . ____\n  72\n65\n  73\n6\n  40\n1.25\n  49\n0.5\n  74\n0\n  49\n-0.25\n  74\n0\n  49\n0\n  74\n0\n  49\n-0.25\n  74\n0\n  49\n0\n  74\n0\n  49\n-0.25\n  74\n0\n  0\nLTYPE\n  5\n231\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nDIVIDE2\n  70\n0\n  3\nDivide2 __..__..__..__..__..__..__..__.._\n  72\n65\n  73\n6\n  40\n0.625\n  49\n0.25\n  74\n0\n  49\n-0.125\n  74\n0\n  49\n0\n  74\n0\n  49\n-0.125\n  74\n0\n  49\n0\n  74\n0\n  49\n-0.125\n  74\n0\n  0\nLTYPE\n  5\n232\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nDIVIDEX2\n  70\n0\n  3\nDividex2 ________  .  .  ________  .  .  _\n  72\n65\n  73\n6\n  40\n2.5\n  49\n1\n  74\n0\n  49\n-0.5\n  74\n0\n  49\n0\n  74\n0\n  49\n-0.5\n  74\n0\n  49\n0\n  74\n0\n  49\n-0.5\n  74\n0\n  0\nLTYPE\n  5\n233\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nDOT\n  70\n0\n  3\nDot . . . . . . . . . . . . . . . . . . . . . . . .\n  72\n65\n  73\n2\n  40\n0.25\n  49\n0\n  74\n0\n  49\n-0.25\n  74\n0\n  0\nLTYPE\n  5\n234\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nDOT2\n  70\n0\n  3\nDot2 ........................................\n  72\n65\n  73\n2\n  40\n0.125\n  49\n0\n  74\n0\n  49\n-0.125\n  74\n0\n  0\nLTYPE\n  5\n235\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nDOTX2\n  70\n0\n  3\nDotx2 .  .  .  .  .  .  .  .  .  .  .  .  .  .\n  72\n65\n  73\n2\n  40\n0.5\n  49\n0\n  74\n0\n  49\n-0.5\n  74\n0\n  0\nLTYPE\n  5\n236\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nHIDDENX2\n  70\n0\n  3\nHiddenx2 ____ ____ ____ ____ ____ ____ ____ \n  72\n65\n  73\n2\n  40\n0.75\n  49\n0.5\n  74\n0\n  49\n-0.25\n  74\n0\n  0\nLTYPE\n  5\n237\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nPHANTOM\n  70\n0\n  3\nPhantom ______  __  __  ______  __  __  ______ \n  72\n65\n  73\n6\n  40\n2.5\n  49\n1.25\n  74\n0\n  49\n-0.25\n  74\n0\n  49\n0.25\n  74\n0\n  49\n-0.25\n  74\n0\n  49\n0.25\n  74\n0\n  49\n-0.25\n  74\n0\n  0\nLTYPE\n  5\n238\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nPHANTOM2\n  70\n0\n  3\nPhantom2 ___ _ _ ___ _ _ ___ _ _ ___ _ _\n  72\n65\n  73\n6\n  40\n1.25\n  49\n0.625\n  74\n0\n  49\n-0.125\n  74\n0\n  49\n0.125\n  74\n0\n  49\n-0.125\n  74\n0\n  49\n0.125\n  74\n0\n  49\n-0.125\n  74\n0\n  0\nLTYPE\n  5\n239\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nPHANTOMX2\n  70\n0\n  3\nPhantomx2 ____________    ____    ____   _\n  72\n65\n  73\n6\n  40\n5\n  49\n2.5\n  74\n0\n  49\n-0.5\n  74\n0\n  49\n0.5\n  74\n0\n  49\n-0.5\n  74\n0\n  49\n0.5\n  74\n0\n  49\n-0.5\n  74\n0\n  0\nLTYPE\n  5\n23B\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nBYLAYER\n  70\n0\n  3\nBYLAYER________________________________________\n  72\n65\n  73\n0\n  40\n0\n  0\nLTYPE\n  5\n23C\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nBYBLOCK\n  70\n0\n  3\nBYBLOCK________________________________________\n  72\n65\n  73\n0\n  40\n0\n  0\nLTYPE\n  5\n23D\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nDASHED0\n  70\n0\n  3\nDashed0 __ __ __ __ __ __ __ __ __ __ __ __ __ _\n  72\n65\n  73\n2\n  40\n1\n  49\n0.5\n  74\n0\n  49\n-0.5\n  74\n0\n  0\nLTYPE\n  5\n23E\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nDOT0\n  70\n0\n  3\nDot0 ........................................\n  72\n65\n  73\n8\n  40\n1\n  49\n0\n  74\n0\n  49\n-0.25\n  74\n0\n  49\n0\n  74\n0\n  49\n-0.25\n  74\n0\n  49\n0\n  74\n0\n  49\n-0.25\n  74\n0\n  49\n0\n  74\n0\n  49\n-0.25\n  74\n0\n  0\nLTYPE\n  5\n23F\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nDASHDOT0\n  70\n0\n  3\nDashdot __ . __ . __ . __ . __ . __ . __ . __\n  72\n65\n  73\n4\n  40\n1\n  49\n0.4\n  74\n0\n  49\n-0.3\n  74\n0\n  49\n0\n  74\n0\n  49\n-0.3\n  74\n0\n  0\nLTYPE\n  5\n240\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nDASHDOTDOT0\n  70\n0\n  3\nDashdot __ . . __ . . __ . . __ . . __ . . __ . . __ . . __\n  72\n65\n  73\n6\n  40\n1\n  49\n0.3\n  74\n0\n  49\n-0.23\n  74\n0\n  49\n0\n  74\n0\n  49\n-0.24\n  74\n0\n  49\n0\n  74\n0\n  49\n-0.23\n  74\n0\n  0\nLTYPE\n  5\n241\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nINVISIBLE\n  70\n0\n  3\nInvisible(                        )\n  72\n65\n  73\n2\n  40\n2\n  49\n-1\n  74\n0\n  49\n-1\n  74\n0\n  0\nENDTAB\n  0\nTABLE\n  2\nLAYER\n  5\n264\n  102\n{ACAD_XDICTIONARY\n  360\n265\n  102\n}\n  330\n0\n  100\nAcDbSymbolTable\n  70\n5\n  0\nLAYER\n  5\n4\n  330\n264\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLayerTableRecord\n  2\n0\n  70\n0\n  62\n7\n  6\nContinuous\n  370\n0\n  390\n263\n  0\nLAYER\n  5\n11A\n  330\n264\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLayerTableRecord\n  2\n__LocationPoints\n  70\n1\n  62\n150\n  6\nContinuous\n  370\n0\n  390\n263\n  0\nLAYER\n  5\n12A\n  330\n264\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLayerTableRecord\n  2\n.Home\n  70\n1\n  62\n7\n  6\nContinuous\n  370\n0\n  390\n263\n  1001\nPE_VERSION\n  1070\n1\n  1001\nPE_EBENE_EBENE\n  1070\n0\n  1001\nPE_EBENE_P1\n  1010\n0\n  1020\n0\n  1030\n0\n  1001\nPE_EBENE_P2\n  1010\n0\n  1020\n0\n  1030\n0\n  1001\nPE_EBENE_P3\n  1010\n0\n  1020\n0\n  1030\n0\n  1001\nPE_UNSICHTBAR\n  1070\n0\n  0\nLAYER\n  5\n12B\n  330\n264\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLayerTableRecord\n  2\n.Home.SINGLE HORIZONTAL NEW\n  70\n0\n  62\n7\n  6\nContinuous\n  370\n0\n  390\n263\n  1001\nPE_VERSION\n  1070\n1\n  1001\nPE_EBENE_EBENE\n  1070\n1\n  1001\nPE_EBENE_P1\n  1010\n-0.83464402923635017\n  1020\n2.14510148387423\n  1030\n-1.6653345369377348E-16\n  1001\nPE_EBENE_P2\n  1010\n0.16535597076364983\n  1020\n2.14510148387423\n  1030\n-1.6653345369377348E-16\n  1001\nPE_EBENE_P3\n  1010\n-0.83464402923635017\n  1020\n3.14510148387423\n  1030\n-1.6653345369377348E-16\n  0\nLAYER\n  5\n12E\n  330\n264\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLayerTableRecord\n  2\n_HOME_COUNTERTOP\n  70\n0\n  62\n7\n  6\nContinuous\n  370\n-3\n  390\n263\n  0\nENDTAB\n  0\nTABLE\n  2\nSTYLE\n  5\n266\n  330\n0\n  100\nAcDbSymbolTable\n  70\n5\n  0\nSTYLE\n  5\n5\n  330\n266\n  100\nAcDbSymbolTableRecord\n  100\nAcDbTextStyleTableRecord\n  2\nSTANDARD\n  70\n0\n  40\n2\n  41\n1\n  50\n0\n  71\n0\n  42\n0.2\n  3\narial.ttf\n  4\n\n  0\nSTYLE\n  5\nBF\n  330\n266\n  100\nAcDbSymbolTableRecord\n  100\nAcDbTextStyleTableRecord\n  2\nautodim\n  70\n0\n  40\n2\n  41\n1\n  50\n0\n  71\n0\n  42\n0.2\n  3\narial.ttf\n  4\n\n  0\nSTYLE\n  5\nF3\n  330\n266\n  100\nAcDbSymbolTableRecord\n  100\nAcDbTextStyleTableRecord\n  2\nautotext\n  70\n0\n  40\n4\n  41\n1\n  50\n0\n  71\n0\n  42\n0.2\n  3\narial.ttf\n  4\n\n  0\nSTYLE\n  5\n126\n  330\n266\n  100\nAcDbSymbolTableRecord\n  100\nAcDbTextStyleTableRecord\n  2\nStamp0001\n  70\n0\n  40\n1.5\n  41\n1\n  50\n0\n  71\n0\n  42\n0.2\n  3\narial.ttf\n  4\n\n  0\nSTYLE\n  5\n129\n  330\n266\n  100\nAcDbSymbolTableRecord\n  100\nAcDbTextStyleTableRecord\n  2\nNumber pieces\n  70\n0\n  40\n3.5\n  41\n1\n  50\n0\n  71\n0\n  42\n0.2\n  3\narial.ttf\n  4\n\n  0\nENDTAB\n  0\nTABLE\n  2\nVIEW\n  5\n267\n  330\n0\n  100\nAcDbSymbolTable\n  70\n0\n  0\nENDTAB\n  0\nTABLE\n  2\nUCS\n  5\n268\n  330\n0\n  100\nAcDbSymbolTable\n  70\n0\n  0\nENDTAB\n  0\nTABLE\n  2\nAPPID\n  5\n269\n  330\n0\n  100\nAcDbSymbolTable\n  70\n25\n  0\nAPPID\n  5\n26A\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nAcAecLayerStandard\n  70\n0\n  0\nAPPID\n  5\n26B\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nVDEXTRAPARAM\n  70\n0\n  0\nAPPID\n  5\n26C\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nACAD_DSTYLE_DIMJAG\n  70\n0\n  0\nAPPID\n  5\n26D\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nACAD_DSTYLE_DIMTALN\n  70\n0\n  0\nAPPID\n  5\n26E\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nVDEXTRASOLID2D\n  70\n0\n  0\nAPPID\n  5\n26F\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nVD_TEMPHATCH\n  70\n0\n  0\nAPPID\n  5\n270\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nACAD\n  70\n0\n  0\nAPPID\n  5\n271\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nPE_URL\n  70\n0\n  0\nAPPID\n  5\n272\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nPE_VERSION\n  70\n0\n  0\nAPPID\n  5\n273\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nPE_EBENE_EBENE\n  70\n0\n  0\nAPPID\n  5\n274\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nPE_EBENE_P1\n  70\n0\n  0\nAPPID\n  5\n275\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nPE_EBENE_P2\n  70\n0\n  0\nAPPID\n  5\n276\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nPE_EBENE_P3\n  70\n0\n  0\nAPPID\n  5\n277\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nPE_UNSICHTBAR\n  70\n0\n  0\nAPPID\n  5\n278\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nCEedFileStamp\n  70\n0\n  0\nAPPID\n  5\n279\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nVD_EX_PRINTER_NAME\n  70\n0\n  0\nAPPID\n  5\n27A\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nVD_EX_PRINTER_PAPER\n  70\n0\n  0\nAPPID\n  5\n27B\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nVD_EX_PRINTER_ORIENT\n  70\n0\n  0\nAPPID\n  5\n27C\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nVD_EX_PRINTER_SIZEX\n  70\n0\n  0\nAPPID\n  5\n27D\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nVD_EX_PRINTER_SIZEY\n  70\n0\n  0\nAPPID\n  5\n27E\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nVD_EX_PRINTER_AVSIZEX\n  70\n0\n  0\nAPPID\n  5\n27F\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nVD_EX_PRINTER_AVSIZEY\n  70\n0\n  0\nAPPID\n  5\n280\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nVD_EX_PRINTER_MARX\n  70\n0\n  0\nAPPID\n  5\n281\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nVD_EX_PRINTER_MARY\n  70\n0\n  0\nAPPID\n  5\n282\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nVD_EX_PRINTER_PAPER_NAME\n  70\n0\n  0\nENDTAB\n  0\nTABLE\n  2\nBLOCK_RECORD\n  5\n283\n  330\n0\n  100\nAcDbSymbolTable\n  70\n8\n  0\nBLOCK_RECORD\n  5\n284\n  330\n283\n  100\nAcDbSymbolTableRecord\n  100\nAcDbBlockTableRecord\n  2\n*Model_Space\n  340\n3\n  0\nBLOCK_RECORD\n  5\n285\n  330\n283\n  100\nAcDbSymbolTableRecord\n  100\nAcDbBlockTableRecord\n  2\n*Paper_Space\n  340\n247\n  0\nBLOCK_RECORD\n  5\n286\n  330\n283\n  100\nAcDbSymbolTableRecord\n  100\nAcDbBlockTableRecord\n  2\nVDDIM_DEFAULT\n  340\n0\n  70\n0\n  0\nBLOCK_RECORD\n  5\n287\n  330\n283\n  100\nAcDbSymbolTableRecord\n  100\nAcDbBlockTableRecord\n  2\nVDDIM_NONE\n  340\n0\n  70\n0\n  0\nBLOCK_RECORD\n  5\n288\n  330\n283\n  100\nAcDbSymbolTableRecord\n  100\nAcDbBlockTableRecord\n  2\nflexijetdatablock\n  340\n0\n  70\n0\n  0\nBLOCK_RECORD\n  5\n289\n  330\n283\n  100\nAcDbSymbolTableRecord\n  100\nAcDbBlockTableRecord\n  2\nblocktempBKSDraufsicht1\n  340\n0\n  70\n0\n  0\nBLOCK_RECORD\n  5\n28A\n  330\n283\n  100\nAcDbSymbolTableRecord\n  100\nAcDbBlockTableRecord\n  2\nFlexiCAD_StandortPointBlock\n  340\n0\n  70\n0\n  0\nBLOCK_RECORD\n  5\n28B\n  330\n283\n  100\nAcDbSymbolTableRecord\n  100\nAcDbBlockTableRecord\n  2\nflx_TmpExport__260924_215747\n  340\n0\n  70\n0\n  0\nENDTAB\n  0\nTABLE\n  2\nDIMSTYLE\n  5\n28C\n  330\n0\n  100\nAcDbSymbolTable\n  70\n2\n  100\nAcDbDimStyleTable\n  71\n2\n  340\n121\n  340\n122\n  0\nDIMSTYLE\n  105\n121\n  330\n28C\n  100\nAcDbSymbolTableRecord\n  100\nAcDbDimStyleTableRecord\n  2\nSTANDARD\n  70\n0\n  41\n1.5\n  3\n\n  177\n8\n  42\n1.5\n  44\n1.5\n  75\n0\n  76\n0\n  40\n1\n  172\n1\n  281\n0\n  282\n0\n  275\n0\n  275\n0\n  277\n5\n  179\n2\n  71\n0\n  47\n0\n  48\n0\n  49\n1\n  290\n0\n  78\n1\n  176\n8\n  178\n8\n  140\n2\n  147\n0.09\n  280\n0\n  77\n0\n  73\n0\n  271\n4\n  173\n1\n  340\n5\n  0\nDIMSTYLE\n  105\n122\n  330\n28C\n  100\nAcDbSymbolTableRecord\n  100\nAcDbDimStyleTableRecord\n  2\nautodim\n  70\n0\n  41\n1.5\n  3\n\n  177\n8\n  42\n1.5\n  44\n1.5\n  75\n0\n  76\n0\n  40\n1\n  172\n1\n  281\n0\n  282\n0\n  275\n0\n  275\n0\n  277\n5\n  179\n2\n  71\n0\n  47\n0\n  48\n0\n  49\n1\n  290\n0\n  78\n1\n  176\n8\n  178\n8\n  140\n2\n  147\n0.09\n  280\n0\n  77\n0\n  73\n0\n  271\n4\n  173\n1\n  340\nBF\n  0\nENDTAB\n  0\nENDSEC\n  0\nSECTION\n  2\nBLOCKS\n  0\nBLOCK\n  5\n28D\n  330\n284\n  100\nAcDbEntity\n  8\n.Home.SINGLE HORIZONTAL NEW\n  100\nAcDbBlockBegin\n  2\n*Model_Space\n  70\n0\n  71\n0\n  10\n0\n  20\n0\n  30\n0\n  3\n*Model_Space\n  1\n\n  0\nENDBLK\n  5\n28E\n  330\n284\n  100\nAcDbEntity\n  67\n1\n  8\n.Home.SINGLE HORIZONTAL NEW\n  100\nAcDbBlockEnd\n  0\nBLOCK\n  5\n28F\n  330\n285\n  100\nAcDbEntity\n  8\n.Home.SINGLE HORIZONTAL NEW\n  100\nAcDbBlockBegin\n  2\n*Paper_Space\n  70\n0\n  71\n0\n  10\n0\n  20\n0\n  30\n0\n  3\n*Paper_Space\n  1\n\n  0\nENDBLK\n  5\n290\n  330\n285\n  100\nAcDbEntity\n  67\n1\n  8\n.Home.SINGLE HORIZONTAL NEW\n  100\nAcDbBlockEnd\n  0\nBLOCK\n  5\n7\n  330\n286\n  100\nAcDbEntity\n  8\n0\n  100\nAcDbBlockBegin\n  2\nVDDIM_DEFAULT\n  70\n0\n  71\n0\n  10\n0\n  20\n0\n  30\n0\n  3\nVDDIM_DEFAULT\n  1\n\n  0\nLWPOLYLINE\n  5\n8\n  102\n{ACAD_REACTORS\n  330\n291\n  102\n}\n  330\n286\n  100\nAcDbEntity\n  8\n0\n  6\nContinuous\n  62\n0\n  440\n33554687\n  100\nAcDbPolyline\n  90\n4\n  43\n0\n  38\n0\n  10\n0\n  20\n0\n  10\n-1\n  20\n-0.1665\n  10\n-1\n  20\n0.1665\n  10\n0\n  20\n0\n  0\nHATCH\n  5\n291\n  330\n286\n  100\nAcDbEntity\n  8\n0\n  6\nContinuous\n  62\n0\n  100\nAcDbHatch\n  10\n0\n  20\n0\n  30\n0\n  210\n0\n  220\n0\n  230\n1\n  2\nSOLID\n  70\n1\n  71\n1\n  91\n1\n  92\n2\n  72\n0\n  73\n1\n  93\n3\n  10\n0\n  20\n0\n  10\n-1\n  20\n-0.1665\n  10\n-1\n  20\n0.1665\n  97\n1\n  330\n8\n  75\n0\n  76\n1\n  98\n1\n  10\n0\n  20\n0\n  1001\nVD_TEMPHATCH\n  1000\nVD_TEMPHATCH\n  0\nENDBLK\n  5\n292\n  330\n286\n  100\nAcDbEntity\n  8\n0\n  100\nAcDbBlockEnd\n  0\nBLOCK\n  5\n9\n  330\n287\n  100\nAcDbEntity\n  8\n0\n  100\nAcDbBlockBegin\n  2\nVDDIM_NONE\n  70\n0\n  71\n0\n  10\n0\n  20\n0\n  30\n0\n  3\nVDDIM_NONE\n  1\n\n  0\nENDBLK\n  5\n293\n  330\n287\n  100\nAcDbEntity\n  8\n0\n  100\nAcDbBlockEnd\n  0\nBLOCK\n  5\nA\n  330\n288\n  100\nAcDbEntity\n  8\n0\n  100\nAcDbBlockBegin\n  2\nflexijetdatablock\n  70\n0\n  71\n0\n  10\n0\n  20\n0\n  30\n0\n  3\nflexijetdatablock\n  1\n\n  0\nENDBLK\n  5\n294\n  330\n288\n  100\nAcDbEntity\n  8\n0\n  100\nAcDbBlockEnd\n  0\nBLOCK\n  5\n3F\n  330\n289\n  100\nAcDbEntity\n  8\n0\n  100\nAcDbBlockBegin\n  2\nblocktempBKSDraufsicht1\n  70\n0\n  71\n0\n  10\n0\n  20\n0\n  30\n0\n  3\nblocktempBKSDraufsicht1\n  1\n\n  0\nENDBLK\n  5\n295\n  330\n289\n  100\nAcDbEntity\n  8\n0\n  100\nAcDbBlockEnd\n  0\nBLOCK\n  5\n11B\n  330\n28A\n  100\nAcDbEntity\n  8\n0\n  100\nAcDbBlockBegin\n  2\nFlexiCAD_StandortPointBlock\n  70\n0\n  71\n0\n  10\n0\n  20\n0\n  30\n0\n  3\nFlexiCAD_StandortPointBlock\n  1\n\n  0\nPOINT\n  5\n11C\n  330\n28A\n  100\nAcDbEntity\n  8\n0\n  62\n0\n  440\n33554687\n  100\nAcDbPoint\n  10\n0\n  20\n0\n  30\n0\n  210\n1\n  220\n0\n  230\n0\n  0\nPOINT\n  5\n11D\n  330\n28A\n  100\nAcDbEntity\n  8\n0\n  62\n0\n  440\n33554687\n  100\nAcDbPoint\n  10\n0\n  20\n0\n  30\n0\n  210\n0\n  220\n1\n  230\n0\n  0\nPOINT\n  5\n11E\n  330\n28A\n  100\nAcDbEntity\n  8\n0\n  62\n0\n  440\n33554687\n  100\nAcDbPoint\n  10\n0\n  20\n0\n  30\n0\n  0\nENDBLK\n  5\n296\n  330\n28A\n  100\nAcDbEntity\n  8\n0\n  100\nAcDbBlockEnd\n  0\nBLOCK\n  5\n12D\n  330\n28B\n  100\nAcDbEntity\n  8\n0\n  100\nAcDbBlockBegin\n  2\nflx_TmpExport__260924_215747\n  70\n0\n  71\n0\n  10\n0\n  20\n0\n  30\n0\n  3\nflx_TmpExport__260924_215747\n  1\n\n  0\nARC\n  5\n12F\n  330\n28B\n  100\nAcDbEntity\n  8\n_HOME_COUNTERTOP\n  6\nCENTER\n  440\n33554687\n  100\nAcDbCircle\n  10\n-0.9375\n  20\n-1.5625\n  30\n0\n  40\n0.25\n  100\nAcDbArc\n  50\n180\n  51\n269.99999999998278\n  0\nLINE\n  5\n130\n  330\n28B\n  100\nAcDbEntity\n  8\n_HOME_COUNTERTOP\n  6\nCENTER\n  440\n33554687\n  100\nAcDbLine\n  10\n-0.9375\n  20\n-1.8125\n  30\n0\n  11\n0.9375\n  21\n-1.8125\n  31\n0\n  0\nARC\n  5\n131\n  330\n28B\n  100\nAcDbEntity\n  8\n_HOME_COUNTERTOP\n  6\nCENTER\n  440\n33554687\n  100\nAcDbCircle\n  10\n0.9375\n  20\n-1.5625\n  30\n0\n  40\n0.25\n  100\nAcDbArc\n  50\n269.99999999998278\n  51\n0\n  0\nLINE\n  5\n132\n  330\n28B\n  100\nAcDbEntity\n  8\n_HOME_COUNTERTOP\n  6\nCENTER\n  440\n33554687\n  100\nAcDbLine\n  10\n1.1875\n  20\n-1.5625\n  30\n0\n  11\n1.1875\n  21\n1.5625\n  31\n0\n  0\nARC\n  5\n133\n  330\n28B\n  100\nAcDbEntity\n  8\n_HOME_COUNTERTOP\n  6\nCENTER\n  440\n33554687\n  100\nAcDbCircle\n  10\n0.9375\n  20\n1.5625\n  30\n0\n  40\n0.25\n  100\nAcDbArc\n  50\n360\n  51\n89.999999999994259\n  0\nLINE\n  5\n134\n  330\n28B\n  100\nAcDbEntity\n  8\n_HOME_COUNTERTOP\n  6\nCENTER\n  440\n33554687\n  100\nAcDbLine\n  10\n0.9375\n  20\n1.8125\n  30\n0\n  11\n-0.9375\n  21\n1.8125\n  31\n0\n  0\nARC\n  5\n135\n  330\n28B\n  100\nAcDbEntity\n  8\n_HOME_COUNTERTOP\n  6\nCENTER\n  440\n33554687\n  100\nAcDbCircle\n  10\n-0.9375\n  20\n1.5625\n  30\n0\n  40\n0.25\n  100\nAcDbArc\n  50\n89.999999999994259\n  51\n180\n  0\nLINE\n  5\n136\n  330\n28B\n  100\nAcDbEntity\n  8\n_HOME_COUNTERTOP\n  6\nCENTER\n  440\n33554687\n  100\nAcDbLine\n  10\n-1.1875\n  20\n1.5625\n  30\n0\n  11\n-1.1875\n  21\n-1.5625\n  31\n0\n  0\nENDBLK\n  5\n297\n  330\n28B\n  100\nAcDbEntity\n  8\n0\n  100\nAcDbBlockEnd\n  0\nENDSEC\n  0\nSECTION\n  2\nENTITIES\n  0\nARC\n  5\n1D2\n  330\n284\n  100\nAcDbEntity\n  8\n.Home.SINGLE HORIZONTAL NEW\n  6\nCENTER\n  440\n33554687\n  100\nAcDbCircle\n  10\n-0.25126277667388663\n  20\n0.56815169067323268\n  30\n0\n  40\n0.25000000000000322\n  100\nAcDbArc\n  50\n269.99999999998278\n  51\n360\n  0\nLINE\n  5\n1D3\n  330\n284\n  100\nAcDbEntity\n  8\n.Home.SINGLE HORIZONTAL NEW\n  6\nCENTER\n  440\n33554687\n  100\nAcDbLine\n  10\n-0.0012627766738768642\n  20\n0.56815169067322946\n  30\n0\n  11\n-0.0012627766738768642\n  21\n2.4431516906732296\n  31\n0\n  0\nARC\n  5\n1D4\n  330\n284\n  100\nAcDbEntity\n  8\n.Home.SINGLE HORIZONTAL NEW\n  6\nCENTER\n  440\n33554687\n  100\nAcDbCircle\n  10\n-0.25126277667386887\n  20\n2.4431516906732362\n  30\n0\n  40\n0.249999999999992\n  100\nAcDbArc\n  50\n360\n  51\n89.999999999994259\n  0\nLINE\n  5\n1D5\n  330\n284\n  100\nAcDbEntity\n  8\n.Home.SINGLE HORIZONTAL NEW\n  6\nCENTER\n  440\n33554687\n  100\nAcDbLine\n  10\n-0.25126277667387686\n  20\n2.6931516906732296\n  30\n0\n  11\n-3.3762627766738769\n  21\n2.6931516906732296\n  31\n0\n  0\nARC\n  5\n1D6\n  330\n284\n  100\nAcDbEntity\n  8\n.Home.SINGLE HORIZONTAL NEW\n  6\nCENTER\n  440\n33554687\n  100\nAcDbCircle\n  10\n-3.3762627766738653\n  20\n2.4431516906732327\n  30\n0\n  40\n0.24999999999999689\n  100\nAcDbArc\n  50\n89.999999999994259\n  51\n180\n  0\nLINE\n  5\n1D7\n  330\n284\n  100\nAcDbEntity\n  8\n.Home.SINGLE HORIZONTAL NEW\n  6\nCENTER\n  440\n33554687\n  100\nAcDbLine\n  10\n-3.6262627766738769\n  20\n2.4431516906732296\n  30\n0\n  11\n-3.6262627766738769\n  21\n0.56815169067322968\n  31\n0\n  0\nARC\n  5\n1D8\n  330\n284\n  100\nAcDbEntity\n  8\n.Home.SINGLE HORIZONTAL NEW\n  6\nCENTER\n  440\n33554687\n  100\nAcDbCircle\n  10\n-3.3762627766738973\n  20\n0.56815169067322557\n  30\n0\n  40\n0.24999999999997957\n  100\nAcDbArc\n  50\n180\n  51\n269.99999999998278\n  0\nLINE\n  5\n1D9\n  330\n284\n  100\nAcDbEntity\n  8\n.Home.SINGLE HORIZONTAL NEW\n  6\nCENTER\n  440\n33554687\n  100\nAcDbLine\n  10\n-3.3762627766738769\n  20\n0.31815169067322957\n  30\n0\n  11\n-0.25126277667387686\n  21\n0.31815169067322957\n  31\n0\n  0\nARC\n  5\n1DA\n  330\n284\n  100\nAcDbEntity\n  8\n.Home.SINGLE HORIZONTAL NEW\n  6\nCENTER\n  440\n33554687\n  100\nAcDbCircle\n  10\n-0.25126277667388663\n  20\n0.56815169067323268\n  30\n0\n  40\n0.25000000000000322\n  100\nAcDbArc\n  50\n269.99999999998278\n  51\n360\n  0\nLINE\n  5\n1DB\n  330\n284\n  100\nAcDbEntity\n  8\n.Home.SINGLE HORIZONTAL NEW\n  6\nCENTER\n  440\n33554687\n  100\nAcDbLine\n  10\n-0.0012627766738768642\n  20\n0.56815169067322946\n  30\n0\n  11\n-0.0012627766738768642\n  21\n2.4431516906732296\n  31\n0\n  0\nARC\n  5\n1DC\n  330\n284\n  100\nAcDbEntity\n  8\n.Home.SINGLE HORIZONTAL NEW\n  6\nCENTER\n  440\n33554687\n  100\nAcDbCircle\n  10\n-0.25126277667386887\n  20\n2.4431516906732362\n  30\n0\n  40\n0.249999999999992\n  100\nAcDbArc\n  50\n360\n  51\n89.999999999994259\n  0\nLINE\n  5\n1DD\n  330\n284\n  100\nAcDbEntity\n  8\n.Home.SINGLE HORIZONTAL NEW\n  6\nCENTER\n  440\n33554687\n  100\nAcDbLine\n  10\n-0.25126277667387686\n  20\n2.6931516906732296\n  30\n0\n  11\n-3.3762627766738769\n  21\n2.6931516906732296\n  31\n0\n  0\nARC\n  5\n1DE\n  330\n284\n  100\nAcDbEntity\n  8\n.Home.SINGLE HORIZONTAL NEW\n  6\nCENTER\n  440\n33554687\n  100\nAcDbCircle\n  10\n-3.3762627766738653\n  20\n2.4431516906732327\n  30\n0\n  40\n0.24999999999999689\n  100\nAcDbArc\n  50\n89.999999999994259\n  51\n180\n  0\nLINE\n  5\n1DF\n  330\n284\n  100\nAcDbEntity\n  8\n.Home.SINGLE HORIZONTAL NEW\n  6\nCENTER\n  440\n33554687\n  100\nAcDbLine\n  10\n-3.6262627766738769\n  20\n2.4431516906732296\n  30\n0\n  11\n-3.6262627766738769\n  21\n0.56815169067322968\n  31\n0\n  0\nARC\n  5\n1E0\n  330\n284\n  100\nAcDbEntity\n  8\n.Home.SINGLE HORIZONTAL NEW\n  6\nCENTER\n  440\n33554687\n  100\nAcDbCircle\n  10\n-3.3762627766738973\n  20\n0.56815169067322557\n  30\n0\n  40\n0.24999999999997957\n  100\nAcDbArc\n  50\n180\n  51\n269.99999999998278\n  0\nLINE\n  5\n1E1\n  330\n284\n  100\nAcDbEntity\n  8\n.Home.SINGLE HORIZONTAL NEW\n  6\nCENTER\n  440\n33554687\n  100\nAcDbLine\n  10\n-3.3762627766738769\n  20\n0.31815169067322957\n  30\n0\n  11\n-0.25126277667387686\n  21\n0.31815169067322957\n  31\n0\n  0\nVIEWPORT\n  5\n298\n  330\n285\n  100\nAcDbEntity\n  67\n1\n  8\n0\n  100\nAcDbViewport\n  10\n105.029\n  20\n148.463\n  40\n24.97\n  41\n312.78718378906251\n  68\n1\n  69\n1\n  12\n105.029\n  22\n148.463\n  13\n0\n  23\n0\n  14\n1\n  24\n1\n  15\n1\n  25\n1\n  16\n0\n  26\n0\n  36\n1\n  17\n0\n  27\n0\n  37\n0\n  42\n50\n  43\n0\n  44\n0\n  45\n312.78718378906251\n  50\n0\n  51\n0\n  72\n1000\n  90\n32800\n  1\n\n  281\n0\n  71\n1\n  74\n0\n  110\n0\n  120\n0\n  130\n0\n  111\n1\n  121\n0\n  131\n0\n  112\n0\n  122\n1\n  132\n0\n  79\n0\n  146\n0\n  0\nENDSEC\n  0\nSECTION\n  2\nOBJECTS\n  0\nDICTIONARY\n  5\n299\n  330\n0\n  100\nAcDbDictionary\n  281\n1\n  3\nACAD_GROUP\n  350\n29A\n  3\nACAD_LAYOUT\n  350\n29B\n  3\nACAD_MLINESTYLE\n  350\n29C\n  3\nACAD_PLOTSETTINGS\n  350\n29D\n  3\nACAD_PLOTSTYLENAME\n  350\n29E\n  3\nVECTORDRAW_OBJECTS\n  350\n29F\n  3\nDWGPROPS\n  350\n2A0\n  3\nACAD_VISUALSTYLE\n  350\n2A1\n  0\nDICTIONARY\n  5\n2A1\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbDictionary\n  281\n1\n  3\n2dWireframe\n  350\n248\n  3\nBasic\n  350\n249\n  3\nBrighten\n  350\n24A\n  3\nColorChange\n  350\n24B\n  3\nConceptual\n  350\n24C\n  3\nDim\n  350\n24D\n  3\nEdgeColorOff\n  350\n24E\n  3\nFacepattern\n  350\n24F\n  3\nFlat\n  350\n250\n  3\nFlatWithEdges\n  350\n251\n  3\nGouraud\n  350\n252\n  3\nGouraudWithEdges\n  350\n253\n  3\nHidden\n  350\n254\n  3\nJitterOff\n  350\n255\n  3\nLinepattern\n  350\n256\n  3\nOverhangOff\n  350\n257\n  3\nRealistic\n  350\n258\n  3\nShaded\n  350\n259\n  3\nShaded with edges\n  350\n25A\n  3\nShades of Gray\n  350\n25B\n  3\nSketchy\n  350\n25C\n  3\nThicken\n  350\n25D\n  3\nWireframe\n  350\n25E\n  3\nX-Ray\n  350\n25F\n  0\nVISUALSTYLE\n  5\n248\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbVisualStyle\n  2\n2dWireframe\n  70\n     4\n  177\n     3\n  291\n     0\n  70\n    58\n  90\n        0\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  40\n0.6\n  176\n     1\n  40\n30.0\n  176\n     1\n  62\n     7\n  420\n 16777215\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        4\n  176\n     1\n  62\n     7\n  176\n     1\n  62\n   257\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n   257\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        6\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  90\n        5\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n0.0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  40\n0.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n    18\n  420\n        0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n        3\n  176\n     1\n  62\n     5\n  420\n      255\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  62\n   256\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        2\n  176\n     1\n  1\nstrokes_ogs.tif\n  176\n     1\n  290\n     0\n  176\n     1\n  40\n1.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  0\nVISUALSTYLE\n  5\n249\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbVisualStyle\n  2\nBasic\n  70\n     7\n  177\n     3\n  291\n     1\n  70\n    58\n  90\n        1\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        0\n  176\n     1\n  40\n0.6\n  176\n     1\n  40\n30.0\n  176\n     1\n  62\n     7\n  420\n 16777215\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        4\n  176\n     1\n  62\n     7\n  176\n     1\n  62\n   257\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        8\n  176\n     1\n  62\n     7\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        6\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  90\n        5\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n0.0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  40\n0.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n    18\n  420\n        0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n        3\n  176\n     1\n  62\n     5\n  420\n      255\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  62\n   256\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        2\n  176\n     1\n  1\nstrokes_ogs.tif\n  176\n     1\n  290\n     0\n  176\n     1\n  40\n1.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  0\nVISUALSTYLE\n  5\n24A\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbVisualStyle\n  2\nBrighten\n  70\n    12\n  177\n     3\n  291\n     1\n  70\n    58\n  90\n        2\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  40\n0.6\n  176\n     1\n  40\n30.0\n  176\n     1\n  62\n     7\n  420\n 16777215\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        4\n  176\n     1\n  62\n     7\n  176\n     1\n  62\n   257\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        8\n  176\n     1\n  62\n     7\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        6\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  90\n        5\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n50.0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  40\n0.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n    18\n  420\n        0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n        3\n  176\n     1\n  62\n     5\n  420\n      255\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  62\n   256\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        2\n  176\n     1\n  1\nstrokes_ogs.tif\n  176\n     1\n  290\n     0\n  176\n     1\n  40\n1.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  0\nVISUALSTYLE\n  5\n24B\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbVisualStyle\n  2\nColorChange\n  70\n    16\n  177\n     3\n  291\n     1\n  70\n    58\n  90\n        2\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        3\n  176\n     1\n  90\n        0\n  176\n     1\n  40\n0.6\n  176\n     1\n  40\n30.0\n  176\n     1\n  62\n     8\n  420\n  8421504\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        4\n  176\n     1\n  62\n     7\n  176\n     1\n  62\n   257\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        8\n  176\n     1\n  62\n     8\n  420\n  8421504\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        6\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  90\n        5\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n0.0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  40\n0.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n    18\n  420\n        0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n        3\n  176\n     1\n  62\n     5\n  420\n      255\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  62\n   256\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        2\n  176\n     1\n  1\nstrokes_ogs.tif\n  176\n     1\n  290\n     0\n  176\n     1\n  40\n1.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  0\nVISUALSTYLE\n  5\n24C\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbVisualStyle\n  2\nConceptual\n  70\n     9\n  177\n     3\n  291\n     0\n  70\n    58\n  90\n        3\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  40\n0.6\n  176\n     1\n  40\n30.0\n  176\n     1\n  62\n     7\n  420\n 16777215\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  62\n   257\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n179.0\n  176\n     1\n  90\n        8\n  176\n     1\n  62\n     7\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        6\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  90\n        3\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n0.0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  40\n0.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n    18\n  420\n        0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n        3\n  176\n     1\n  62\n     5\n  420\n      255\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  62\n   256\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        2\n  176\n     1\n  1\nstrokes_ogs.tif\n  176\n     1\n  290\n     0\n  176\n     1\n  40\n1.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  0\nVISUALSTYLE\n  5\n24D\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbVisualStyle\n  2\nDim\n  70\n    11\n  177\n     3\n  291\n     1\n  70\n    58\n  90\n        2\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  40\n0.6\n  176\n     1\n  40\n30.0\n  176\n     1\n  62\n     7\n  420\n 16777215\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        4\n  176\n     1\n  62\n     7\n  176\n     1\n  62\n   257\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        8\n  176\n     1\n  62\n     7\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        6\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  90\n        5\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n-50.0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  40\n0.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n    18\n  420\n        0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n        3\n  176\n     1\n  62\n     5\n  420\n      255\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  62\n   256\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        2\n  176\n     1\n  1\nstrokes_ogs.tif\n  176\n     1\n  290\n     0\n  176\n     1\n  40\n1.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  0\nVISUALSTYLE\n  5\n24E\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbVisualStyle\n  2\nEdgeColorOff\n  70\n    22\n  177\n     3\n  291\n     1\n  70\n    58\n  90\n        2\n  176\n     0\n  90\n        2\n  176\n     0\n  90\n        0\n  176\n     0\n  90\n        0\n  176\n     0\n  40\n0.6\n  176\n     0\n  40\n30.0\n  176\n     0\n  62\n     7\n  420\n 16777215\n  176\n     0\n  90\n        1\n  176\n     0\n  90\n        4\n  176\n     0\n  62\n     7\n  176\n     0\n  62\n   257\n  176\n     0\n  90\n        1\n  176\n     0\n  90\n        1\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        8\n  176\n     2\n  62\n     7\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        1\n  176\n     0\n  90\n        6\n  176\n     0\n  90\n        2\n  176\n     0\n  62\n     7\n  176\n     0\n  90\n        5\n  176\n     0\n  90\n        0\n  176\n     0\n  90\n        0\n  176\n     0\n  290\n     0\n  176\n     0\n  90\n        1\n  176\n     0\n  40\n0.0\n  176\n     0\n  90\n        0\n  176\n     0\n  290\n     0\n  176\n     0\n  290\n     1\n  176\n     0\n  290\n     1\n  176\n     0\n  290\n     0\n  176\n     0\n  290\n     0\n  176\n     0\n  290\n     0\n  176\n     0\n  290\n     0\n  176\n     0\n  290\n     0\n  176\n     0\n  290\n     0\n  176\n     0\n  90\n       50\n  176\n     0\n  40\n0.0\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        0\n  176\n     0\n  62\n    18\n  420\n        0\n  176\n     0\n  90\n       50\n  176\n     0\n  90\n        3\n  176\n     0\n  62\n     5\n  420\n      255\n  176\n     0\n  290\n     0\n  176\n     0\n  90\n       50\n  176\n     0\n  90\n       50\n  176\n     0\n  90\n       50\n  176\n     0\n  290\n     0\n  176\n     0\n  90\n       50\n  176\n     0\n  62\n   256\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        2\n  176\n     0\n  1\nstrokes_ogs.tif\n  176\n     0\n  290\n     0\n  176\n     0\n  40\n1.0\n  176\n     0\n  40\n1.0\n  176\n     0\n  0\nVISUALSTYLE\n  5\n24F\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbVisualStyle\n  2\nFacepattern\n  70\n    15\n  177\n     3\n  291\n     1\n  70\n    58\n  90\n        2\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  40\n0.6\n  176\n     1\n  40\n30.0\n  176\n     1\n  62\n     7\n  420\n 16777215\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        4\n  176\n     1\n  62\n     7\n  176\n     1\n  62\n   257\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        8\n  176\n     1\n  62\n     7\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        6\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  90\n        5\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n0.0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  40\n0.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n    18\n  420\n        0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n        3\n  176\n     1\n  62\n     5\n  420\n      255\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  62\n   256\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        2\n  176\n     1\n  1\nstrokes_ogs.tif\n  176\n     1\n  290\n     0\n  176\n     1\n  40\n1.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  0\nVISUALSTYLE\n  5\n250\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbVisualStyle\n  2\nFlat\n  70\n     0\n  177\n     3\n  291\n     1\n  70\n    58\n  90\n        2\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        2\n  176\n     1\n  40\n0.6\n  176\n     1\n  40\n30.0\n  176\n     1\n  62\n     7\n  420\n 16777215\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n     7\n  176\n     1\n  62\n   257\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        8\n  176\n     1\n  62\n     7\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        6\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  90\n        5\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       13\n  176\n     1\n  40\n0.0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  40\n0.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n    18\n  420\n        0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n        3\n  176\n     1\n  62\n     5\n  420\n      255\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  62\n   256\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        2\n  176\n     1\n  1\nstrokes_ogs.tif\n  176\n     1\n  290\n     0\n  176\n     1\n  40\n1.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  0\nVISUALSTYLE\n  5\n251\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbVisualStyle\n  2\nFlatWithEdges\n  70\n     1\n  177\n     3\n  291\n     1\n  70\n    58\n  90\n        2\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        2\n  176\n     1\n  40\n0.6\n  176\n     1\n  40\n30.0\n  176\n     1\n  62\n     7\n  420\n 16777215\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n     7\n  176\n     1\n  62\n   257\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n   257\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        6\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  90\n        5\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       13\n  176\n     1\n  40\n0.0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  40\n0.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n    18\n  420\n        0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n        3\n  176\n     1\n  62\n     5\n  420\n      255\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  62\n   256\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        2\n  176\n     1\n  1\nstrokes_ogs.tif\n  176\n     1\n  290\n     0\n  176\n     1\n  40\n1.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  0\nVISUALSTYLE\n  5\n252\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbVisualStyle\n  2\nGouraud\n  70\n     2\n  177\n     3\n  291\n     1\n  70\n    58\n  90\n        2\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        2\n  176\n     1\n  40\n0.6\n  176\n     1\n  40\n30.0\n  176\n     1\n  62\n     7\n  420\n 16777215\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n     7\n  176\n     1\n  62\n   257\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n     7\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        6\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  90\n        5\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       13\n  176\n     1\n  40\n0.0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  40\n0.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n    18\n  420\n        0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n        3\n  176\n     1\n  62\n     5\n  420\n      255\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  62\n   256\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        2\n  176\n     1\n  1\nstrokes_ogs.tif\n  176\n     1\n  290\n     0\n  176\n     1\n  40\n1.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  0\nVISUALSTYLE\n  5\n253\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbVisualStyle\n  2\nGouraudWithEdges\n  70\n     3\n  177\n     3\n  291\n     1\n  70\n    58\n  90\n        2\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        2\n  176\n     1\n  40\n0.6\n  176\n     1\n  40\n30.0\n  176\n     1\n  62\n     7\n  420\n 16777215\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n     7\n  176\n     1\n  62\n   257\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n   257\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        6\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  90\n        5\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       13\n  176\n     1\n  40\n0.0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  40\n0.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n    18\n  420\n        0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n        3\n  176\n     1\n  62\n     5\n  420\n      255\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  62\n   256\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        2\n  176\n     1\n  1\nstrokes_ogs.tif\n  176\n     1\n  290\n     0\n  176\n     1\n  40\n1.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  0\nVISUALSTYLE\n  5\n254\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbVisualStyle\n  2\nHidden\n  70\n     6\n  177\n     3\n  291\n     0\n  70\n    58\n  90\n        1\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        0\n  176\n     1\n  40\n0.6\n  176\n     1\n  40\n30.0\n  176\n     1\n  62\n     7\n  420\n 16777215\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  62\n   257\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n40.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n   257\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        6\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  90\n        3\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n0.0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  40\n0.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n    18\n  420\n        0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n        3\n  176\n     1\n  62\n     5\n  420\n      255\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  62\n   256\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        2\n  176\n     1\n  1\nstrokes_ogs.tif\n  176\n     1\n  290\n     0\n  176\n     1\n  40\n1.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  0\nVISUALSTYLE\n  5\n255\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbVisualStyle\n  2\nJitterOff\n  70\n    20\n  177\n     3\n  291\n     1\n  70\n    58\n  90\n        2\n  176\n     0\n  90\n        2\n  176\n     0\n  90\n        0\n  176\n     0\n  90\n        0\n  176\n     0\n  40\n0.6\n  176\n     0\n  40\n30.0\n  176\n     0\n  62\n     7\n  420\n 16777215\n  176\n     0\n  90\n        1\n  176\n     0\n  90\n        4\n  176\n     0\n  62\n     7\n  176\n     0\n  62\n   257\n  176\n     0\n  90\n        1\n  176\n     0\n  90\n        1\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n       10\n  176\n     2\n  62\n     7\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        1\n  176\n     0\n  90\n        6\n  176\n     0\n  90\n        2\n  176\n     0\n  62\n     7\n  176\n     0\n  90\n        5\n  176\n     0\n  90\n        0\n  176\n     0\n  90\n        0\n  176\n     0\n  290\n     0\n  176\n     0\n  90\n        1\n  176\n     0\n  40\n0.0\n  176\n     0\n  90\n        0\n  176\n     0\n  290\n     0\n  176\n     0\n  290\n     1\n  176\n     0\n  290\n     1\n  176\n     0\n  290\n     0\n  176\n     0\n  290\n     0\n  176\n     0\n  290\n     0\n  176\n     0\n  290\n     0\n  176\n     0\n  290\n     0\n  176\n     0\n  290\n     0\n  176\n     0\n  90\n       50\n  176\n     0\n  40\n0.0\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        0\n  176\n     0\n  62\n    18\n  420\n        0\n  176\n     0\n  90\n       50\n  176\n     0\n  90\n        3\n  176\n     0\n  62\n     5\n  420\n      255\n  176\n     0\n  290\n     0\n  176\n     0\n  90\n       50\n  176\n     0\n  90\n       50\n  176\n     0\n  90\n       50\n  176\n     0\n  290\n     0\n  176\n     0\n  90\n       50\n  176\n     0\n  62\n   256\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        2\n  176\n     0\n  1\nstrokes_ogs.tif\n  176\n     0\n  290\n     0\n  176\n     0\n  40\n1.0\n  176\n     0\n  40\n1.0\n  176\n     0\n  0\nVISUALSTYLE\n  5\n256\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbVisualStyle\n  2\nLinepattern\n  70\n    14\n  177\n     3\n  291\n     1\n  70\n    58\n  90\n        2\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  40\n0.6\n  176\n     1\n  40\n30.0\n  176\n     1\n  62\n     7\n  420\n 16777215\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        4\n  176\n     1\n  62\n     7\n  176\n     1\n  62\n   257\n  176\n     1\n  90\n        7\n  176\n     1\n  90\n        7\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        8\n  176\n     1\n  62\n     7\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        6\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  90\n        5\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n0.0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  40\n0.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n    18\n  420\n        0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n        3\n  176\n     1\n  62\n     5\n  420\n      255\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  62\n   256\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        2\n  176\n     1\n  1\nstrokes_ogs.tif\n  176\n     1\n  290\n     0\n  176\n     1\n  40\n1.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  0\nVISUALSTYLE\n  5\n257\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbVisualStyle\n  2\nOverhangOff\n  70\n    21\n  177\n     3\n  291\n     1\n  70\n    58\n  90\n        2\n  176\n     0\n  90\n        2\n  176\n     0\n  90\n        0\n  176\n     0\n  90\n        0\n  176\n     0\n  40\n0.6\n  176\n     0\n  40\n30.0\n  176\n     0\n  62\n     7\n  420\n 16777215\n  176\n     0\n  90\n        1\n  176\n     0\n  90\n        4\n  176\n     0\n  62\n     7\n  176\n     0\n  62\n   257\n  176\n     0\n  90\n        1\n  176\n     0\n  90\n        1\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        9\n  176\n     2\n  62\n     7\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        1\n  176\n     0\n  90\n        6\n  176\n     0\n  90\n        2\n  176\n     0\n  62\n     7\n  176\n     0\n  90\n        5\n  176\n     0\n  90\n        0\n  176\n     0\n  90\n        0\n  176\n     0\n  290\n     0\n  176\n     0\n  90\n        1\n  176\n     0\n  40\n0.0\n  176\n     0\n  90\n        0\n  176\n     0\n  290\n     0\n  176\n     0\n  290\n     1\n  176\n     0\n  290\n     1\n  176\n     0\n  290\n     0\n  176\n     0\n  290\n     0\n  176\n     0\n  290\n     0\n  176\n     0\n  290\n     0\n  176\n     0\n  290\n     0\n  176\n     0\n  290\n     0\n  176\n     0\n  90\n       50\n  176\n     0\n  40\n0.0\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        0\n  176\n     0\n  62\n    18\n  420\n        0\n  176\n     0\n  90\n       50\n  176\n     0\n  90\n        3\n  176\n     0\n  62\n     5\n  420\n      255\n  176\n     0\n  290\n     0\n  176\n     0\n  90\n       50\n  176\n     0\n  90\n       50\n  176\n     0\n  90\n       50\n  176\n     0\n  290\n     0\n  176\n     0\n  90\n       50\n  176\n     0\n  62\n   256\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        2\n  176\n     0\n  1\nstrokes_ogs.tif\n  176\n     0\n  290\n     0\n  176\n     0\n  40\n1.0\n  176\n     0\n  40\n1.0\n  176\n     0\n  0\nVISUALSTYLE\n  5\n258\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbVisualStyle\n  2\nRealistic\n  70\n     8\n  177\n     3\n  291\n     0\n  70\n    58\n  90\n        2\n  176\n     1\n  90\n        3\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        2\n  176\n     1\n  40\n0.6\n  176\n     1\n  40\n30.0\n  176\n     1\n  62\n     7\n  420\n 16777215\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n     7\n  176\n     1\n  62\n   257\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        8\n  176\n     1\n  62\n   257\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        6\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  90\n        3\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       13\n  176\n     1\n  40\n0.0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  40\n0.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n    18\n  420\n        0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n        3\n  176\n     1\n  62\n     5\n  420\n      255\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  62\n   256\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        2\n  176\n     1\n  1\nstrokes_ogs.tif\n  176\n     1\n  290\n     0\n  176\n     1\n  40\n1.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  0\nVISUALSTYLE\n  5\n259\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbVisualStyle\n  2\nShaded\n  70\n    27\n  177\n     3\n  291\n     0\n  70\n    58\n  90\n        2\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        2\n  176\n     1\n  40\n0.6\n  176\n     1\n  40\n30.0\n  176\n     1\n  62\n     7\n  420\n 16777215\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        4\n  176\n     1\n  62\n     7\n  176\n     1\n  62\n   257\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        8\n  176\n     1\n  62\n   257\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        6\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     8\n  420\n  7895160\n  176\n     1\n  90\n        3\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n        5\n  176\n     1\n  40\n0.0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  40\n0.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n    18\n  420\n        0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n        3\n  176\n     1\n  62\n     5\n  420\n      255\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  62\n   256\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        2\n  176\n     1\n  1\nstrokes_ogs.tif\n  176\n     1\n  290\n     0\n  176\n     1\n  40\n1.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  0\nVISUALSTYLE\n  5\n25A\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbVisualStyle\n  2\nShaded with edges\n  70\n    26\n  177\n     3\n  291\n     0\n  70\n    58\n  90\n        2\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        2\n  176\n     1\n  40\n0.6\n  176\n     1\n  40\n30.0\n  176\n     1\n  62\n     7\n  420\n 16777215\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  62\n   257\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        8\n  176\n     1\n  62\n   257\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        6\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  90\n        3\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n        5\n  176\n     1\n  40\n0.0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  40\n0.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n    18\n  420\n        0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n        3\n  176\n     1\n  62\n     5\n  420\n      255\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  62\n   256\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        2\n  176\n     1\n  1\nstrokes_ogs.tif\n  176\n     1\n  290\n     0\n  176\n     1\n  40\n1.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  0\nVISUALSTYLE\n  5\n25B\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbVisualStyle\n  2\nShades of Gray\n  70\n    23\n  177\n     3\n  291\n     0\n  70\n    58\n  90\n        2\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        3\n  176\n     1\n  90\n        0\n  176\n     1\n  40\n0.6\n  176\n     1\n  40\n30.0\n  176\n     1\n  62\n     7\n  420\n 16777215\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  62\n     7\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n40.0\n  176\n     1\n  90\n        8\n  176\n     1\n  62\n     7\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        6\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  90\n        3\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n0.0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  40\n0.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n    18\n  420\n        0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n        3\n  176\n     1\n  62\n     5\n  420\n      255\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  62\n   256\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        2\n  176\n     1\n  1\nstrokes_ogs.tif\n  176\n     1\n  290\n     0\n  176\n     1\n  40\n1.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  0\nVISUALSTYLE\n  5\n25C\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbVisualStyle\n  2\nSketchy\n  70\n    24\n  177\n     3\n  291\n     0\n  70\n    58\n  90\n        1\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        0\n  176\n     1\n  40\n0.6\n  176\n     1\n  40\n30.0\n  176\n     1\n  62\n     7\n  420\n 16777215\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  62\n     7\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n40.0\n  176\n     1\n  90\n       11\n  176\n     1\n  62\n     7\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        6\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  90\n        6\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n0.0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  40\n0.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n    18\n  420\n        0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n        3\n  176\n     1\n  62\n     5\n  420\n      255\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  62\n   256\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        2\n  176\n     1\n  1\nstrokes_ogs.tif\n  176\n     1\n  290\n     0\n  176\n     1\n  40\n1.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  0\nVISUALSTYLE\n  5\n25D\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbVisualStyle\n  2\nThicken\n  70\n    13\n  177\n     3\n  291\n     1\n  70\n    58\n  90\n        2\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  40\n0.6\n  176\n     1\n  40\n30.0\n  176\n     1\n  62\n     7\n  420\n 16777215\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        4\n  176\n     1\n  62\n     7\n  176\n     1\n  62\n   257\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n       12\n  176\n     1\n  62\n     7\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        6\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  90\n        5\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n0.0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  40\n0.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n    18\n  420\n        0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n        3\n  176\n     1\n  62\n     5\n  420\n      255\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  62\n   256\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        2\n  176\n     1\n  1\nstrokes_ogs.tif\n  176\n     1\n  290\n     0\n  176\n     1\n  40\n1.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  0\nVISUALSTYLE\n  5\n25E\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbVisualStyle\n  2\nWireframe\n  70\n     5\n  177\n     3\n  291\n     0\n  70\n    58\n  90\n        0\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  40\n0.6\n  176\n     1\n  40\n30.0\n  176\n     1\n  62\n     7\n  420\n 16777215\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        4\n  176\n     1\n  62\n     7\n  176\n     1\n  62\n   257\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n   257\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        6\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  90\n        3\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n0.0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  40\n0.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n    18\n  420\n        0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n        3\n  176\n     1\n  62\n     5\n  420\n      255\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  62\n   256\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        2\n  176\n     1\n  1\nstrokes_ogs.tif\n  176\n     1\n  290\n     0\n  176\n     1\n  40\n1.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  0\nVISUALSTYLE\n  5\n25F\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbVisualStyle\n  2\nX-Ray\n  70\n    25\n  177\n     3\n  291\n     0\n  70\n    58\n  90\n        2\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n0.5\n  176\n     1\n  40\n30.0\n  176\n     1\n  62\n     7\n  420\n 16777215\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n     7\n  176\n     1\n  62\n   257\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        8\n  176\n     1\n  62\n     7\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        6\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  90\n        3\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       13\n  176\n     1\n  40\n0.0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  40\n0.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n    18\n  420\n        0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n        3\n  176\n     1\n  62\n     5\n  420\n      255\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  62\n   256\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        2\n  176\n     1\n  1\nstrokes_ogs.tif\n  176\n     1\n  290\n     0\n  176\n     1\n  40\n1.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  0\nDICTIONARY\n  5\n265\n  330\n264\n  100\nAcDbDictionary\n  280\n1\n  281\n1\n  3\nACAD_LAYERFILTERS\n  360\n2A2\n  3\nACAD_LAYERSTATES\n  360\n2A3\n  3\nACLYDICTIONARY\n  360\n2A4\n  0\nDICTIONARY\n  5\n2A2\n  102\n{ACAD_REACTORS\n  330\n265\n  102\n}\n  330\n265\n  100\nAcDbDictionary\n  281\n1\n  0\nDICTIONARY\n  5\n2A3\n  102\n{ACAD_REACTORS\n  330\n265\n  102\n}\n  330\n265\n  100\nAcDbDictionary\n  281\n1\n  0\nDICTIONARY\n  5\n2A4\n  102\n{ACAD_REACTORS\n  330\n265\n  102\n}\n  330\n265\n  100\nAcDbDictionary\n  281\n1\n  1001\nACAD\n  1000\n<All\n  0\nDICTIONARY\n  5\n29A\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbDictionary\n  281\n1\n  0\nDICTIONARY\n  5\n29B\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbDictionary\n  281\n1\n  3\nLayout1\n  350\n247\n  3\nModel\n  350\n3\n  0\nDICTIONARY\n  5\n29C\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbDictionary\n  281\n1\n  3\nStandard\n  350\n242\n  0\nDICTIONARY\n  5\n29D\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbDictionary\n  281\n1\n  0\nACDBDICTIONARYWDFLT\n  5\n29E\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbDictionary\n  281\n1\n  3\nNormal\n  350\n263\n  100\nAcDbDictionaryWithDefault\n  340\n263\n  0\nDICTIONARY\n  5\n29F\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbDictionary\n  281\n1\n  3\nSERIALNO\n  350\n2A5\n  0\nLAYOUT\n  5\n247\n  102\n{ACAD_REACTORS\n  330\n29B\n  102\n}\n  330\n29B\n  100\nAcDbPlotSettings\n  1\n\n  2\n\n  4\n\n  6\n\n  40\n0\n  41\n0\n  42\n0\n  43\n0\n  44\n210.058\n  45\n296.926\n  46\n0\n  47\n0\n  48\n0\n  49\n0\n  140\n210.058\n  141\n296.926\n  142\n1\n  143\n1\n  70\n560\n  72\n1\n  73\n0\n  74\n4\n  75\n16\n  147\n1\n  148\n0\n  149\n0\n  100\nAcDbLayout\n  1\nLayout1\n  70\n0\n  71\n1\n  10\n0\n  20\n0\n  11\n12\n  21\n9\n  12\n0\n  22\n0\n  32\n0\n  14\n0\n  24\n0\n  34\n0\n  15\n0\n  25\n0\n  35\n0\n  146\n0\n  13\n0\n  23\n0\n  33\n0\n  16\n1\n  26\n0\n  36\n0\n  17\n0\n  27\n1\n  37\n0\n  76\n0\n  330\n285\n  0\nLAYOUT\n  5\n3\n  102\n{ACAD_REACTORS\n  330\n29B\n  102\n}\n  330\n29B\n  100\nAcDbPlotSettings\n  1\nVectorDraw Printer Drawing\n  2\n\n  4\n\n  6\n\n  40\n0\n  41\n0\n  42\n0\n  43\n0\n  44\n209.804\n  45\n296.926\n  46\n0\n  47\n0\n  48\n0\n  49\n0\n  140\n10\n  141\n10\n  142\n1000\n  143\n100\n  70\n560\n  72\n1\n  73\n0\n  74\n4\n  75\n0\n  147\n1\n  148\n0\n  149\n0\n  100\nAcDbLayout\n  1\nModel\n  70\n1\n  71\n0\n  10\n3.9370078740157481\n  20\n-3.9370078740157481\n  11\n-3.9370078740157481\n  21\n3.9370078740157481\n  12\n0\n  22\n0\n  32\n0\n  14\n-0.0012627766738768642\n  24\n0.31815169067322946\n  34\n-3.6262627766738769\n  15\n2.6931516906732296\n  25\n0\n  35\n0\n  146\n0\n  13\n0\n  23\n0\n  33\n0\n  16\n1\n  26\n0\n  36\n0\n  17\n0\n  27\n1\n  37\n0\n  76\n0\n  330\n284\n  1001\nVD_EX_PRINTER_NAME\n  1000\n\n  1001\nVD_EX_PRINTER_PAPER\n  1070\n0\n  1001\nVD_EX_PRINTER_ORIENT\n  1070\n1\n  1001\nVD_EX_PRINTER_SIZEX\n  1040\n210\n  1001\nVD_EX_PRINTER_SIZEY\n  1040\n297\n  1001\nVD_EX_PRINTER_AVSIZEX\n  1040\n210\n  1001\nVD_EX_PRINTER_AVSIZEY\n  1040\n297\n  1001\nVD_EX_PRINTER_MARX\n  1040\n0\n  1001\nVD_EX_PRINTER_MARY\n  1040\n0\n  1001\nVD_EX_PRINTER_PAPER_NAME\n  1000\n\n  0\nMLINESTYLE\n  5\n242\n  102\n{ACAD_REACTORS\n  330\n29C\n  102\n}\n  330\n29C\n  100\nAcDbMlineStyle\n  2\nStandard\n  70\n0\n  3\n\n  62\n0\n  51\n90\n  52\n90\n  71\n2\n  49\n0.5\n  62\n7\n  6\nContinuous\n  49\n-0.5\n  62\n7\n  6\nContinuous\n  0\nACDBPLACEHOLDER\n  5\n263\n  102\n{ACAD_REACTORS\n  330\n29E\n  102\n}\n  330\n29E\n  0\nXRECORD\n  5\n2A5\n  102\n{ACAD_REACTORS\n  330\n29F\n  102\n}\n  330\n29F\n  100\nAcDbXrecord\n  280\n1\n  1000\nudnjVM6OT3ptXXPNDrqErnGX8\n  1070\n5\n  1070\n1\n  0\nXRECORD\n  5\n2A0\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbXrecord\n  280\n1\n  1\nDWGPROPS COOKIE\n  2\n\n  3\n\n  4\n\n  6\n\n  7\n\n  8\n\n  9\n\n  40\n0\n  41\n0\n  42\n0\n  1\n\n  90\n0\n  0\nENDSEC\n  999\nCreated By VectorDraw :10.1001.1.1\n  0\nEOF\n";
@@ -326,6 +381,7 @@ function addNewPieceFromHome(){
   pieceNo=(nums.length?Math.max(...nums):0)+1;
   hideWorkScreens();
   resetPieceForm();
+  tmApplyDefaultThicknessToPiece();
   pieceTitle.textContent='Piece '+pieceNo;
   document.getElementById('piece')?.classList.remove('hidden');
 }
@@ -336,17 +392,20 @@ function completeJobFromHome(){
 function startPiece(){
   try{
   pieces=[]; pieceNo=1;
+  tmDefaultThickness='';
+  tmInitialOtherAppliesToFirstOnly=false;
+  tmPiece1ThicknessDecision='';
   const pieceEl=document.getElementById('piece');
   const jobEl=document.getElementById('job');
   const thicknessEl=document.getElementById('pieceThickness');
-  const allsameEl=document.getElementById('allsame');
   if(!pieceEl || !jobEl){
     alert('Unable to open Piece 1. Please reload the app and try again.');
     return;
   }
   pieceEl.classList.remove('hidden');
   jobEl.classList.add('hidden');
-  if(thicknessEl) thicknessEl.classList.toggle('hidden',allsameEl ? allsameEl.value==='Yes' : true);
+  if(thicknessEl) thicknessEl.classList.remove('hidden');
+  tmApplyDefaultThicknessToPiece();
   try{ window.scrollTo({top:0,left:0,behavior:'auto'}); }
   catch(e){ window.scrollTo(0,0); }
   }catch(err){
@@ -367,6 +426,12 @@ if(document.readyState==='loading'){
   document.addEventListener('DOMContentLoaded',bindContinuePiece1);
 }else{
   bindContinuePiece1();
+}
+function tmOpenPlaneAdjustments(){
+  const btn=document.getElementById('addPlaneAdjustmentBtn');
+  const entry=document.getElementById('planeAdjustmentEntry');
+  if(btn) btn.style.display='none';
+  if(entry) entry.style.display='block';
 }
 function addAdjustment(edge='Top'){
   const rw=document.getElementById('rightHeightWrap');
@@ -602,6 +667,10 @@ function validateRadiusRows(){
   return ok;
 }
 function syncRadiusData(){
+  if(!window.currentReviewPiece){
+    const base=typeof tmBuildCanonicalPieceFromForm==='function'?tmBuildCanonicalPieceFromForm():null;
+    if(base) window.currentReviewPiece=base;
+  }
   if(!window.currentReviewPiece) return;
   window.currentReviewPiece.radii=[...document.querySelectorAll('.radiusCorner')].map(x=>({
     corner:x.querySelector('.radiusCornerSel')?.value||'',
@@ -643,7 +712,6 @@ function addOutlet(){
 function removeOutlet(btn){
   const row=btn && btn.closest ? btn.closest('.outlet') : null;
   if(!row) return;
-  if(!confirm('Remove this outlet / cutout from the piece?')) return;
   row.remove();
   const remaining=document.querySelectorAll('#outlets .outlet').length;
   const b=document.getElementById('addOutletBtn');
@@ -651,20 +719,38 @@ function removeOutlet(btn){
   refreshRadiusCornerOptions();
   refreshReviewDrawing();
 }
+let tmPieceNoteSeq=0;
 function addPieceNote(category='', text=''){
   const box=document.getElementById('pieceNotes'); if(!box) return;
   const d=document.createElement('div');
   d.className='pieceNote';
+  d.dataset.noteId='note-'+(++tmPieceNoteSeq);
   d.style.cssText='border:1px solid #aaa;border-radius:10px;padding:12px;margin:10px 0;text-align:left;';
-  d.innerHTML=`<div class="row"><div><label>Note Type</label><select class="noteType" onchange="refreshReviewExtras()">
+  d.innerHTML=`<div class="row"><div><label>Note Type</label><select class="noteType">
     <option>Fabrication Notes</option><option>Programming Notes</option><option>Install Notes</option><option>General Notes</option>
   </select></div></div>
   <label>Note</label>
-  <textarea class="noteText" rows="3" style="width:100%;box-sizing:border-box;font-size:18px;padding:10px" placeholder="Enter piece note" oninput="refreshReviewExtras()"></textarea>
-  <button class="btn secondary" type="button" onclick="this.closest('.pieceNote').remove();refreshReviewExtras()">Remove Note</button>`;
+  <textarea class="noteText" rows="3" style="width:100%;box-sizing:border-box;font-size:18px;padding:10px" placeholder="Enter piece note"></textarea>
+  <button class="btn secondary removeNoteBtn" type="button">Remove Note</button>`;
   box.appendChild(d);
   d.querySelector('.noteType').value=category||'General Notes';
   d.querySelector('.noteText').value=text||'';
+  const updateThisNote=()=>{
+    if(!window.currentReviewPiece) window.currentReviewPiece=data();
+    collectReviewExtras(window.currentReviewPiece);
+    rebuildSPSegments(window.currentReviewPiece);
+    window.draw(window.currentReviewPiece);
+    if(typeof refreshLivePieceDrawing==='function') refreshLivePieceDrawing();
+  };
+  d.querySelector('.noteType').addEventListener('change',updateThisNote);
+  d.querySelector('.noteText').addEventListener('input',updateThisNote);
+  d.querySelector('.removeNoteBtn').addEventListener('click',()=>{
+    d.remove();
+    updateThisNote();
+    const remaining=box.querySelectorAll(':scope > .pieceNote').length;
+    const b=document.getElementById('addNoteBtn');
+    if(b) b.textContent=remaining?'+ ADD ANOTHER NOTE':'+ ADD NOTE';
+  });
   const b=document.getElementById('addNoteBtn'); if(b)b.textContent='+ ADD ANOTHER NOTE';
 }
 
@@ -736,7 +822,7 @@ function rebuildSPSegments(p){
   });
 }
 function collectReviewExtras(p){
-  p.notes=[...document.querySelectorAll('.pieceNote')].map(x=>({category:x.querySelector('.noteType').value,text:(x.querySelector('.noteText').value||'').trim()})).filter(n=>n.text);
+  p.notes=[...document.querySelectorAll('#pieceNotes > .pieceNote')].map(x=>({id:x.dataset.noteId||'',category:x.querySelector('.noteType')?.value||'General Notes',text:(x.querySelector('.noteText')?.value||'').trim()})).filter(n=>n.text);
   p.stopPolishes=[...document.querySelectorAll('.stopPolish')].map(x=>({edge:x.querySelector('.spEdge').value,ref:x.querySelector('.spRef').value,distance:+x.querySelector('.spDist').value,polish:x.querySelector('.spPolish').value})).filter(x=>x.distance>=0);
   return p;
 }
@@ -745,6 +831,35 @@ function refreshReviewExtras(){
   collectReviewExtras(window.currentReviewPiece);
   rebuildSPSegments(window.currentReviewPiece);
   window.draw(window.currentReviewPiece);
+}
+function tmOpenOffsetEntry(){
+  const b=document.getElementById('tmOffsetLauncher');
+  const e=document.getElementById('tmOffsetEntry');
+  if(b) b.style.display='none';
+  if(e) e.style.display='block';
+}
+function tmTopOffsetChanged(){
+  const sel=document.getElementById('topFitOffset');
+  const wrap=document.getElementById('topFitCustomWrap');
+  if(wrap) wrap.style.display=(sel&&sel.value==='custom')?'block':'none';
+  if(sel&&sel.value!=='custom'){
+    const c=document.getElementById('topFitCustom'); if(c)c.value='';
+  }
+}
+function tmTopFitOffsetValue(){
+  const sel=document.getElementById('topFitOffset');
+  if(!sel || sel.value==='') return null;
+  if(sel.value==='custom'){
+    const raw=(document.getElementById('topFitCustom')?.value??'').trim();
+    return raw===''?null:Math.max(0,+raw||0);
+  }
+  return Math.max(0,+sel.value||0);
+}
+function tmFmtOffset(v){
+  if(v===0) return 'NONE';
+  if(Math.abs(v-0.0625)<1e-8) return '1/16"';
+  if(Math.abs(v-0.125)<1e-8) return '1/8"';
+  return (Math.round(v*1000)/1000)+'"';
 }
 function data(){
 const hasPlanePoints=document.querySelectorAll('.adjust').length>0;
@@ -797,12 +912,14 @@ else if(topEntered.length){
   const last=topEntered[topEntered.length-1];
   derivedRight=last.height;
 }
-return {length:+len.value,height:leftHeight,rightHeight:derivedRight,adj,
+return {length:+len.value,height:leftHeight,rightHeight:derivedRight,thickness:tmCurrentPieceThickness(),adj,topFitOffset:tmTopFitOffsetValue(),
 notches:[...document.querySelectorAll('.notch')].map(x=>({end:x.querySelector('.notchEnd').value,inside:+x.querySelector('.notchIn').value,from:x.querySelector('.notchFrom').value,far:+x.querySelector('.notchHowFar').value})),
 radii:[...document.querySelectorAll('.radiusCorner')].map(x=>({corner:x.querySelector('.radiusCornerSel').value,radius:+x.querySelector('.radiusAmt').value})),
-outs:[...document.querySelectorAll('.outlet')].map(x=>({x:+x.querySelector('.ox').value,y:+x.querySelector('.oy').value,type:x.querySelector('.otype').value})),
+outs:[...document.querySelectorAll('.outlet')].map(x=>({xRaw:x.querySelector('.ox').value,yRaw:x.querySelector('.oy').value,type:x.querySelector('.otype').value})).filter(o=>o.xRaw!==''&&o.yRaw!=='').map(o=>({x:+o.xRaw,y:+o.yRaw,type:o.type})),
+faucetHoles:(typeof tmReadFaucetHoles==='function'?tmReadFaucetHoles():[]),
 top:(document.getElementById('topPol')?.value||'No'),side:(document.getElementById('sidePol')?.value||'None')}}
 function review(){
+if(!tmRequirePieceThickness()) return;
 let p;
 try{p=data();}catch(e){alert('Unable to open Piece Details: '+(e&&e.message?e.message:e));return;}
   if(window.editingReviewExtras){
@@ -887,22 +1004,80 @@ window.draw(p);
     }
     window.currentReviewPiece=p;
     window.draw(p);
+    if(typeof refreshLivePieceDrawing==='function') refreshLivePieceDrawing();
   }catch(e){}
 }
-function draw(p){let s=document.getElementById('drawing'), W=720,H=420,m=75, sx=(W-2*m)/p.length, sy=(H-2*m)/p.height, k=Math.min(sx,sy), ox=m,oy=H-m;let X=x=>ox+x*k,Y=y=>oy-y*k;
-let topPts=[[0,p.height]],botPts=[[0,0]], topLevel=p.height,botLevel=0;
-p.adj.forEach(a=>{let delta=(a.dir==='Starting Point'?0:(a.dir==='Up'?1:-1))*(+a.amt||0);if(a.edge==='Top'){topLevel+=delta;topPts.push([a.loc,topLevel])}else{botLevel+=delta;botPts.push([a.loc,botLevel])}});
-topPts.push([p.length,topLevel]);botPts.push([p.length,botLevel]);
-let path=`M ${X(0)} ${Y(0)} `+botPts.slice(1).map(q=>`L ${X(q[0])} ${Y(q[1])}`).join(' ')+` L ${X(p.length)} ${Y(topLevel)} `+topPts.slice().reverse().map(q=>`L ${X(q[0])} ${Y(q[1])}`).join(' ')+` Z`;
-let g=`<path d="${path}" fill="none" stroke="black" stroke-width="2"/>`;
-g+=`<line x1="${X(0)}" y1="${Y(-.35)}" x2="${X(p.length)}" y2="${Y(-.35)}" stroke="black"/><text x="${(X(0)+X(p.length))/2}" y="${Y(-.55)}" text-anchor="middle" font-size="14">${p.length}&quot;</text>`;
-g+=`<line x1="${X(-.35)}" y1="${Y(0)}" x2="${X(-.35)}" y2="${Y(p.height)}" stroke="black"/><text x="${X(-.55)}" y="${(Y(0)+Y(p.height))/2}" text-anchor="middle" font-size="14" transform="rotate(-90 ${X(-.55)} ${(Y(0)+Y(p.height))/2})">${p.height}&quot;</text>`;
-p.adj.forEach(a=>{let yy=a.edge==='Top'?p.height:0;g+=`<circle cx="${X(a.loc)}" cy="${Y(yy)}" r="3"/><text x="${X(a.loc)}" y="${Y(yy)+(a.edge==='Top'?-12:18)}" text-anchor="middle" font-size="12">${a.loc}&quot; LEFT • ${a.amt}&quot; ${a.dir.toUpperCase()}</text>`});
-p.outs.forEach(o=>{let w=Math.max(34,2.8*k),h=Math.max(18,1.5*k);g+=`<rect x="${X(o.x)-w/2}" y="${Y(o.y)-h/2}" width="${w}" height="${h}" fill="none" stroke="black"/><line x1="${X(o.x)-8}" y1="${Y(o.y)}" x2="${X(o.x)+8}" y2="${Y(o.y)}" stroke="black"/><line x1="${X(o.x)}" y1="${Y(o.y)-8}" x2="${X(o.x)}" y2="${Y(o.y)+8}" stroke="black"/><text x="${X(o.x)}" y="${Y(o.y)+h/2+16}" text-anchor="middle" font-size="11">${o.x}&quot; LEFT • ${o.y}&quot; UP</text>`});
-if(p.top==='Yes')g+=`<text x="${X(p.length/2)}" y="${Y(topLevel)-8}" text-anchor="middle" font-size="15" font-weight="700">A</text>`;
-if(p.side==='Left'||p.side==='Both')g+=`<text x="${X(0)+8}" y="${Y(p.height/2)}" font-size="15" font-weight="700">A</text>`;
-if(p.side==='Right'||p.side==='Both')g+=`<text x="${X(p.length)-16}" y="${Y(p.height/2)}" font-size="15" font-weight="700">A</text>`;
-s.innerHTML=g}
+function draw(p){
+  const s=document.getElementById('drawing');
+  if(!s) return;
+  const W=720,H=420,m=75,L=+p.length||0,leftH=+p.height||0;
+  const adj=[...(p.adj||[])].sort((a,b)=>(+a.loc||0)-(+b.loc||0));
+
+  // Use the stored plane elevations directly. Point 1 is the reference;
+  // every following point carries the cumulative Up/Down change.
+  let bottom=[[0,0]];
+  adj.filter(a=>String(a.edge).toLowerCase()==='bottom').forEach(a=>{
+    const x=Math.max(0,Math.min(L,+a.loc||0)), h=Number(a.height);
+    if(Number.isFinite(h)) bottom.push([x,h]);
+  });
+  bottom.push([L,bottom.length?bottom[bottom.length-1][1]:0]);
+
+  let top=[[0,leftH]];
+  adj.filter(a=>String(a.edge).toLowerCase()==='top').forEach(a=>{
+    const x=Math.max(0,Math.min(L,+a.loc||0)), h=Number(a.height);
+    if(Number.isFinite(h)) top.push([x,h]);
+  });
+  const rightH=Number.isFinite(+p.rightHeight)&&+p.rightHeight>0?+p.rightHeight:leftH;
+  top.push([L,rightH]);
+
+  function clean(pts){
+    pts.sort((a,b)=>a[0]-b[0]);
+    const o=[];
+    pts.forEach(q=>{
+      if(o.length&&Math.abs(o[o.length-1][0]-q[0])<1e-9)o[o.length-1]=q;
+      else o.push(q);
+    });
+    return o;
+  }
+  bottom=clean(bottom); top=clean(top);
+
+  const ys=bottom.concat(top).map(q=>q[1]);
+  const minY=Math.min(0,...ys),maxY=Math.max(leftH,...ys);
+  const k=Math.min((W-2*m)/Math.max(L,1),(H-2*m)/Math.max(maxY-minY,1));
+  const X=x=>m+x*k,Y=y=>H-m-(y-minY)*k;
+
+  const pts=bottom.concat(top.slice().reverse());
+  let path=`M ${X(pts[0][0])} ${Y(pts[0][1])} `+
+    pts.slice(1).map(q=>`L ${X(q[0])} ${Y(q[1])}`).join(' ')+' Z';
+  let g=`<path d="${path}" fill="none" stroke="black" stroke-width="2"/>`;
+
+  // Overall length dimension.
+  g+=`<line x1="${X(0)}" y1="${Y(minY)-28}" x2="${X(L)}" y2="${Y(minY)-28}" stroke="black"/>`;
+  g+=`<text x="${(X(0)+X(L))/2}" y="${Y(minY)-35}" text-anchor="middle" font-size="14">${L}&quot;</text>`;
+
+  // Finished height dimensions follow the actual top and bottom planes.
+  const lb=bottom[0][1],rb=bottom[bottom.length-1][1];
+  g+=`<line x1="${X(0)-28}" y1="${Y(lb)}" x2="${X(0)-28}" y2="${Y(top[0][1])}" stroke="black"/>`;
+  g+=`<text x="${X(0)-40}" y="${(Y(lb)+Y(top[0][1]))/2}" text-anchor="middle" font-size="14" transform="rotate(-90 ${X(0)-40} ${(Y(lb)+Y(top[0][1]))/2})">${(top[0][1]-lb).toFixed(2).replace(/\.00$/,'')}&quot;</text>`;
+  g+=`<line x1="${X(L)+28}" y1="${Y(rb)}" x2="${X(L)+28}" y2="${Y(top[top.length-1][1])}" stroke="black"/>`;
+  g+=`<text x="${X(L)+40}" y="${(Y(rb)+Y(top[top.length-1][1]))/2}" text-anchor="middle" font-size="14" transform="rotate(-90 ${X(L)+40} ${(Y(rb)+Y(top[top.length-1][1]))/2})">${(top[top.length-1][1]-rb).toFixed(2).replace(/\.00$/,'')}&quot;</text>`;
+
+  // Show each entered plane point on the actual finished edge.
+  adj.forEach(a=>{
+    const edge=String(a.edge).toLowerCase(),x=Math.max(0,Math.min(L,+a.loc||0)),h=Number(a.height);
+    if(!Number.isFinite(h))return;
+    const px=X(x),py=Y(h);
+    g+=`<circle cx="${px}" cy="${py}" r="4" fill="white" stroke="black" stroke-width="1.5"/>`;
+    if(a.isReference){
+      g+=`<text x="${px+7}" y="${py-8}" font-size="11" font-weight="700">${edge==='bottom'?'BOTTOM':'TOP'} PLANE REF</text>`;
+    }else if(Number.isFinite(+a.amt)&&+a.amt!==0){
+      const sign=String(a.dir).toLowerCase()==='down'?'−':'+';
+      g+=`<text x="${px}" y="${py-9}" text-anchor="middle" font-size="11" font-weight="700">${sign}${Math.abs(+a.amt)}&quot;</text>`;
+    }
+  });
+
+  s.innerHTML=g;
+}
 function editPiece(){
   if(window.currentReviewPiece){
     collectReviewExtras(window.currentReviewPiece);
@@ -941,9 +1116,12 @@ function renderCompletedPieces(){
   }
 }
 function approve(){
+  if(!tmRequirePieceThickness()) return;
+  if(!tmRequireThicknessDefaultDecision()) return;
   if(window.currentReviewPiece) collectReviewExtras(window.currentReviewPiece);
   try{
     const p=data();
+    tmOfferOtherAsNewDefault();
     if(window.currentReviewPiece){
       p.notes=(window.currentReviewPiece.notes||[]).map(x=>({...x}));
       p.stopPolishes=(window.currentReviewPiece.stopPolishes||[]).map(x=>({...x}));
@@ -966,11 +1144,134 @@ function approve(){
     alert('Approve Piece error: '+(err && err.message ? err.message : err));
   }
 }
+let tmDefaultThickness='';
+let tmInitialOtherAppliesToFirstOnly=false;
+let tmPiece1ThicknessDecision='';
+function tmJobThicknessChanged(sel){
+  // Compatibility hook for older saved jobs. Thickness is now selected per piece.
+}
+function tmEstablishInitialThickness(){ return true; }
+function tmSetPieceThicknessValue(value){
+  const sel=document.getElementById('pthick'), other=document.getElementById('pthickOther'); if(!sel)return; const v=String(value||'').trim();
+  if(v==='2 cm'||v==='3 cm'){sel.value=v;if(other)other.value='';} else if(v){sel.value='Other';if(other)other.value=v;} else {sel.value='';if(other)other.value='';}
+  tmPieceThicknessChanged(sel);
+}
+function tmApplyDefaultThicknessToPiece(){
+  // Piece 1 intentionally starts blank. Later pieces inherit the established default.
+  tmSetPieceThicknessValue(pieceNo===1 ? '' : tmDefaultThickness);
+}
+function tmRequirePieceThickness(){
+  const sel=document.getElementById('pthick'), choice=String(sel?.value||'').trim();
+  if(!choice){alert('MATERIAL THICKNESS REQUIRED\n\nSelect the material thickness for this piece before continuing.');sel?.focus();return false;}
+  if(choice==='Other'){const input=document.getElementById('pthickOther'), custom=String(input?.value||'').trim();if(!custom||tmParseThickness(custom)===null){alert('OTHER THICKNESS REQUIRED\n\nEnter the material thickness for this piece before continuing.');input?.focus();return false;}}
+  return true;
+}
+function tmAskPiece1DefaultThickness(value){
+  const v=String(value||'').trim();
+  if(pieceNo!==1 || !v || tmPiece1ThicknessDecision===v) return;
+  tmPiece1ThicknessDecision='';
+  const box=document.getElementById('tmThicknessDefaultQuestion');
+  const txt=document.getElementById('tmThicknessDefaultQuestionText');
+  if(txt) txt.textContent='USE '+v.toUpperCase()+' AS THE DEFAULT THICKNESS FOR THE REMAINING PIECES?';
+  if(box) box.classList.remove('hidden');
+}
+function tmAnswerThicknessDefault(yes){
+  const v=tmCurrentPieceThickness();
+  if(!v) return;
+  tmDefaultThickness=yes?v:'';
+  tmPiece1ThicknessDecision=v;
+  const box=document.getElementById('tmThicknessDefaultQuestion');
+  if(box) box.classList.add('hidden');
+}
+function tmRequireThicknessDefaultDecision(){
+  if(pieceNo!==1) return true;
+  const v=tmCurrentPieceThickness();
+  if(!v) return true;
+  if(tmPiece1ThicknessDecision===v) return true;
+  tmAskPiece1DefaultThickness(v);
+  alert('DEFAULT THICKNESS DECISION REQUIRED\n\nChoose whether this thickness should be the default for the remaining pieces.');
+  return false;
+}
+function tmOfferOtherAsNewDefault(){
+  const sel=document.getElementById('pthick'), choice=String(sel?.value||'').trim();
+  if(!choice)return;
+  if(pieceNo===1){
+    const current=tmCurrentPieceThickness();
+    if(current) tmAskPiece1DefaultThickness(current);
+    return;
+  }
+  // Later pieces normally retain the original default. A custom OTHER thickness can optionally become the new default.
+  if(choice==='Other'){
+    const custom=String(document.getElementById('pthickOther')?.value||'').trim();
+    if(!custom||custom===tmDefaultThickness)return;
+    if(confirm('USE '+custom+' AS THE NEW DEFAULT THICKNESS FOR THE NEXT PIECES?\n\nOK = MAKE NEW DEFAULT\nCANCEL = THIS PIECE ONLY')) tmDefaultThickness=custom;
+  }
+}
+function tmParseThickness(v){
+  let x=String(v??'').trim().replace(/["″]/g,'').replace(/\s*in(?:ches?)?\.?$/i,'').trim();
+  if(!x) return null;
+  const parts=x.split(/\s+/);
+  let total=0;
+  for(const part of parts){
+    if(/^\d+\/\d+$/.test(part)){
+      const [n,d]=part.split('/').map(Number);
+      if(!d) return null;
+      total+=n/d;
+    }else if(/^\d*\.?\d+$/.test(part)){
+      total+=Number(part);
+    }else return null;
+  }
+  return Number.isFinite(total)?total:null;
+}
+function tmNormalizeThickness(v){
+  const n=tmParseThickness(v);
+  if(n===null) return String(v??'').trim();
+  // Preserve a clean decimal when the user entered a decimal; otherwise
+  // retain the user's fraction text so the drawing remains readable.
+  return String(v??'').trim();
+}
+function tmPieceThicknessChanged(sel){
+  const wrap=document.getElementById('pthickOtherWrap');
+  const other=document.getElementById('pthickOther');
+  const choice=String(sel?.value||'');
+  const isOther=choice==='Other';
+  if(wrap) wrap.style.display=isOther?'block':'none';
+  if(!isOther && other) other.value='';
+  if(pieceNo===1 && tmPiece1ThicknessDecision!==choice) tmPiece1ThicknessDecision='';
+  if(pieceNo===1 && (choice==='2 cm'||choice==='3 cm')) tmAskPiece1DefaultThickness(choice);
+  if(pieceNo===1 && !choice){const q=document.getElementById('tmThicknessDefaultQuestion');if(q)q.classList.add('hidden');}
+  if(typeof refreshLivePieceDrawing==='function') refreshLivePieceDrawing();
+}
+function tmValidateOtherThickness(input){
+  const value=String(input?.value||'').trim();
+  if(value && tmParseThickness(value)===null){
+    input.setCustomValidity('Enter a decimal or fraction, such as 1.5 or 1 1/2.');
+  }else{
+    input.setCustomValidity('');
+    if(pieceNo===1 && value) tmAskPiece1DefaultThickness(value);
+  }
+  if(typeof refreshLivePieceDrawing==='function') refreshLivePieceDrawing();
+}
+function tmCurrentPieceThickness(){
+  const sel=document.getElementById('pthick');
+  if(!sel) return '';
+  if(String(sel.value)==='Other'){
+    return String(document.getElementById('pthickOther')?.value||'').trim();
+  }
+  return String(sel.value||'').trim();
+}
 function resetPieceForm(){
   const aob=document.getElementById('addOutletBtn'); if(aob)aob.textContent='+ ADD OUTLET / CUTOUT';
   len.value=''; ht.value=''; rightHt.value='';
+  const pt=document.getElementById('pthick'); if(pt)pt.value='';  const pto=document.getElementById('pthickOther'); if(pto)pto.value=''; const ptow=document.getElementById('pthickOtherWrap'); if(ptow)ptow.style.display='none'; const tdq=document.getElementById('tmThicknessDefaultQuestion'); if(tdq)tdq.classList.add('hidden');
+  const tfo=document.getElementById('topFitOffset'); if(tfo)tfo.value='';
+  const tfc=document.getElementById('topFitCustom'); if(tfc)tfc.value='';
+  tmTopOffsetChanged();
   document.getElementById('rightHeightWrap')?.classList.add('hidden');
   adjustments.innerHTML=''; outlets.innerHTML='';
+  const ba=document.getElementById('bottomAdjustments'); if(ba) ba.innerHTML='';
+  const fh=document.getElementById('faucetHoles'); if(fh) fh.innerHTML='';
+  const spl=document.getElementById('stopPolishes'); if(spl) spl.innerHTML='';
   const nb=document.getElementById('notches'); if(nb) nb.innerHTML='';
   const anb=document.getElementById('addNotchBtn'); if(anb) anb.textContent='+ ADD NOTCH';
   const rc=document.getElementById('radiusCorners'); if(rc) rc.innerHTML='';
@@ -1019,10 +1320,23 @@ function deleteCurrentPiece(){
 function nextPiece(){
   editingPieceIndex=null;
   pieceNo++;
+  // A new piece must not inherit any Piece Review/detail state from the prior piece.
+  window.currentReviewPiece=null;
+  window.editingReviewExtras=null;
+  resetPieceForm();
+  const ba=document.getElementById('bottomAdjustments'); if(ba) ba.innerHTML='';
+  const ta=document.getElementById('adjustments'); if(ta) ta.innerHTML='';
+  const ob=document.getElementById('outlets'); if(ob) ob.innerHTML='';
+  const fh=document.getElementById('faucetHoles'); if(fh) fh.innerHTML='';
+  const spl=document.getElementById('stopPolishes'); if(spl) spl.innerHTML='';
+  const pn=document.getElementById('pieceNotes'); if(pn) pn.innerHTML='';
+  const review=document.getElementById('review'); if(review) review.classList.add('hidden');
   document.getElementById('finish').classList.add('hidden');
   document.getElementById('piece').classList.remove('hidden');
   pieceTitle.textContent='Piece '+pieceNo;
-  resetPieceForm();
+  // The established default thickness is the ONLY piece-specific value carried forward.
+  tmApplyDefaultThicknessToPiece();
+  if(typeof refreshLivePieceDrawing==='function') refreshLivePieceDrawing();
 }
 let allPiecesReturn='finish';
 function viewAllPieces(from){
@@ -1057,6 +1371,23 @@ function editSavedPiece(i){
   len.value=p.length||'';
   ht.value=p.height||'';
   rightHt.value=p.rightHeight||p.height||'';
+  const editThickness=document.getElementById('pthick');
+  const editOther=document.getElementById('pthickOther');
+  if(editThickness){
+    const savedThickness=String(p.thickness||'');
+    if(savedThickness==='2 CM' || savedThickness==='2 cm'){
+      editThickness.value='2 cm';
+    }else if(savedThickness==='3 CM' || savedThickness==='3 cm'){
+      editThickness.value='3 cm';
+    }else if(savedThickness){
+      editThickness.value='Other';
+      if(editOther) editOther.value=savedThickness;
+      const ow=document.getElementById('pthickOtherWrap'); if(ow) ow.style.display='block';
+    }else{
+      editThickness.value='';
+    }
+    tmPieceThicknessChanged(editThickness);
+  }
 
   const bottomPtsSaved=(p.adj||[]).filter(a=>String(a.edge).toLowerCase()==='bottom');
   if(bottomPtsSaved.length){
@@ -1190,7 +1521,7 @@ function tmJobData(){
     job:{
       workOrder:val('wo'), jobName:val('jobname'), jobNumber:val('jobnum'),
       stoneColor:val('stone'), measurementType:val('measureType'),
-      thickness:val('thick'), allSameThickness:val('allsame')
+      thickness:val('thick'), customThickness:val('jobThickOther'), defaultThickness:tmDefaultThickness, allSameThickness:val('allsame')
     },
     pieces:pieces
   };
@@ -1198,9 +1529,15 @@ function tmJobData(){
 function saveJobFile(){
   if(!pieces.length){alert('Approve at least one piece before saving the job.');return;}
   savePieces();
-  const d=tmJobData(), base=tmSafeName(d.job.workOrder||d.job.jobNumber||d.job.jobName);
+  const d=tmJobData();
+  const suggested=[d.job.jobName,d.job.jobNumber?('#'+d.job.jobNumber):''].filter(Boolean).join(' ').trim() || d.job.workOrder || 'Tru Measure Job';
+  const entered=window.prompt('Enter Job File Name:',suggested);
+  if(entered===null)return;
+  const clean=String(entered).trim();
+  if(!clean){alert('Enter a job file name before saving.');return;}
+  const base=tmSafeName(clean);
   tmDownload(base+'_TruMeasure.json',JSON.stringify(d,null,2),'application/json');
-  const s=document.getElementById('sendStatus'); if(s)s.textContent='Job file saved. This file can be loaded back into Tru Measure later.';
+  const s=document.getElementById('sendStatus'); if(s)s.textContent='Job file saved as '+clean+'. This file can be loaded back into Tru Measure later.';
 }
 function loadJobFile(input){
   const f=input.files&&input.files[0]; if(!f)return;
@@ -1213,7 +1550,8 @@ function loadJobFile(input){
       const j=d.job||{};
       const set=(id,v)=>{const e=document.getElementById(id);if(e&&v!=null)e.value=v;};
       set('wo',j.workOrder);set('jobname',j.jobName);set('jobnum',j.jobNumber);set('stone',j.stoneColor);
-      set('measureType',j.measurementType);set('thick',j.thickness);set('allsame',j.allSameThickness);
+      set('measureType',j.measurementType);set('thick',j.thickness);set('jobThickOther',j.customThickness||'');set('allsame',j.allSameThickness);
+      tmDefaultThickness=String(j.defaultThickness||((j.thickness==='2 cm'||j.thickness==='3 cm')?j.thickness:(j.customThickness||'')));tmJobThicknessChanged(document.getElementById('thick'));
       pieceNo=(pieces.reduce((m,p)=>Math.max(m,Number(p.pieceNo)||0),0)||0)+1;
       showJobHome();
       alert('Job loaded: '+pieces.length+' completed piece'+(pieces.length===1?'':'s')+'.');
@@ -1246,6 +1584,14 @@ function tmRenderedSvgElement(p){
   try{
     window.currentReviewPiece=null;
     window.draw(p);
+
+    // V1.7.4: make all production PDF drawing annotations 3x larger.
+    // This changes text only; piece geometry and drawing scale remain unchanged.
+    temp.querySelectorAll('text').forEach(t=>{
+      const raw=t.getAttribute('font-size');
+      const size=parseFloat(raw||getComputedStyle(t).fontSize||'12');
+      if(Number.isFinite(size)&&size>0)t.setAttribute('font-size',String(size*3));
+    });
 
     // Measure the ACTUAL rendered content rather than exporting the full 720x500 canvas.
     let b=null;
@@ -1358,7 +1704,7 @@ function tmPairAreaFractions(pair){
 }
 function tmJobCommonPdfScale(){
   // Printable geometry allowance inside each half-page slot.
-  const maxWIn=10.05, maxHIn=3.08;
+  const maxWIn=10.05, maxHIn=1.92;
   let scale=Infinity;
   pieces.forEach(p=>{
     const b=tmPiecePhysicalBounds(p);
@@ -1416,9 +1762,9 @@ function buildPDFPreview(){
   const val=id=>document.getElementById(id)?.value||'';
   const commonScale=tmJobCommonPdfScale();
 
-  for(let pageStart=0;pageStart<pieces.length;pageStart+=2){
-    const pair=pieces.slice(pageStart,pageStart+2);
-    const fracs=tmPairAreaFractions(pair);
+  for(let pageStart=0;pageStart<pieces.length;pageStart+=3){
+    const pair=pieces.slice(pageStart,pageStart+3);
+    const fracs=pair.map(()=>1/pair.length);
     const sheet=document.createElement('div');sheet.className='tmPdfSheet';
     sheet.innerHTML='<div class="tmPdfJobHeader"><h3>TRU MEASURE — PIECE DRAWINGS</h3>'+
       '<div><strong>Work Order:</strong> '+tmEsc(val('wo'))+
@@ -1431,7 +1777,7 @@ function buildPDFPreview(){
     pair.forEach((p,j)=>{
       const i=pageStart+j;
       const piece=document.createElement('div');piece.className='tmPdfPreviewPiece tmPdfRelativePiece';
-      piece.style.height=(pair.length===1?94:94*fracs[j])+'%';
+      piece.style.height=(94*fracs[j])+'%';
       piece.innerHTML='<div class="tmPdfPieceHead"><strong>Piece '+tmEsc(p.pieceNo||i+1)+'</strong>'+
         '<span>REFERENCE DRAWING — DO NOT SCALE — USE DIMENSIONS SHOWN</span></div>'+
         '<div class="tmPdfScaledStage"></div>';
@@ -1445,7 +1791,7 @@ function buildPDFPreview(){
       const geomW=Math.max(0.35,phys.w*commonScale), geomH=Math.max(0.20,phys.h*commonScale);
       let drawW=Math.min(10.40,geomW+0.40);
       // preview slot height follows the same relative allocation as the PDF
-      const slotH=pair.length===1?7.55:7.55*fracs[j];
+      const slotH=7.55*fracs[j];
       let drawH=Math.min(Math.max(0.75,slotH-0.22),geomH+0.28);
       if(drawW/drawH>aspect)drawW=drawH*aspect; else drawH=drawW/aspect;
       rendered.style.width=(drawW/10.40*100)+'%';
@@ -1503,6 +1849,15 @@ async function savePreviewPDF(){
 }
 function printSavePDF(){previewPDF();}
 function saveJobPDF(){return printSavePDF();}
+function openRecipientScreen(){
+  if(!pieces.length){alert('Approve at least one piece before sending files.');return;}
+  document.getElementById('pdfPreview')?.classList.add('hidden');
+  document.getElementById('send')?.classList.remove('hidden');
+  const status=document.getElementById('sendStatus');
+  if(status) status.textContent='Enter or confirm the recipient, then use the file buttons below.';
+  window.scrollTo({top:0,left:0,behavior:'smooth'});
+  setTimeout(()=>document.getElementById('email')?.focus(),0);
+}
 function sendFilesToRecipient(){
   const recipient=(document.getElementById('email')?.value||'').trim();
   if(!recipient){alert('Enter a recipient email address first.');return;}
@@ -1534,34 +1889,212 @@ function tmTopPts(p){
   else if(pts[pts.length-1][0] < +p.length) pts.push([+p.length,pts[pts.length-1][1]]);
   return pts;
 }
-function tmDXFLine(a,b){
-  return '0\nLINE\n8\n0\n10\n'+a[0]+'\n20\n'+a[1]+'\n30\n0\n11\n'+b[0]+'\n21\n'+b[1]+'\n31\n0\n';
+function tmDXFLine(a,b,layer='CUT'){
+  return '0\nLINE\n8\n'+layer+'\n10\n'+a[0]+'\n20\n'+a[1]+'\n30\n0\n11\n'+b[0]+'\n21\n'+b[1]+'\n31\n0\n';
+}
+function tmDXFText(x,y,text,height=0.22,layer='TEXT',rot=0){
+  const clean=String(text??'').replace(/[\r\n]+/g,' ').replace(/[^\x20-\x7E]/g,'');
+  // V1.7.4: production DXF annotation text is intentionally 3x larger.
+  const productionTextHeight=(Number(height)||0.22)*3;
+  return '0\nTEXT\n8\n'+layer+'\n10\n'+x+'\n20\n'+y+'\n30\n0\n40\n'+productionTextHeight+'\n1\n'+clean+'\n50\n'+rot+'\n';
+}
+function tmDXFCircle(x,y,r,layer='HOLES'){
+  return '0\nCIRCLE\n8\n'+layer+'\n10\n'+x+'\n20\n'+y+'\n30\n0\n40\n'+r+'\n';
+}
+function tmDXFArc(cx,cy,r,a1,a2,layer='CUT'){
+  while(a1<0)a1+=360; while(a2<0)a2+=360; a1%=360; a2%=360;
+  return '0\nARC\n8\n'+layer+'\n10\n'+cx+'\n20\n'+cy+'\n30\n0\n40\n'+r+'\n50\n'+a1+'\n51\n'+a2+'\n';
+}
+function tmDXFInterp(pts,x){
+  const a=[...pts].sort((u,v)=>u[0]-v[0]);
+  if(x<=a[0][0])return a[0][1];
+  for(let i=0;i<a.length-1;i++){const p0=a[i],p1=a[i+1];if(x>=p0[0]&&x<=p1[0]){const d=p1[0]-p0[0];return d?p0[1]+(x-p0[0])*(p1[1]-p0[1])/d:p1[1];}}
+  return a[a.length-1][1];
+}
+function tmDXFFinishedPerimeter(p){
+  const L=+p.length||0, fit=Math.max(0,+p.topFitOffset||0);
+  let top=tmTopPts(p).map(q=>[q[0],q[1]-fit]);
+  const bot=tmBottomPts(p);
+  function getN(end,from){const a=(p.notches||[]).filter(n=>n.end===end&&n.from===from);return a.length?a[a.length-1]:null;}
+  const lt=getN('Left','Top'),lb=getN('Left','Bottom'),rt=getN('Right','Top'),rb=getN('Right','Bottom');
+  let tf=top.slice();
+  if(lt){const x=Math.abs(+lt.inside||0),ey=tmDXFInterp(top,x),iy=ey-Math.abs(+lt.far||0);tf=top.filter(q=>q[0]>x+1e-9);tf.unshift([0,iy],[x,iy],[x,ey]);}
+  if(rt){const x=L-Math.abs(+rt.inside||0),ey=tmDXFInterp(top,x),iy=ey-Math.abs(+rt.far||0);tf=tf.filter(q=>q[0]<x-1e-9);tf.push([x,ey],[x,iy],[L,iy]);}
+  let bf=bot.slice().reverse();
+  if(rb){const x=L-Math.abs(+rb.inside||0),ey=tmDXFInterp(bot,x),iy=ey+Math.abs(+rb.far||0);bf=bot.slice().reverse().filter(q=>q[0]<x-1e-9);bf.unshift([L,iy],[x,iy],[x,ey]);}
+  if(lb){const x=Math.abs(+lb.inside||0),ey=tmDXFInterp(bot,x),iy=ey+Math.abs(+lb.far||0);bf=bf.filter(q=>q[0]>x+1e-9);bf.push([x,ey],[x,iy],[0,iy]);}
+  const pts=[...tf,...bf];
+  for(let i=pts.length-1;i>0;i--)if(Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1])<1e-8)pts.splice(i,1);
+  if(pts.length>2&&Math.hypot(pts[0][0]-pts.at(-1)[0],pts[0][1]-pts.at(-1)[1])<1e-8)pts.pop();
+  return pts;
+}
+function tmDXFRadiusMap(p,pts){
+  const out={};
+  function near(target){let bi=-1,bd=1e9;pts.forEach((q,i)=>{const d=Math.hypot(q[0]-target[0],q[1]-target[1]);if(d<bd){bd=d;bi=i;}});return bd<1e-3?bi:-1;}
+  const top=tmTopPts(p).map(q=>[q[0],q[1]-Math.max(0,+p.topFitOffset||0)]),bot=tmBottomPts(p),L=+p.length||0;
+  (p.radii||[]).forEach(r=>{let t=null,R=+r.radius||0;if(!R)return;
+    if(r.corner==='Top Left')t=[0,tmDXFInterp(top,0)]; else if(r.corner==='Top Right')t=[L,tmDXFInterp(top,L)];
+    else if(r.corner==='Bottom Right')t=[L,tmDXFInterp(bot,L)]; else if(r.corner==='Bottom Left')t=[0,tmDXFInterp(bot,0)];
+    if(t){const i=near(t);if(i>=0)out[i]=R;}
+  }); return out;
+}
+function tmDXFPerimeterEntities(p){
+  const pts=tmDXFFinishedPerimeter(p), n=pts.length, rm=tmDXFRadiusMap(p,pts); if(n<2)return '';
+  const fil=new Array(n).fill(null);
+  for(let i=0;i<n;i++){
+    const R=rm[i]; if(!R)continue;
+    const prev=pts[(i-1+n)%n],c=pts[i],next=pts[(i+1)%n];
+    const vp=[prev[0]-c[0],prev[1]-c[1]],vn=[next[0]-c[0],next[1]-c[1]],lp=Math.hypot(...vp),ln=Math.hypot(...vn);
+    if(lp<1e-9||ln<1e-9)continue;
+    const up=[vp[0]/lp,vp[1]/lp],un=[vn[0]/ln,vn[1]/ln];
+    const theta=Math.acos(Math.max(-1,Math.min(1,up[0]*un[0]+up[1]*un[1]))),cut=R/Math.tan(theta/2);
+    if(!Number.isFinite(cut)||cut<=0||cut>lp||cut>ln)continue;
+    const a=[c[0]+up[0]*cut,c[1]+up[1]*cut],b=[c[0]+un[0]*cut,c[1]+un[1]*cut];
+    const bis=[up[0]+un[0],up[1]+un[1]],bl=Math.hypot(...bis); if(bl<1e-9)continue;
+    const cd=R/Math.sin(theta/2),ctr=[c[0]+bis[0]/bl*cd,c[1]+bis[1]/bl*cd];
+    let aa=Math.atan2(a[1]-ctr[1],a[0]-ctr[0])*180/Math.PI,ab=Math.atan2(b[1]-ctr[1],b[0]-ctr[0])*180/Math.PI;
+    aa=(aa+360)%360; ab=(ab+360)%360;
+    // DXF ARC is counter-clockwise. Use the minor arc between tangent points so
+    // bottom-right and other outside corners cannot sweep around the long way.
+    if(((ab-aa+360)%360)>180){const z=aa;aa=ab;ab=z;}
+    fil[i]={a,b,ctr,R,aa,ab};
+  }
+  let e='';
+  for(let i=0;i<n;i++){
+    const j=(i+1)%n;
+    const from=fil[i]?fil[i].b:pts[i];
+    const to=fil[j]?fil[j].a:pts[j];
+    e+=tmDXFLine(from,to,'CUT');
+    if(fil[j]) e+=tmDXFArc(fil[j].ctr[0],fil[j].ctr[1],fil[j].R,fil[j].aa,fil[j].ab,'CUT');
+  }
+  return e;
+}
+function tmDXFDimH(x1,x2,y,offset,label){
+  const dy=y+offset, tick=.10;
+  return tmDXFLine([x1,y],[x1,dy],'DIMENSIONS')+tmDXFLine([x2,y],[x2,dy],'DIMENSIONS')+
+    tmDXFLine([x1,dy],[x2,dy],'DIMENSIONS')+tmDXFLine([x1,dy-tick],[x1,dy+tick],'DIMENSIONS')+
+    tmDXFLine([x2,dy-tick],[x2,dy+tick],'DIMENSIONS')+tmDXFText((x1+x2)/2,dy+(offset>=0?.12:-.24),label,.16,'DIMENSIONS');
+}
+function tmDXFDimV(x,y1,y2,offset,label){
+  const dx=x+offset,tick=.10;
+  return tmDXFLine([x,y1],[dx,y1],'DIMENSIONS')+tmDXFLine([x,y2],[dx,y2],'DIMENSIONS')+
+    tmDXFLine([dx,y1],[dx,y2],'DIMENSIONS')+tmDXFLine([dx-tick,y1],[dx+tick,y1],'DIMENSIONS')+
+    tmDXFLine([dx-tick,y2],[dx+tick,y2],'DIMENSIONS')+tmDXFText(dx+(offset>=0?.16:-.16),(y1+y2)/2,label,.16,'DIMENSIONS',90);
+}
+function tmDXFSelectedPolishSegments(p,edge){
+  const raw=(p.stopPolishes||[]).filter(s=>s.edge===edge).map(s=>({...s,pos:spPosition(s,p)})).sort((a,b)=>a.pos-b.pos);
+  if(!raw.length)return [];
+  const L=+p.length||0, max=(edge==='Top'||edge==='Bottom')?L:(tmDXFInterp(tmTopPts(p),edge==='Left'?0:L)-tmBottomAt(p,edge==='Left'?0:L));
+  const cuts=[0,...raw.map(s=>s.pos),max], selected=[];
+  raw.forEach((sp,i)=>{if(sp.polish==='Before SP'||sp.polish==='Both')selected.push([cuts[i],cuts[i+1]]);if(sp.polish==='After SP'||sp.polish==='Both')selected.push([cuts[i+1],cuts[i+2]]);});
+  return selected;
 }
 function tmDXFForPiece(p){
-  // Production-safe scope for this version: adjusted top/bottom planes and square end edges.
-  // Notches/radii are deliberately blocked below rather than exporting incorrect CNC geometry.
-  let e='';
-  const top=tmTopPts(p), bot=tmBottomPts(p);
-  for(let i=0;i<top.length-1;i++)e+=tmDXFLine(top[i],top[i+1]);
-  e+=tmDXFLine(top[top.length-1],bot[bot.length-1]);
-  for(let i=bot.length-1;i>0;i--)e+=tmDXFLine(bot[i],bot[i-1]);
-  e+=tmDXFLine(bot[0],top[0]);
-  // Single Horizontal outlet geometry is already confirmed in inches ($INSUNITS=1).
+  let e=tmDXFPerimeterEntities(p), L=+p.length||0, fit=Math.max(0,+p.topFitOffset||0);
+  const top=tmTopPts(p).map(q=>[q[0],q[1]-fit]), bot=tmBottomPts(p);
+  const leftB=tmBottomAt(p,0),rightB=tmBottomAt(p,L),leftT=tmDXFInterp(top,0),rightT=tmDXFInterp(top,L);
+
+  // Outlet/cutout geometry and center dimensions. No extra OUTLET 1 text.
   (p.outs||[]).forEach(o=>{
-    const ox=+o.x||0, oy=tmBottomAt(p,ox)+(+o.y||0);
-    SINGLE_HORIZONTAL_GEOM.forEach(g=>{
-      if(g.t==='L')e+=tmDXFLine([ox+g.x1,oy+g.y1],[ox+g.x2,oy+g.y2]);
-      else if(g.t==='A')e+='0\nARC\n8\n0\n10\n'+(ox+g.cx)+'\n20\n'+(oy+g.cy)+'\n30\n0\n40\n'+g.r+'\n50\n'+g.a1+'\n51\n'+g.a2+'\n';
-    });
+    const ox=+o.x||0,oy=tmBottomAt(p,ox)+(+o.y||0);
+    SINGLE_HORIZONTAL_GEOM.forEach(g=>{if(g.t==='L')e+=tmDXFLine([ox+g.x1,oy+g.y1],[ox+g.x2,oy+g.y2],'OUTLETS');else if(g.t==='A')e+=tmDXFArc(ox+g.cx,oy+g.cy,g.r,g.a1,g.a2,'OUTLETS');});
   });
-  return '0\nSECTION\n2\nHEADER\n9\n$INSUNITS\n70\n1\n0\nENDSEC\n0\nSECTION\n2\nENTITIES\n'+e+'0\nENDSEC\n0\nEOF\n';
+
+  // Faucet holes and their center dimensions.
+  (p.faucetHoles||[]).forEach((h,i)=>{
+    const fromRight=String(h.ref||'Left').toLowerCase()==='right', x=fromRight?L-(+h.x||0):(+h.x||0),y=+h.y||0,d=+h.diameter||0;
+    e+=tmDXFCircle(x,y,d>0?d/2:.0625,'HOLES');
+    e+=tmDXFText(x+(d/2+.12),y,'H'+(h.number||i+1),.16,'TEXT');
+  });
+
+  // Stop Polish: slash starts on edge, SP text is moved clearly off/below the edge,
+  // and each SP keeps its reference dimension.
+  (p.stopPolishes||[]).forEach(sp=>{
+    const d=Math.max(0,+sp.distance||0); let x=0,y=0;
+    if(sp.edge==='Top'||sp.edge==='Bottom'){x=sp.ref==='Left'?d:L-d;y=sp.edge==='Top'?tmDXFInterp(top,x):tmBottomAt(p,x);}
+    else{x=sp.edge==='Left'?0:L;const b=tmBottomAt(p,x),t=tmDXFInterp(top,x);y=sp.ref==='Bottom'?b+d:t-d;}
+    let a=[x,y],b=[x,y],tx=x,ty=y;
+    if(sp.edge==='Top'){b=[x+.18,y-.18];tx=x+.22;ty=y-.32;}
+    else if(sp.edge==='Bottom'){b=[x+.18,y+.18];tx=x+.22;ty=y-.38;}
+    else if(sp.edge==='Left'){b=[x+.18,y+.18];tx=x+.24;ty=y-.30;}
+    else {b=[x-.18,y+.18];tx=x-.50;ty=y-.30;}
+    e+=tmDXFLine(a,b,'MARKERS')+tmDXFText(tx,ty,'SP',.16,'TEXT');
+  });
+
+  // Polished-edge A designations, including SP-controlled segments.
+  ['Top','Bottom'].forEach(edge=>{
+    const seg=tmDXFSelectedPolishSegments(p,edge);
+    if(seg.length){seg.forEach(q=>{const x=(q[0]+q[1])/2,y=edge==='Top'?tmDXFInterp(top,x):tmBottomAt(p,x);e+=tmDXFText(x,y+(edge==='Top'?.28:-.38),'A',.24,'POLISH');});}
+    else if(edge==='Top'&&p.top==='Yes'){const x=L/2;e+=tmDXFText(x,tmDXFInterp(top,x)+.28,'A',.24,'POLISH');}
+  });
+  ['Left','Right'].forEach(edge=>{
+    const seg=tmDXFSelectedPolishSegments(p,edge), x=edge==='Left'?0:L;
+    if(seg.length)seg.forEach(q=>e+=tmDXFText(x+(edge==='Left'?-.35:.22),(q[0]+q[1])/2,'A',.24,'POLISH'));
+    else if(p.side===edge||p.side==='Both')e+=tmDXFText(x+(edge==='Left'?-.35:.22),(tmBottomAt(p,x)+tmDXFInterp(top,x))/2,'A',.24,'POLISH');
+  });
+
+  // Notch fabrication dimensions and identification.
+  (p.notches||[]).forEach((n,i)=>{
+    const inside=Math.abs(+n.inside||0),far=Math.abs(+n.far||0),isLeft=n.end==='Left',xEdge=isLeft?0:L,xIn=isLeft?inside:L-inside;
+    const edgeY=n.from==='Top'?tmDXFInterp(top,xIn):tmBottomAt(p,xIn),cutY=n.from==='Top'?edgeY-far:edgeY+far;
+    e+=tmDXFText((xEdge+xIn)/2,cutY+(n.from==='Top'?-.32:.22),'NOTCH '+(i+1),.16,'NOTES');
+  });
+
+  // Radius identification at the corresponding finished corner/notch corner.
+  (p.radii||[]).forEach(r=>{const R=+r.radius||0;if(!R)return;let x=L/2,y=(leftT+rightT)/2;
+    if(r.corner==='Top Left'){x=0;y=leftT;} else if(r.corner==='Top Right'){x=L;y=rightT;} else if(r.corner==='Bottom Right'){x=L;y=rightB;} else if(r.corner==='Bottom Left'){x=0;y=leftB;}
+    e+=tmDXFText(x+(x===0?.25:x===L?-.95:.2),y+(String(r.corner).startsWith('Bottom')?.28:-.42),'RADIUS',.16,'RADIUS');
+  });
+
+  const ys=tmDXFFinishedPerimeter(p).map(q=>q[1]), topY=(ys.length?Math.max(...ys):(+p.height||0))+1.35;
+  e+=tmDXFText(0,topY,'PIECE '+(p.pieceNo||''),.28,'TEXT');
+  e+=tmDXFText(0,topY-.35,'MATERIAL THICKNESS: '+(p.thickness||p.pieceThickness||'NOT SET'),.18,'TEXT');
+  if(fit>0)e+=tmDXFText(L/2,topY-.35,'FITTING OFFSET APPLIED',.18,'NOTES');
+  let ny=topY-.7;(p.notes||[]).forEach(n=>{e+=tmDXFText(0,ny,String(n.category||'NOTE').toUpperCase()+': '+String(n.text||''),.17,'NOTES');ny-=.25;});
+  return '0\nSECTION\n2\nHEADER\n9\n$ACADVER\n1\nAC1009\n9\n$INSUNITS\n70\n1\n0\nENDSEC\n0\nSECTION\n2\nENTITIES\n'+e+'0\nENDSEC\n0\nEOF\n';
+}
+function tmUseLastTestDrawing(){
+  const before=pieces.length;
+  loadPieces();
+  if(!pieces.length){alert('No saved test drawing was found in this browser yet. Approve a piece once and it will be available for repeated DXF testing.');return;}
+  pieceNo=Math.max(...pieces.map((p,i)=>Number(p.pieceNo)||i+1))+1;
+  const s=document.getElementById('sendStatus'); if(s)s.textContent='Loaded '+pieces.length+' saved piece'+(pieces.length===1?'':'s')+' for repeated PDF/DXF testing. You do not need to redraw it.';
+  if(typeof showJobHome==='function')showJobHome();
+}
+function tmDXFEntityBody(dxf){
+  const a='0\nSECTION\n2\nENTITIES\n', b='0\nENDSEC\n0\nEOF\n';
+  const i=dxf.indexOf(a); if(i<0)return '';
+  const start=i+a.length, end=dxf.indexOf(b,start);
+  return dxf.slice(start,end<0?dxf.length:end);
+}
+function tmDXFTranslateX(body,dx){
+  const lines=body.split('\n');
+  for(let i=0;i<lines.length-1;i++){
+    const code=lines[i].trim();
+    if(code==='10'||code==='11'||code==='12'||code==='13'){
+      const n=Number(lines[i+1]); if(Number.isFinite(n))lines[i+1]=String(n+dx);
+    }
+  }
+  return lines.join('\n');
+}
+function tmDXFForJob(){
+  let body='', xOffset=0;
+  pieces.forEach((p,i)=>{
+    body+=tmDXFTranslateX(tmDXFEntityBody(tmDXFForPiece(p)),xOffset);
+    const pts=tmDXFFinishedPerimeter(p);
+    const xs=pts.map(q=>q[0]);
+    const width=xs.length?Math.max(...xs)-Math.min(...xs):(+p.length||0);
+    xOffset+=Math.max(width,+p.length||0)+6;
+  });
+  return '0\nSECTION\n2\nHEADER\n9\n$ACADVER\n1\nAC1009\n9\n$INSUNITS\n70\n1\n0\nENDSEC\n0\nSECTION\n2\nENTITIES\n'+body+'0\nENDSEC\n0\nEOF\n';
 }
 function downloadDXFFiles(){
-  if(!pieces.length){alert('Approve at least one piece before creating DXF files.');return;}
+  if(!pieces.length){alert('Approve at least one piece before creating the DXF file.');return;}
   const val=id=>document.getElementById(id)?.value||'';
-  const base=tmSafeName(val('wo')||val('jobnum')||val('jobname'));
-  pieces.forEach((p,i)=>tmDownload(base+'_Piece_'+tmSafeName(p.pieceNo||i+1)+'.dxf',tmDXFForPiece(p),'application/dxf'));
-  const s=document.getElementById('sendStatus');if(s)s.textContent=pieces.length+' DXF file'+(pieces.length===1?'':'s')+' downloaded in inches (1:1).';
+  const jobName=String(val('jobname')).trim(), jobNumber=String(val('jobnum')).trim();
+  const displayBase=[jobName,jobNumber?('#'+jobNumber):''].filter(Boolean).join(' ').trim() || String(val('wo')).trim() || 'Tru Measure Job';
+  tmDownload(displayBase+'.dxf',tmDXFForJob(),'application/dxf');
+  const s=document.getElementById('sendStatus');if(s)s.textContent='One consolidated DXF downloaded with '+pieces.length+' approved piece'+(pieces.length===1?'':'s')+', separated for CAD/CNC use.';
 }
 function prepareFiles(){saveJobPDF();}
 
@@ -1648,7 +2181,7 @@ function drawPiece(){
   // Basic dimensions and material thickness; no original construction rectangle is drawn.
   g+=`<text x="${vw/2}" y="24" text-anchor="middle" font-size="18">${tmEsc(W)}" LONG × ${tmEsc(H)}" HIGH</text>`;
   let thick='';
-  const thicknessIds=['pieceThickness','thickness','defaultThickness','materialThickness','jobThickness','matThickness'];
+  const thicknessIds=['pthick','thickness','defaultThickness','materialThickness','jobThickness','matThickness'];
   for(const id of thicknessIds){
     const el=document.getElementById(id);
     if(el && String(el.value||'').trim()){ thick=String(el.value).trim(); break; }
@@ -1928,7 +2461,23 @@ window.draw = function(p){
   const hasRequestedRadius=(p.radii||[]).some(r=>(+r.radius||0)>0);
   const hasRadiusArc=/\sA\s/.test(perimeterD);
   
+  const fitOffset=(p.topFitOffset===null||p.topFitOffset===undefined)?null:Math.max(0,+p.topFitOffset||0);
   let g=`<path d="${perimeterD}" fill="none" stroke="black" stroke-width="2"/>`;
+
+  // Top-edge fit offset visualization:
+  // original measured top stays dashed; finished fabrication top is solid and offset downward.
+  if(fitOffset!==null && fitOffset>0){
+    const originalTopPts=topPts.map(q=>[q[0],q[1]]);
+    const finishedTopPts=topPts.map(q=>[q[0],q[1]-fitOffset]);
+    const topPath=pts=>pts.map((q,i)=>(i?'L ':'M ')+X(q[0])+' '+Y(q[1])).join(' ');
+    // Cover the original solid top from the perimeter, then redraw it dashed.
+    g+=`<path d="${topPath(originalTopPts)}" fill="none" stroke="white" stroke-width="5"/>`;
+    g+=`<path d="${topPath(originalTopPts)}" fill="none" stroke="none" stroke-width="0"/>`;
+    // Finished fabrication edge.
+    g+=`<path d="${topPath(finishedTopPts)}" fill="none" stroke="black" stroke-width="2.5"/>`;
+
+    // Offset dimension near the right side, from measured top to finished top.
+  }
 
   // V1.5.08: guaranteed visible radius rendering.
   // Draw the radius directly over the selected finished corner using the same
@@ -1951,8 +2500,21 @@ window.draw = function(p){
     const sweep=turn>0?0:1;
 
     // Erase only the sharp corner legs, then draw the two tangent endpoints and arc.
+    // For a top fit offset, shift the visible top-corner radius with the finished top edge.
+    const tmTopRadiusShift=(fitOffset!==null && fitOffset>0 && (req.name==='Top Left'||req.name==='Top Right')) ? (fitOffset*k) : 0;
+    if(tmTopRadiusShift>0){
+      // Mask only the old radius arc/corner footprint; no visible erase stroke.
+      const maskPad=4;
+      const mx=Math.min(X(a[0]),X(c[0]),X(b[0]))-maskPad;
+      const my=Math.min(Y(a[1]),Y(c[1]),Y(b[1]))-maskPad;
+      const mw=Math.max(X(a[0]),X(c[0]),X(b[0]))-mx+maskPad;
+      const mh=Math.max(Y(a[1]),Y(c[1]),Y(b[1]))-my+maskPad;
+      g+=`<rect x="${mx}" y="${my}" width="${mw}" height="${mh}" fill="white"/>`;
+    }
+    g+=`<g transform="translate(0 ${tmTopRadiusShift})">`;
     g+=`<path d="M ${X(a[0])} ${Y(a[1])} L ${X(c[0])} ${Y(c[1])} L ${X(b[0])} ${Y(b[1])}" fill="none" stroke="white" stroke-width="5" stroke-linecap="square" stroke-linejoin="miter"/>`;
     g+=`<path d="M ${X(a[0])} ${Y(a[1])} A ${req.r*k} ${req.r*k} 0 0 ${sweep} ${X(b[0])} ${Y(b[1])}" fill="none" stroke="black" stroke-width="2"/>`;
+    g+=`</g>`;
   });
 // Radius callouts on the review drawing.
   (p.radii||[]).forEach(r=>{
@@ -1965,8 +2527,8 @@ window.draw = function(p){
     else { const ng=notchRadiusGeometry(r.corner,p); if(ng) targetPt=ng.c; }
     if(!targetPt) return;
     let x=0,y=0,dx=0,dy=0;
-    if(r.corner==='Top Left'){x=0;y=leftH;dx=R*.72;dy=-R*.72;}
-    if(r.corner==='Top Right'){x=p.length;y=rightH;dx=-R*.72;dy=-R*.72;}
+    if(r.corner==='Top Left'){x=0;y=leftH-((fitOffset!==null&&fitOffset>0)?fitOffset:0);dx=R*.72;dy=-R*.72;}
+    if(r.corner==='Top Right'){x=p.length;y=rightH-((fitOffset!==null&&fitOffset>0)?fitOffset:0);dx=-R*.72;dy=-R*.72;}
     if(r.corner==='Bottom Left'){x=0;y=bottomAt(0);dx=R*.72;dy=R*.72;}
     if(r.corner==='Bottom Right'){x=p.length;y=bottomAt(p.length);dx=-R*.72;dy=R*.72;}
     if(/^Notch \d+ - (Lower Outside Corner|Inside Corner|Upper Outside Corner)$/.test(r.corner)){
@@ -2063,7 +2625,7 @@ window.draw = function(p){
       <path d="M ${dx-4} ${datumY-7} L ${dx} ${datumY} L ${dx+4} ${datumY-7}"/>
       <path d="M ${dx-4} ${cy+7} L ${dx} ${cy} L ${dx+4} ${cy+7}"/>
     </g>`;
-    g+=`<text x="${dx-7}" y="${(datumY+cy)/2}" text-anchor="middle" font-size="12" font-weight="600" transform="rotate(-90 ${dx-7} ${(datumY+cy)/2})">${fmtDim(rise)}" BOTTOM TO C/L</text>`;
+    g+=`<text x="${dx-7}" y="${(datumY+cy)/2}" text-anchor="middle" font-size="12" font-weight="600" transform="rotate(-90 ${dx-7} ${(datumY+cy)/2})">${fmtDim(rise)}"</text>`;
 
     // Horizontal dimension from LEFT edge to outlet centerline.
     const hDimY=cy+34+(i*16);
@@ -2074,7 +2636,7 @@ window.draw = function(p){
       <path d="M ${X(0)+7} ${hDimY-4} L ${X(0)} ${hDimY} L ${X(0)+7} ${hDimY+4}"/>
       <path d="M ${cx-7} ${hDimY-4} L ${cx} ${hDimY} L ${cx-7} ${hDimY+4}"/>
     </g>`;
-    g+=`<text x="${(X(0)+cx)/2}" y="${hDimY-6}" text-anchor="middle" font-size="12" font-weight="600">${fmtDim(ox)}" LEFT TO C/L</text>`;
+    g+=`<text x="${(X(0)+cx)/2}" y="${hDimY-6}" text-anchor="middle" font-size="12" font-weight="600">${fmtDim(ox)}"</text>`;
   });
 
   // Polished-edge A markers are attached to the FINAL adjusted perimeter.
@@ -2148,12 +2710,15 @@ window.draw = function(p){
     }
   });
 
-  // Thickness: piece override only when "all pieces same" is No; otherwise job-level thickness.
+  // Material thickness: when a piece has its own thickness, use that piece
+  // value first. This is especially important when editing a saved piece.
   const allsame=document.getElementById('allsame')?.value || 'Yes';
-  let thick = allsame==='No'
-      ? (document.getElementById('pthick')?.value || document.getElementById('thick')?.value || '')
-      : (document.getElementById('thick')?.value || '');
-  thick=String(thick).trim();
+  let thick = String(
+    (p && p.thickness) ||
+    document.getElementById('pthick')?.value ||
+    document.getElementById('thick')?.value ||
+    ''
+  ).trim();
   if(/^2\s*cm$/i.test(thick)) thick='2 CM';
   if(/^3\s*cm$/i.test(thick)) thick='3 CM';
 
@@ -2164,23 +2729,27 @@ window.draw = function(p){
   g+=`<line x1="${X(p.length)}" y1="${dimY-7}" x2="${X(p.length)}" y2="${dimY+7}" stroke="black" stroke-width="1"/>`;
   g+=`<text x="${X(p.length/2)}" y="${dimY-7}" text-anchor="middle" font-size="16" font-weight="600">${tmEsc(p.length)}"</text>`;
 
+  // Finished top endpoints used by the displayed height dimensions.
+  const tmFinishedLeftH=leftH-((fitOffset!==null&&fitOffset>0)?fitOffset:0);
+  const tmFinishedRightH=rightH-((fitOffset!==null&&fitOffset>0)?fitOffset:0);
+
   // V1.5.08: clear LEFT-SIDE height dimension, outside the piece.
   const dimX=X(0)-42;
   g+=`<line x1="${X(0)}" y1="${Y(0)}" x2="${dimX-8}" y2="${Y(0)}" stroke="black" stroke-width="0.9"/>`;
-  g+=`<line x1="${X(0)}" y1="${Y(leftH)}" x2="${dimX-8}" y2="${Y(leftH)}" stroke="black" stroke-width="0.9"/>`;
-  g+=`<line x1="${dimX}" y1="${Y(0)}" x2="${dimX}" y2="${Y(leftH)}" stroke="black" stroke-width="1"/>`;
+  g+=`<line x1="${X(0)}" y1="${Y(tmFinishedLeftH)}" x2="${dimX-8}" y2="${Y(tmFinishedLeftH)}" stroke="black" stroke-width="0.9"/>`;
+  g+=`<line x1="${dimX}" y1="${Y(0)}" x2="${dimX}" y2="${Y(tmFinishedLeftH)}" stroke="black" stroke-width="1"/>`;
   g+=`<line x1="${dimX-7}" y1="${Y(0)}" x2="${dimX+7}" y2="${Y(0)}" stroke="black" stroke-width="1"/>`;
-  g+=`<line x1="${dimX-7}" y1="${Y(leftH)}" x2="${dimX+7}" y2="${Y(leftH)}" stroke="black" stroke-width="1"/>`;
-  g+=`<text x="${dimX-12}" y="${(Y(0)+Y(leftH))/2}" text-anchor="middle" font-size="16" font-weight="600" transform="rotate(-90 ${dimX-12} ${(Y(0)+Y(leftH))/2})">${tmEsc(leftH)}"</text>`;
+  g+=`<line x1="${dimX-7}" y1="${Y(tmFinishedLeftH)}" x2="${dimX+7}" y2="${Y(tmFinishedLeftH)}" stroke="black" stroke-width="1"/>`;
+  g+=`<text x="${dimX-12}" y="${(Y(0)+Y(tmFinishedLeftH))/2}" text-anchor="middle" font-size="16" font-weight="600" transform="rotate(-90 ${dimX-12} ${(Y(0)+Y(tmFinishedLeftH))/2})">${tmEsc(tmFmtOffset(tmFinishedLeftH))}"</text>`;
 
   // V1.5.08: RIGHT-SIDE height dimension, outside the piece.
   const rightDimX=X(p.length)+42;
   g+=`<line x1="${X(p.length)}" y1="${Y(0)}" x2="${rightDimX+8}" y2="${Y(0)}" stroke="black" stroke-width="0.9"/>`;
-  g+=`<line x1="${X(p.length)}" y1="${Y(rightH)}" x2="${rightDimX+8}" y2="${Y(rightH)}" stroke="black" stroke-width="0.9"/>`;
-  g+=`<line x1="${rightDimX}" y1="${Y(0)}" x2="${rightDimX}" y2="${Y(rightH)}" stroke="black" stroke-width="1"/>`;
+  g+=`<line x1="${X(p.length)}" y1="${Y(tmFinishedRightH)}" x2="${rightDimX+8}" y2="${Y(tmFinishedRightH)}" stroke="black" stroke-width="0.9"/>`;
+  g+=`<line x1="${rightDimX}" y1="${Y(0)}" x2="${rightDimX}" y2="${Y(tmFinishedRightH)}" stroke="black" stroke-width="1"/>`;
   g+=`<line x1="${rightDimX-7}" y1="${Y(0)}" x2="${rightDimX+7}" y2="${Y(0)}" stroke="black" stroke-width="1"/>`;
-  g+=`<line x1="${rightDimX-7}" y1="${Y(rightH)}" x2="${rightDimX+7}" y2="${Y(rightH)}" stroke="black" stroke-width="1"/>`;
-  g+=`<text x="${rightDimX+12}" y="${(Y(0)+Y(rightH))/2}" text-anchor="middle" font-size="16" font-weight="600" transform="rotate(-90 ${rightDimX+12} ${(Y(0)+Y(rightH))/2})">${tmEsc(rightH)}"</text>`;
+  g+=`<line x1="${rightDimX-7}" y1="${Y(tmFinishedRightH)}" x2="${rightDimX+7}" y2="${Y(tmFinishedRightH)}" stroke="black" stroke-width="1"/>`;
+  g+=`<text x="${rightDimX+12}" y="${(Y(0)+Y(tmFinishedRightH))/2}" text-anchor="middle" font-size="16" font-weight="600" transform="rotate(-90 ${rightDimX+12} ${(Y(0)+Y(tmFinishedRightH))/2})">${tmEsc(tmFmtOffset(tmFinishedRightH))}"</text>`;
 
   g+=`<text x="${m}" y="24" font-size="18" font-weight="700">PIECE ${tmEsc(document.getElementById('pieceTitle')?.textContent?.replace(/[^0-9-]/g,'')||'')}</text>`;
   g+=`<text x="${W-m}" y="24" text-anchor="end" font-size="18" font-weight="700">MATERIAL THICKNESS: ${tmEsc(thick||'NOT SET')}</text>`;
@@ -2244,13 +2813,10 @@ window.draw = function(p){
     }
   });
 
-  // V1.5.08: piece notes are kept outside the piece geometry.
-  // Place them in a dedicated note area at the lower-left of the drawing.
+  // V1.6.54: show piece notes directly under the piece number in the upper-left.
   if((p.notes||[]).length){
-    const noteX=18;
-    let ny=405;
-    g+=`<text x="${noteX}" y="${ny}" font-size="13" font-weight="700">PIECE NOTES</text>`;
-    ny+=17;
+    const noteX=m;
+    let ny=42;
     (p.notes||[]).forEach(n=>{
       const cat=tmEsc(String(n.category||'NOTE').toUpperCase());
       const txt=tmEsc(String(n.text||''));
@@ -2258,7 +2824,39 @@ window.draw = function(p){
       ny+=15;
     });
   }
-  s.innerHTML=g;
+    // Faucet holes — authoritative Piece Review / Piece 1 renderer.
+  (p.faucetHoles||[]).forEach((h,i)=>{
+    const actualX=String(h.ref||'Left').toLowerCase()==='right' ? p.length-(+h.x||0) : (+h.x||0);
+    const yy=+h.y||0;
+    const dia=+h.diameter||0;
+    const rr=Math.max(5,(dia>0?dia*k/2:6));
+    g+=`<circle cx="${X(actualX)}" cy="${Y(yy)}" r="${rr}" fill="none" stroke="black" stroke-width="2"/>`;
+    g+=`<line x1="${X(actualX)-7}" y1="${Y(yy)}" x2="${X(actualX)+7}" y2="${Y(yy)}" stroke="black"/>`;
+    g+=`<line x1="${X(actualX)}" y1="${Y(yy)-7}" x2="${X(actualX)}" y2="${Y(yy)+7}" stroke="black"/>`;
+    g+=`<text x="${X(actualX)}" y="${Y(yy)+rr+15}" text-anchor="middle" font-size="11">H${h.number||i+1}${dia?` • Ø${dia}&quot;`:''}</text>`;
+    // Horizontal dimension: selected side reference to hole center.
+    const fromRight=String(h.ref||'Left').toLowerCase()==='right';
+    const refX=fromRight?p.length:0;
+    const dimY=Math.max(-0.65, yy-0.55);
+    g+=`<line x1="${X(refX)}" y1="${Y(dimY)}" x2="${X(actualX)}" y2="${Y(dimY)}" stroke="black" stroke-width="1"/>`;
+    g+=`<line x1="${X(refX)}" y1="${Y(dimY)-5}" x2="${X(refX)}" y2="${Y(dimY)+5}" stroke="black"/>`;
+    g+=`<line x1="${X(actualX)}" y1="${Y(dimY)-5}" x2="${X(actualX)}" y2="${Y(dimY)+5}" stroke="black"/>`;
+    g+=`<text x="${(X(refX)+X(actualX))/2}" y="${Y(dimY)-5}" text-anchor="middle" font-size="11">${h.x}&quot; ${fromRight?'RIGHT':'LEFT'} TO C/L</text>`;
+    // Vertical dimension: bottom reference to hole center.
+    const dimX=actualX+(fromRight?-0.45:0.45);
+    g+=`<line x1="${X(dimX)}" y1="${Y(0)}" x2="${X(dimX)}" y2="${Y(yy)}" stroke="black" stroke-width="1"/>`;
+    g+=`<line x1="${X(dimX)-5}" y1="${Y(0)}" x2="${X(dimX)+5}" y2="${Y(0)}" stroke="black"/>`;
+    g+=`<line x1="${X(dimX)-5}" y1="${Y(yy)}" x2="${X(dimX)+5}" y2="${Y(yy)}" stroke="black"/>`;
+    g+=`<text x="${X(dimX)+(fromRight?-7:7)}" y="${(Y(0)+Y(yy))/2}" text-anchor="${fromRight?'end':'start'}" font-size="11">${h.y}&quot; BOTTOM TO C/L</text>`;
+  });
+  if(p.topFitOffset!==null && p.topFitOffset!==undefined){
+    const tmFinishedTopY=Math.min(Y(interpY(topPath,0)-(+p.topFitOffset||0)),Y(interpY(topPath,p.length)-(+p.topFitOffset||0)));
+    const tmOffsetNoteY=Math.max(16,tmFinishedTopY-(3*k));
+    g+=`<text x="${W/2}" y="${tmOffsetNoteY}" text-anchor="middle" font-size="13" font-weight="700">${tmEsc(tmFmtOffset(+p.topFitOffset||0))} FITTING OFFSET APPLIED</text>`;
+  }else{
+    g+=`<text x="${W/2}" y="${H-42}" text-anchor="middle" font-size="13" font-weight="700">INSTALLATION FITTING OFFSET: NOT SELECTED</text>`;
+  }
+s.innerHTML=g;
 };
 
 
@@ -2269,16 +2867,10 @@ document.addEventListener('change',function(e){
   if(e.target && (e.target.matches('.radiusCornerSel') || e.target.type==='number')) updateRadiusForceWarning();
 });
 
-function refreshLivePieceDrawing(){
+function tmBuildCanonicalPieceFromForm(){
   const L=+(document.getElementById('len')?.value||0);
   const H=+(document.getElementById('ht')?.value||0);
-  const wrap=document.getElementById('livePiecePreview');
-  const live=document.getElementById('liveDrawing');
-  if(!wrap||!live) return;
-  if(!(L>0&&H>0)){wrap.style.display='none';live.innerHTML='';return;}
-  wrap.style.display='block';
-
-  // Build a preview-only piece without touching or validating the live form.
+  if(!(L>0&&H>0)) return null;
   let adj=[];
   document.querySelectorAll('.adjust[data-edge="Bottom"]').forEach(group=>{
     let level=0;
@@ -2299,7 +2891,8 @@ function refreshLivePieceDrawing(){
     const rows=adj.filter(a=>a.edge==='Bottom').map(a=>[a.loc,a.height]);
     const pts=[[0,0],...rows,[L,rows.length?rows[rows.length-1][1]:0]].sort((a,b)=>a[0]-b[0]);
     for(let i=0;i<pts.length-1;i++) if(x>=pts[i][0]&&x<=pts[i+1][0]){
-      const dx=pts[i+1][0]-pts[i][0];return dx?pts[i][1]+(x-pts[i][0])*(pts[i+1][1]-pts[i][1])/dx:pts[i+1][1];
+      const dx=pts[i+1][0]-pts[i][0];
+      return dx?pts[i][1]+(x-pts[i][0])*(pts[i+1][1]-pts[i][1])/dx:pts[i+1][1];
     }
     return 0;
   };
@@ -2307,16 +2900,48 @@ function refreshLivePieceDrawing(){
     group.querySelectorAll('.planePoint').forEach((r,i)=>{
       const loc=parseFloat(r.querySelector('.pointLoc')?.value);
       const mh=parseFloat(r.querySelector('.pointHeight')?.value);
-      if(Number.isFinite(loc)&&Number.isFinite(mh)) adj.push({edge:'Top',loc,height:bottomAt(loc)+mh,measuredHeight:mh,isReference:i===0,dir:null,amt:null});
+      if(Number.isFinite(loc)&&Number.isFinite(mh))
+        adj.push({edge:'Top',loc,height:bottomAt(loc)+mh,measuredHeight:mh,isReference:i===0,dir:null,amt:null});
     });
   });
+  // Preserve the complete plane-adjustment set for the drawing renderer.
+  adj=adj.filter(a=>Number.isFinite(+a.loc)&&Number.isFinite(+a.height));
   const RH=parseFloat(document.getElementById('rightHt')?.value);
-  const p={length:L,height:H,rightHeight:Number.isFinite(RH)&&RH>0?RH:H,adj,notches:[],radii:[],outs:[],top:'No',side:'None'};
-  const reviewSvg=document.getElementById('drawing');
-  if(!reviewSvg||typeof window.draw!=='function') return;
-  reviewSvg.id='drawingReviewHold'; live.id='drawing';
-  try{ window.draw(p); }catch(e){}
-  finally{ live.id='liveDrawing'; reviewSvg.id='drawing'; }
+  const shared=window.currentReviewPiece||{};
+  // Build all detail-add data directly from the current Piece Details form so the
+  // live drawing updates before Review is opened.
+  const notes=[...document.querySelectorAll('#pieceNotes > .pieceNote')].map(x=>({id:x.dataset.noteId||'',category:x.querySelector('.noteType')?.value||'',text:(x.querySelector('.noteText')?.value||'').trim()})).filter(x=>x.text);
+  const stopPolishes=[...document.querySelectorAll('.stopPolish')].map(x=>({edge:x.querySelector('.spEdge')?.value||'',ref:x.querySelector('.spRef')?.value||'',distance:+(x.querySelector('.spDist')?.value||0),polish:x.querySelector('.spPolish')?.value||''}));
+  const notches=[...document.querySelectorAll('.notch')].map(x=>({end:x.querySelector('.notchEnd')?.value||'',inside:+(x.querySelector('.notchIn')?.value||0),from:x.querySelector('.notchFrom')?.value||'',far:+(x.querySelector('.notchHowFar')?.value||0)}));
+  const radii=[...document.querySelectorAll('.radiusCorner')].map(x=>({corner:x.querySelector('.radiusCornerSel')?.value||'',radius:+(x.querySelector('.radiusAmt')?.value||0)}));
+  const outs=[...document.querySelectorAll('.outlet')].map(x=>({x:+(x.querySelector('.ox')?.value||0),y:+(x.querySelector('.oy')?.value||0),type:x.querySelector('.otype')?.value||''}));
+  const faucetHoles=typeof tmReadFaucetHoles==='function'?tmReadFaucetHoles():[];
+  return {length:L,height:H,rightHeight:Number.isFinite(RH)&&RH>0?RH:H,thickness:tmCurrentPieceThickness(),adj,
+    topFitOffset:typeof tmTopFitOffsetValue==='function'?tmTopFitOffsetValue():null,
+    notches,radii,outs,faucetHoles,notes,stopPolishes,
+    top:(document.getElementById('topPol')?.value||shared.top||'No'),
+    side:(document.getElementById('sidePol')?.value||shared.side||'None')};
+}
+function tmDrawToTarget(p,target){
+  if(!p||!target||typeof window.draw!=='function') return;
+  const canonical=document.getElementById('drawing');
+  const oldId=target.id;
+  if(canonical && canonical!==target) canonical.id='drawingCanonicalHold';
+  target.id='drawing';
+  try{ window.draw(p); }
+  finally{
+    target.id=oldId;
+    if(canonical && canonical!==target) canonical.id='drawing';
+  }
+}
+function refreshLivePieceDrawing(){
+  const wrap=document.getElementById('livePiecePreview');
+  const live=document.getElementById('liveDrawing');
+  if(!wrap||!live) return;
+  const p=tmBuildCanonicalPieceFromForm();
+  if(!p){wrap.style.display='none';live.innerHTML='';return;}
+  wrap.style.display='block';
+  tmDrawToTarget(p,live);
 }
 document.addEventListener('input',function(e){
   if(e.target && e.target.closest && e.target.closest('#piece')) refreshLivePieceDrawing();
@@ -2324,8 +2949,130 @@ document.addEventListener('input',function(e){
 document.addEventListener('change',function(e){
   if(e.target && e.target.closest && e.target.closest('#piece')) refreshLivePieceDrawing();
 });
+
+function tmSyncPlaneAdjustments(){
+  try{
+    if(typeof refreshLivePieceDrawing==='function') refreshLivePieceDrawing();
+    if(typeof refreshReviewDrawing==='function') refreshReviewDrawing();
+  }catch(err){
+    console.error('Plane adjustment redraw:',err);
+  }
+}
+document.addEventListener('input',function(e){
+  if(e.target && e.target.closest && e.target.closest('.adjust')){
+    setTimeout(tmSyncPlaneAdjustments,0);
+  }
+},true);
+document.addEventListener('change',function(e){
+  if(e.target && e.target.closest && e.target.closest('.adjust')){
+    setTimeout(tmSyncPlaneAdjustments,0);
+  }
+},true);
+
 const _tmOldAddAdjustment=addAdjustment;
 addAdjustment=function(edge='Top'){const r=_tmOldAddAdjustment(edge);setTimeout(refreshLivePieceDrawing,0);return r;};
 const _tmOldAddNextPlanePoint=addNextPlanePoint;
 addNextPlanePoint=function(btn){const r=_tmOldAddNextPlanePoint(btn);setTimeout(refreshLivePieceDrawing,0);return r;};
+</script>
+<script>
+function tmSet(id,v){
+  const e=document.getElementById(id); if(!e)return;
+  e.value=v; e.dispatchEvent(new Event('input',{bubbles:true}));
+  e.dispatchEvent(new Event('change',{bubbles:true}));
+}
+function tmLoadTestJob(){
+  tmSet('jobname','Test Job');
+  tmSet('jobnum','1000');
+  tmSet('stone','UBA');
+  tmSet('thick','2 cm');
+  tmSet('allsame','Yes');
+
+  // Enter the real Piece 1 workflow.
+  startPiece();
+  tmSet('len','25');
+  tmSet('ht','4');
+  tmSet('topPol','Yes');
+  tmSet('sidePol','Both');
+
+  // Add the radius using the app's real radius control.
+  const rb=document.getElementById('radiusCorners');
+  if(rb) rb.innerHTML='';
+  addRadiusCorner('Top Left','1');
+
+  // Refresh the app's own live drawing.
+  if(typeof refreshLivePieceDrawing==='function') refreshLivePieceDrawing();
+  else if(typeof refreshReviewDrawing==='function') refreshReviewDrawing();
+
+  // Keep user at the actual piece screen.
+  const p=document.getElementById('piece');
+  if(p) p.classList.remove('hidden');
+  window.scrollTo({top:0,left:0,behavior:'auto'});
+}
+</script>
+<script>
+function tmOpenFaucetEntry(){
+  const entry=document.getElementById("tmFaucetEntry");
+  const btn=document.getElementById("openFaucetBtn");
+  if(entry) entry.style.display="block";
+  if(btn) btn.style.display="none";
+  const count=document.getElementById("tmFaucetCount");
+  if(count) count.focus();
+}
+function tmBuildFaucetHoles(){
+  const countEl=document.getElementById("tmFaucetCount");
+  const box=document.getElementById("faucetHoles");
+  if(!countEl || !box) return;
+  const old=[...box.querySelectorAll(".tmFaucetHoleRow")].map(row=>({
+    ref:row.querySelector(".tmFaucetRef")?.value||"Left",
+    x:row.querySelector(".tmFaucetX")?.value||"",
+    y:row.querySelector(".tmFaucetY")?.value||"",
+    d:row.querySelector(".tmFaucetDia")?.value||""
+  }));
+  let n=parseInt(countEl.value,10);
+  if(!Number.isFinite(n) || n<1) n=1;
+  if(n>12) n=12;
+  let html="";
+  for(let i=1;i<=n;i++){
+    const v=old[i-1]||{ref:"Left",x:"",y:"",d:""};
+    html += '<div class="detailCard tmFaucetHoleRow" data-hole="'+i+'" style="margin-top:10px;padding:12px">'
+      + '<h4 style="margin:0 0 10px">HOLE '+i+'</h4>'
+      + '<div class="row">'
+      + '<div><label>Reference Side</label><select class="tmFaucetRef" onchange="tmSyncFaucetDrawing()"><option value="Left"'+(v.ref==="Left"?" selected":"")+'>LEFT</option><option value="Right"'+(v.ref==="Right"?" selected":"")+'>RIGHT</option></select></div>'
+      + '<div><label>Side to Center</label><input class="tmFaucetX" type="number" min="0" step="0.0625" value="'+v.x+'" placeholder="inches" oninput="tmSyncFaucetDrawing()" onchange="tmSyncFaucetDrawing()"></div>'
+      + '</div>'
+      + '<div class="row">'
+      + '<div><label>Bottom to Center</label><input class="tmFaucetY" type="number" min="0" step="0.0625" value="'+v.y+'" placeholder="inches" oninput="tmSyncFaucetDrawing()" onchange="tmSyncFaucetDrawing()"></div>'
+      + '<div><label>Diameter</label><input class="tmFaucetDia" type="number" min="0" step="0.0625" value="'+v.d+'" placeholder="inches" oninput="tmSyncFaucetDrawing()" onchange="tmSyncFaucetDrawing()"></div>'
+      + '</div></div>';
+  }
+  box.innerHTML=html;
+  tmSyncFaucetDrawing();
+}
+function tmReadFaucetHoles(){
+  return [...document.querySelectorAll("#faucetHoles .tmFaucetHoleRow")].map((row,i)=>{
+    const ref=row.querySelector(".tmFaucetRef")?.value||"Left";
+    const xRaw=row.querySelector(".tmFaucetX")?.value??"";
+    const yRaw=row.querySelector(".tmFaucetY")?.value??"";
+    const dRaw=row.querySelector(".tmFaucetDia")?.value??"";
+    return {number:i+1,ref,xRaw,yRaw,dRaw};
+  }).filter(h=>h.xRaw!==""&&h.yRaw!=="").map(h=>({
+    number:h.number,ref:h.ref,x:+h.xRaw,y:+h.yRaw,diameter:h.dRaw===""?0:+h.dRaw
+  }));
+}
+function tmSyncFaucetDrawing(){
+  try{
+    const holes=tmReadFaucetHoles();
+    let p=window.currentReviewPiece;
+    if(!p){
+      p=data();
+      window.currentReviewPiece=p;
+    }
+    p.faucetHoles=holes;
+    const status=document.getElementById("tmFaucetStatus");
+    if(status) status.textContent=holes.length ? (holes.length+" faucet hole"+(holes.length===1?"":"s")+" shown on Piece Review drawing.") : "No positioned faucet holes yet.";
+    window.currentReviewPiece=p;
+    window.draw(p);
+    if(typeof refreshLivePieceDrawing==="function") refreshLivePieceDrawing();
+  }catch(e){ console.error("Faucet drawing update failed",e); }
+}
 </script></body></html>
