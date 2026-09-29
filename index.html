@@ -3,8 +3,8 @@
 <html>
 <head>
 <meta charset="utf-8"/><meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
-<!-- Tru Measure V1.7.4: 3x production PDF/DXF text -->
-<title>Tru Measure Digital Cutsheet App — V1.7.1</title>
+<!-- Tru Measure V1.8.2: solid seams; faucet vertical references finished bottom plane -->
+<title>Tru Measure Digital Cutsheet App — V1.8.0</title>
 <style>
 :root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#111;background:#f5f5f5}
 *{box-sizing:border-box} body{margin:0}.app{max-width:760px;margin:auto;padding:18px}.card{background:white;border:1px solid #ddd;border-radius:16px;padding:18px;margin:12px 0}
@@ -64,12 +64,15 @@ svg{width:100%;height:auto;border:1px solid #ddd;border-radius:12px;background:w
   @page{size:letter landscape;margin:.35in}
 }
 
-.tmPdfSheet{background:#fff;border:1px solid #999;border-radius:8px;padding:10px;margin:0 0 18px;aspect-ratio:11/8.5;overflow:hidden}
+.tmPdfSheet{background:#fff;border:1px solid #999;border-radius:8px;padding:10px;margin:0 auto 18px;aspect-ratio:11/8.5;overflow:hidden;display:flex;flex-direction:column;width:100%;max-width:1100px}.tmPdfSheet>.tmPdfJobHeader{flex:0 0 auto}.tmPdfSheet>.tmPdfPreviewPiece{flex:1 1 0;min-height:0}#pdfPreviewPages{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}#pdfPreview{overflow:visible}
 .tmPdfSheet .tmPdfJobHeader{font-size:11px;margin-bottom:4px;padding-bottom:4px}
 .tmPdfSheet .tmPdfJobHeader h3{margin:0 0 3px}
 .tmPdfPreviewPiece{height:47%;border-top:1px solid #bbb;padding-top:3px;overflow:hidden}
 .tmPdfPreviewPiece:first-of-type{border-top:0}
-.tmPdfPieceHead{display:flex;justify-content:space-between;align-items:center;font-size:10px;font-weight:700;height:18px}
+.tmPdfPieceHead{position:relative;display:block;font-size:10px;font-weight:700;height:20px;line-height:20px;padding:0 4px}
+.tmPdfPieceHead .tmPdfPieceNo{position:absolute;left:4px;top:0;white-space:nowrap;font-size:20px;font-weight:800}
+.tmPdfPieceHead .tmPdfThickness{position:absolute;right:18px;top:0;text-align:right;white-space:nowrap}
+.tmPdfRefNote{text-align:center;font-size:8px;font-weight:700;height:14px;line-height:14px}
 .tmPdfPreviewPiece svg{display:block;width:100%;height:calc(100% - 18px);background:#fff}
 @media print{
   body.tmPreviewPrinting .tmPdfSheet{border:0!important;border-radius:0!important;padding:0!important;margin:0!important;width:10.3in;height:7.7in;aspect-ratio:auto;page-break-after:always;break-after:page}
@@ -153,21 +156,21 @@ svg{border-radius:8px}#review h2{background:#fff;border-left:5px solid var(--tm-
 <input id="allsame" type="hidden" value="Yes"/>
 <div class="actions">
 <button class="btn" id="continuePiece1Btn" type="button">Continue to Piece 1</button>
-<button class="btn secondary" onclick="document.getElementById('loadJobInputHome').click()" type="button">LOAD SAVED JOB</button><button class="btn secondary" id="tmLoadTestJobBtn" onclick="tmLoadTestJob()" type="button">LOAD TEST JOB</button>
+<button class="btn secondary" onclick="document.getElementById('loadJobInputHome').click()" type="button">LOAD SAVED JOB</button>
 </div></section>
 <section class="card hidden" id="jobHome">
 <h2>JOB HOME</h2>
 <div class="notice" id="jobHomeInfo"></div>
 <div class="muted" id="jobHomeCount" style="margin:12px 0"></div>
 <div class="actions">
-<button class="btn" onclick="addNewPieceFromHome()" type="button">Add New Piece</button>
+<button class="btn" onclick="addNewPieceFromHome()" type="button">Add New Piece</button><button class="btn secondary" onclick="tmEditJobSetup()" type="button">JOB SETUP</button><button class="btn secondary" onclick="tmAddWorkOrder()" type="button">ADD ANOTHER WORK ORDER</button>
 <button class="btn" onclick="viewAllPieces('jobHome')" type="button">View / Edit Completed Pieces</button>
 <button class="btn" onclick="completeJobFromHome()" type="button">Complete Job — Prepare PDF + DXF</button>
 </div>
 </section>
 <input accept=".json,application/json" class="hidden" id="loadJobInputHome" onchange="loadJobFile(this)" type="file"/>
 <section class="card hidden" id="piece"><h2 id="pieceTitle">Piece 1</h2>
-<div class="row"><div><label>Overall Length (in.)</label><input id="len" min="0" oninput="refreshLivePieceDrawing()" required step=".0625" type="number"/></div><div><label>Left Height (in.)</label><input id="ht" min="0" oninput="refreshLivePieceDrawing()" required step=".0625" type="number"/></div><div class="hidden" id="rightHeightWrap"><label>Confirm Right Height (in.)</label><input id="rightHt" step=".0625" type="number"/><div class="muted">Required when plane adjustments are used.</div></div></div>
+<div class="row"><div><label>Overall Length (in.)</label><input id="len" inputmode="decimal" oninput="refreshLivePieceDrawing()" required step=".0625" type="number"/></div><div><label>Left Height (in.)</label><input id="ht" inputmode="decimal" oninput="refreshLivePieceDrawing()" required step=".0625" type="number"/></div><div class="hidden" id="rightHeightWrap"><label>Confirm Right Height (in.)</label><input id="rightHt" inputmode="decimal" type="text"/><div class="muted">Required when plane adjustments are used.</div></div></div>
 <div id="pieceThickness">
 <label>Piece Thickness</label>
 <select id="pthick" onchange="tmPieceThicknessChanged(this)">
@@ -193,31 +196,31 @@ svg{border-radius:8px}#review h2{background:#fff;border-left:5px solid var(--tm-
 <div class="muted" style="margin:4px 0 8px">Updates as overall dimensions and plane measurements are entered.</div>
 <svg id="liveDrawing" style="width:100%;max-height:420px;background:#fff;border:1px solid #bbb;border-radius:8px" viewbox="0 0 900 500"></svg>
 </div>
-<div id="pieceManagementActions" style="margin-top:8px;padding:6px 8px;border:1px solid #ccc;border-radius:8px;background:#fafafa">
-<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-<div style="font-size:12px;font-weight:800;letter-spacing:.04em">PIECE CONTROLS</div>
-<button class="btn secondary" onclick="clearCurrentPiece()" type="button" style="padding:6px 9px;font-size:12px">CLEAR PIECE</button>
-<button class="btn secondary" onclick="deleteCurrentPiece()" type="button" style="padding:6px 9px;font-size:12px">DELETE PIECE</button>
-</div>
-</div>
 <div id="addPieceDetailsAction" style="margin-top:22px;padding:16px;border:2px solid #111;border-radius:10px;text-align:center">
 <div style="font-weight:700;margin-bottom:8px">Plane measurements complete?</div>
 <button class="btn" onclick="review()" style="width:100%;font-size:18px;padding:14px" type="button">ADD PIECE DETAILS</button>
 <div class="muted" style="margin-top:8px">Continue to polished edges, notches, radius corners, outlets/cutouts, Stop Polish, and piece notes.</div>
 </div>
-<div class="actions"><button class="btn secondary" onclick="viewAllPieces('piece')" type="button">View Completed Pieces</button><button class="btn secondary" onclick="completeJobFromWork()" type="button">Complete Job</button></div></section>
+<div class="actions"><button class="btn secondary" onclick="tmEditJobSetup()" type="button">JOB SETUP</button><button class="btn secondary" onclick="viewAllPieces('piece')" type="button">View Completed Pieces</button><button class="btn secondary" onclick="completeJobFromWork()" type="button">Complete Job</button></div></section>
 <section class="card hidden" id="review"><h2>Piece Review</h2>
+<div id="activePieceReview" style="border:2px solid #111;border-radius:10px;padding:12px;margin-bottom:14px;background:#fff">
 <div class="notice">REFERENCE DRAWING — DO NOT SCALE — USE DIMENSIONS SHOWN</div>
 <svg id="drawing" viewbox="0 0 720 500"></svg>
+</div>
 <div class="notice" style="margin-top:12px"><strong>ADD PIECE DETAILS</strong><br/>Choose each type of detail below. Every section uses the same layout.</div>
-<div class="detailsGrid" id="reviewExtras"><div class="detailCard">
+<div id="pieceManagementActions" style="margin:12px 0;padding:8px 10px;border:1px solid #ccc;border-radius:8px;background:#fafafa">
+  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+    <div style="font-size:12px;font-weight:800;letter-spacing:.04em">PIECE CONTROLS</div>
+    <button id="tmClearPieceBtn" class="btn secondary" onclick="clearCurrentPiece()" type="button" style="padding:6px 9px;font-size:12px">CLEAR PIECE DETAILS</button>
+    <button id="tmDeletePieceBtn" class="btn secondary" onclick="deleteCurrentPiece()" type="button" style="padding:6px 9px;font-size:12px">DELETE PIECE</button>
+  </div>
+</div>
+<div class="detailsGrid" id="reviewExtras"><div class="detailCard" style="margin-top:0;border-top:2px solid #111;border-radius:0 0 8px 8px">
 <h3>POLISHED EDGES</h3>
-<div class="muted">Designate the finished edges to be polished.</div><button class="btn detailAdd" id="tmPolishedEdgesLauncher" onclick="var e=document.getElementById('tmPolishedEdgesEntry');var o=e.style.display==='none';e.style.display=o?'block':'none';this.textContent=o?'CLOSE POLISHED EDGES':'+ ADD POLISHED EDGES';" type="button">+ ADD POLISHED EDGES</button><div id="tmPolishedEdgesEntry" style="display:none;margin-top:12px"><div class="row">
+<div class="muted">Designate the finished edges to be polished.</div><button class="btn detailAdd" id="tmPolishedEdgesLauncher" onclick="var e=document.getElementById('tmPolishedEdgesEntry');var o=e.style.display==='none';e.style.display=o?'block':'none';this.textContent=o?'CLOSE POLISHED EDGES':'+ ADD POLISHED EDGES';if(o)setTimeout(function(){e.scrollIntoView({behavior:'smooth',block:'start'});},60);" type="button">+ ADD POLISHED EDGES</button><div id="tmPolishedEdgesEntry" style="display:none;margin-top:12px"><div class="row">
 <div><label>Top Edge</label><select id="topPol" onchange="refreshReviewDrawing()"><option value="No">Not Polished</option><option value="Yes">Polished</option></select></div>
 <div><label>Side Edges</label><select id="sidePol" onchange="refreshReviewDrawing()"><option value="None">None</option><option value="Left">Left</option><option value="Right">Right</option><option value="Both">Both</option></select></div>
 </div><div id="spSegmentControls" style="margin-top:12px"></div></div>
-
-
 </div><div class="detailCard" id="bowPanel"><h3>PLANE ADJUSTMENTS</h3>
 <div class="notice" style="font-size:17px;font-weight:800;margin-bottom:8px">ESTABLISH THE BOTTOM PLANE FIRST, THEN THE TOP PLANE.</div>
 <button class="btn detailAdd" id="addPlaneAdjustmentBtn" onclick="tmOpenPlaneAdjustments()" type="button">+ ADD PLANE ADJUSTMENT</button>
@@ -234,6 +237,11 @@ svg{border-radius:8px}#review h2{background:#fff;border-left:5px solid var(--tm-
 <div class="detailSubsection" id="bottomPlaneBlock"><h3>BOTTOM PLANE</h3><div class="muted">Establish the bottom plane first. Other details, including outlet heights, reference this finished bottom.</div><div id="bottomAdjustments"></div><button class="btn detailAdd" onclick="addAdjustment('Bottom')" type="button">+ ADD BOTTOM PLANE ADJUSTMENT</button></div>
 <div class="detailSubsection" id="topPlaneBlock" style="margin-top:18px"><h3>TOP PLANE</h3><div class="muted">Establish the top plane after the bottom plane.</div><div id="adjustments"></div><button class="btn detailAdd" onclick="addAdjustment('Top')" type="button">+ ADD TOP PLANE ADJUSTMENT</button></div>
 </div>
+</div><div class="detailCard" id="seamPanel">
+<h3>SEAMS</h3>
+<div class="muted">Add a seam by entering its centerline location from the LEFT. The drawing labels SEAM on both sides and updates the piece designation.</div>
+<div id="seams"></div>
+<button class="btn detailAdd" id="addSeamBtn" onclick="addSeam()" type="button">+ ADD SEAM</button>
 </div><div class="detailCard" id="cutPanel">
 <h3>OUTLETS / CUTOUTS</h3>
 <div class="muted">Locate cutout centers from LEFT and from the adjusted BOTTOM.</div>
@@ -290,10 +298,10 @@ svg{border-radius:8px}#review h2{background:#fff;border-left:5px solid var(--tm-
 <div id="pieceNotes"></div>
 <button class="btn detailAdd" id="addNoteBtn" onclick="addPieceNote()" type="button">+ ADD NOTE</button>
 </div></div>
-<div class="actions"><button class="btn secondary" onclick="editPiece()" type="button">EDIT SHAPE</button><button class="btn secondary" onclick="viewAllPieces('review')" type="button">VIEW COMPLETED PIECES</button><button class="btn" onclick="approve()" type="button">APPROVE PIECE</button></div>
+<div class="actions"><button class="btn secondary" onclick="tmEditJobSetup()" type="button">JOB SETUP</button><button class="btn secondary" onclick="editPiece()" type="button">EDIT SHAPE</button><button class="btn secondary" onclick="viewAllPieces('review')" type="button">VIEW COMPLETED PIECES</button><button class="btn" onclick="approve()" type="button">APPROVE PIECE</button></div>
 </section>
 <section class="card hidden" id="finish"><h2>Piece Approved</h2><div class="notice" id="approvedCount"></div>
-<div class="actions"><button class="btn secondary" onclick="nextPiece()">Add Next Piece</button><button class="btn secondary" onclick="viewAllPieces('finish')">View Completed Pieces</button><button class="btn secondary" onclick="showJobHome()">Job Home</button><button class="btn" onclick="completeJob()">Complete Job</button></div></section>
+<div class="actions"><button class="btn secondary" onclick="nextPiece()">Add Next Piece</button><button class="btn secondary" onclick="tmAddWorkOrder()" type="button">ADD ANOTHER WORK ORDER</button><button class="btn secondary" onclick="tmEditJobSetup()" type="button">JOB SETUP</button><button class="btn secondary" onclick="viewAllPieces('finish')">View Completed Pieces</button><button class="btn secondary" onclick="showJobHome()">Job Home</button><button class="btn" onclick="completeJob()">Complete Job</button></div></section>
 <section class="card hidden" id="allPieces"><h2>All Pieces</h2>
 <div id="piecesSummary"></div>
 <div class="actions"><button class="btn secondary" onclick="closeAllPieces()">Back</button><button class="btn secondary" onclick="showJobHome()">Job Home</button><button class="btn" onclick="completeJob()">Complete Job</button></div></section>
@@ -327,7 +335,7 @@ svg{border-radius:8px}#review h2{background:#fff;border-left:5px solid var(--tm-
 <button class="btn secondary" onclick="saveJobFile()">SAVE JOB FILE</button>
 <button class="btn secondary" onclick="document.getElementById('loadJobInput').click()">LOAD JOB FILE</button>
 <button class="btn secondary" onclick="previewPDF()">PREVIEW PDF</button>
-<button class="btn secondary" onclick="tmUseLastTestDrawing()">USE LAST SAVED TEST DRAWING</button>
+
 <button class="btn" onclick="downloadDXFFiles()">DOWNLOAD DXF</button>
 <button class="btn" onclick="sendFilesToRecipient()">SEND FILES TO RECIPIENT</button>
 </div>
@@ -337,6 +345,77 @@ svg{border-radius:8px}#review h2{background:#fff;border-left:5px solid var(--tm-
 <script>
 const REAL_DXF = "  0\nSECTION\n  2\nHEADER\n  9\n$ACADVER\n  1\nAC1032\n  9\n$ACADMAINTVER\n  90\n55\n  9\n$DWGCODEPAGE\n  3\nansi_1252\n  9\n$TITLE\n  1\nVectorDraw Document\n  9\n$INSBASE\n  10\n0\n  20\n0\n  30\n0\n  9\n$EXTMIN\n  10\n-3.6262627766738769\n  20\n0.31815169067322946\n  30\n0\n  9\n$EXTMAX\n  10\n-0.0012627766738768642\n  20\n2.6931516906732296\n  30\n0\n  9\n$LIMMIN\n  10\n-3.9370078740157481\n  20\n-3.9370078740157481\n  9\n$LIMMAX\n  10\n3.9370078740157481\n  20\n3.9370078740157481\n  9\n$ORTHOMODE\n  70\n0\n  9\n$REGENMODE\n  70\n1\n  9\n$FILLMODE\n  70\n1\n  9\n$QTEXTMODE\n  70\n0\n  9\n$MIRRTEXT\n  70\n1\n  9\n$LTSCALE\n  40\n1\n  9\n$ATTMODE\n  70\n1\n  9\n$TEXTSIZE\n  40\n0.2\n  9\n$TRACEWID\n  40\n0.05\n  9\n$TEXTSTYLE\n  7\nautodim\n  9\n$CLAYER\n  8\n.Home.SINGLE HORIZONTAL NEW\n  9\n$CELTYPE\n  6\nBYLAYER\n  9\n$CECOLOR\n  62\n256\n  9\n$CELTSCALE\n  40\n1\n  9\n$DISPSILH\n  70\n0\n  9\n$DIMSCALE\n  40\n1\n  9\n$DIMASZ\n  40\n1.5\n  9\n$DIMEXO\n  40\n1.5\n  9\n$DIMRND\n  40\n0\n  9\n$DIMDLE\n  40\n0\n  9\n$DIMEXE\n  40\n1.5\n  9\n$DIMTP\n  40\n0\n  9\n$DIMTM\n  40\n0\n  9\n$DIMTXT\n  40\n2\n  9\n$DIMTSZ\n  40\n0.0\n  9\n$DIMTOL\n  70\n0\n  9\n$DIMLIM\n  70\n0\n  9\n$DIMTIH\n  70\n0\n  9\n$DIMGAP\n  40\n0.09\n  9\n$DIMTOH\n  70\n0\n  9\n$DIMSE1\n  70\n0\n  9\n$DIMSE2\n  70\n0\n  9\n$DIMTAD\n  70\n0\n  9\n$DIMZIN\n  70\n1\n  9\n$DIMBLK\n  1\nVDDIM_DEFAULT\n  9\n$DIMASO\n  70\n1\n  9\n$DIMSHO\n  70\n1\n  9\n$DIMPOST\n  1\n\n  9\n$DIMAPOST\n  1\n\n  9\n$DIMALT\n  70\n0\n  9\n$DIMBLK1\n  1\n\n  9\n$DIMBLK2\n  1\n\n  9\n$DIMSTYLE\n  2\nautodim\n  9\n$DIMCLRD\n  70\n8\n  9\n$DIMCLRE\n  70\n8\n  9\n$DIMCLRT\n  70\n8\n  9\n$DIMTFAC\n  40\n1\n  9\n$DIMSD1\n  70\n0\n  9\n$DIMSD2\n  70\n0\n  9\n$DIMTOLJ\n  70\n1\n  9\n$DIMTFILL\n  70\n0\n  9\n$DIMTFILLCLR\n  70\n0\n  9\n$DIMTXSTY\n  7\nautodim\n  9\n$DIMAUNIT\n  70\n0\n  9\n$DIMADEC\n  70\n2\n  9\n$DIMAZIN\n  70\n0\n  9\n$DIMLUNIT\n  70\n5\n  9\n$LUNITS\n  70\n2\n  9\n$LUPREC\n  70\n4\n  9\n$FILLETRAD\n  40\n0\n  9\n$AUNITS\n  70\n0\n  9\n$AUPREC\n  70\n0\n  9\n$MENU\n  1\n\n  9\n$ELEVATION\n  40\n0\n  9\n$PELEVATION\n  40\n0\n  9\n$THICKNESS\n  40\n0\n  9\n$ANGBASE\n  50\n0\n  9\n$ANGDIR\n  70\n0\n  9\n$PDMODE\n  70\n35\n  9\n$PDSIZE\n  40\n1\n  9\n$PLINEWID\n  40\n0\n  9\n$SPLFRAME\n  70\n0\n  9\n$SPLINETYPE\n  70\n6\n  9\n$SPLINESEGS\n  70\n8\n  9\n$HANDSEED\n  5\n              2A6\n  9\n$SURFTAB1\n  70\n6\n  9\n$SURFTAB2\n  70\n6\n  9\n$SURFTYPE\n  70\n6\n  9\n$SURFU\n  70\n6\n  9\n$SURFV\n  70\n6\n  9\n$UCSBASE\n  2\n\n  9\n$UCSNAME\n  2\n\n  9\n$UCSORG\n  10\n0\n  20\n0\n  30\n0\n  9\n$UCSXDIR\n  10\n1\n  20\n0\n  30\n0\n  9\n$UCSYDIR\n  10\n0\n  20\n1\n  30\n0\n  9\n$UCSORGTOP\n  10\n0\n  20\n0\n  30\n0\n  9\n$UCSORGBOTTOM\n  10\n0\n  20\n0\n  30\n0\n  9\n$UCSORGLEFT\n  10\n0\n  20\n0\n  30\n0\n  9\n$UCSORGRIGHT\n  10\n0\n  20\n0\n  30\n0\n  9\n$UCSORGFRONT\n  10\n0\n  20\n0\n  30\n0\n  9\n$UCSORGBACK\n  10\n0\n  20\n0\n  30\n0\n  9\n$PUCSBASE\n  2\n\n  9\n$PUCSNAME\n  2\n\n  9\n$PUCSXDIR\n  10\n1\n  20\n0\n  30\n0\n  9\n$PUCSYDIR\n  10\n0\n  20\n1\n  30\n0\n  9\n$PUCSORGTOP\n  10\n0\n  20\n0\n  30\n0\n  9\n$PUCSORGBOTTOM\n  10\n0\n  20\n0\n  30\n0\n  9\n$PUCSORGLEFT\n  10\n0\n  20\n0\n  30\n0\n  9\n$PUCSORGRIGHT\n  10\n0\n  20\n0\n  30\n0\n  9\n$PUCSORGFRONT\n  10\n0\n  20\n0\n  30\n0\n  9\n$PUCSORGBACK\n  10\n0\n  20\n0\n  30\n0\n  9\n$USERI1\n  70\n0\n  9\n$USERI2\n  70\n0\n  9\n$USERI3\n  70\n0\n  9\n$USERI4\n  70\n0\n  9\n$USERI5\n  70\n0\n  9\n$USERR1\n  40\n0\n  9\n$USERR2\n  40\n0\n  9\n$USERR3\n  40\n0\n  9\n$USERR4\n  40\n0\n  9\n$USERR5\n  40\n0\n  9\n$TILEMODE\n  70\n1\n  9\n$PINSBASE\n  10\n0\n  20\n0\n  30\n0\n  9\n$LWDISPLAY\n  290\n0\n  9\n$INSUNITS\n  70\n1\n  9\n$MEASUREMENT\n  70\n1\n  0\nENDSEC\n  0\nSECTION\n  2\nCLASSES\n  0\nCLASS\n  1\nACDBDICTIONARYWDFLT\n  2\nAcDbDictionaryWithDefault\n  3\nObjectDBX Classes\n  90\n0\n  91\n1\n  280\n0\n  281\n0\n  0\nCLASS\n  1\nIMAGEDEF\n  2\nAcDbRasterImageDef\n  3\nISM\n  90\n0\n  91\n1\n  280\n0\n  281\n0\n  0\nCLASS\n  1\nIMAGE\n  2\nAcDbRasterImage\n  3\nISM\n  90\n127\n  91\n1\n  280\n0\n  281\n1\n  0\nCLASS\n  1\nIMAGEDEF_REACTOR\n  2\nAcDbRasterImageDefReactor\n  3\nObjectDBX Classes\n  90\n1\n  91\n1\n  280\n0\n  281\n0\n  0\nCLASS\n  1\nACDBPLACEHOLDER\n  2\nAcDbPlaceHolder\n  3\nObjectDBX Classes\n  90\n0\n  91\n1\n  280\n0\n  281\n0\n  0\nCLASS\n  1\nLAYOUT\n  2\nAcDbLayout\n  3\nObjectDBX Classes\n  90\n0\n  91\n1\n  280\n0\n  281\n0\n  0\nCLASS\n  1\nARCALIGNEDTEXT\n  2\nAcDbArcAlignedText\n  3\nATEXT|AutoCAD Express Tool|expresstools@autodesk.com\n  90\n0\n  91\n1\n  280\n0\n  281\n1\n  0\nCLASS\n  1\nMESH\n  2\nAcDbSubDMesh\n  3\nObjectDBX Classes\n  90\n0\n  91\n2\n  280\n0\n  281\n1\n  0\nCLASS\n  1\nVISUALSTYLE\n  2\nAcDbVisualStyle\n  3\nObjectDBX Classes\n  90\n4095\n  91\n24\n  280\n0\n  281\n0\n  0\nENDSEC\n  0\nSECTION\n  2\nTABLES\n  0\nTABLE\n  2\nVPORT\n  5\n260\n  330\n0\n  100\nAcDbSymbolTable\n  70\n2\n  0\nVPORT\n  5\n261\n  330\n260\n  100\nAcDbSymbolTableRecord\n  100\nAcDbViewportTableRecord\n  2\n*Active\n  70\n0\n  10\n0\n  20\n0\n  11\n1\n  21\n1\n  12\n-1.8137627766738769\n  22\n1.5056516906732296\n  13\n0\n  23\n0\n  14\n1\n  24\n1\n  15\n1\n  25\n1\n  16\n0\n  26\n0\n  36\n1\n  17\n0\n  27\n0\n  37\n0\n  40\n2.375\n  41\n1\n  42\n50\n  43\n0\n  44\n0\n  50\n0\n  51\n0\n  71\n0\n  72\n100\n  73\n1\n  74\n3\n  75\n0\n  76\n0\n  77\n0\n  78\n0\n  281\n0\n  65\n1\n  110\n0\n  120\n0\n  130\n0\n  111\n1\n  121\n0\n  131\n0\n  112\n0\n  122\n1\n  132\n0\n  79\n0\n  146\n0\n  0\nENDTAB\n  0\nTABLE\n  2\nLTYPE\n  5\n262\n  330\n0\n  100\nAcDbSymbolTable\n  70\n32\n  0\nLTYPE\n  5\n222\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nCENTER\n  70\n0\n  3\nCenter ____ _ ____ _ ____ _ ____ _ ____ _ ____\n  72\n65\n  73\n4\n  40\n2\n  49\n1.25\n  74\n0\n  49\n-0.25\n  74\n0\n  49\n0.25\n  74\n0\n  49\n-0.25\n  74\n0\n  0\nLTYPE\n  5\n223\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nDASHDOT\n  70\n0\n  3\nDashdot __ . __ . __ . __ . __ . __ . __ . __\n  72\n65\n  73\n4\n  40\n1\n  49\n0.5\n  74\n0\n  49\n-0.25\n  74\n0\n  49\n0\n  74\n0\n  49\n-0.25\n  74\n0\n  0\nLTYPE\n  5\n224\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nDASHED\n  70\n0\n  3\nDashed __ __ __ __ __ __ __ __ __ __ __ __ __ _\n  72\n65\n  73\n2\n  40\n0.75\n  49\n0.5\n  74\n0\n  49\n-0.25\n  74\n0\n  0\nLTYPE\n  5\n225\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nHIDDEN\n  70\n0\n  3\nHidden __ __ __ __ __ __ __ __ __ __ __ __ __ __\n  72\n65\n  73\n2\n  40\n0.375\n  49\n0.25\n  74\n0\n  49\n-0.125\n  74\n0\n  0\nLTYPE\n  5\n226\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nHIDDEN2\n  70\n0\n  3\nHidden2 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n  72\n65\n  73\n2\n  40\n0.1875\n  49\n0.125\n  74\n0\n  49\n-0.0625\n  74\n0\n  0\nLTYPE\n  5\n227\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nBORDER\n  70\n0\n  3\nBorder __ __ . __ __ . __ __ . __ __ . __ __ .\n  72\n65\n  73\n6\n  40\n1.75\n  49\n0.5\n  74\n0\n  49\n-0.25\n  74\n0\n  49\n0.5\n  74\n0\n  49\n-0.25\n  74\n0\n  49\n0\n  74\n0\n  49\n-0.25\n  74\n0\n  0\nLTYPE\n  5\n228\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nBORDER2\n  70\n0\n  3\nBorder2 __.__.__.__.__.__.__.__.__.__.__.\n  72\n65\n  73\n6\n  40\n0.875\n  49\n0.25\n  74\n0\n  49\n-0.125\n  74\n0\n  49\n0.25\n  74\n0\n  49\n-0.125\n  74\n0\n  49\n0\n  74\n0\n  49\n-0.125\n  74\n0\n  0\nLTYPE\n  5\n229\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nBORDERX2\n  70\n0\n  3\nBorderx2  ____  ____  .  ____  ____  .  ___\n  72\n65\n  73\n6\n  40\n3.5\n  49\n1\n  74\n0\n  49\n-0.5\n  74\n0\n  49\n1\n  74\n0\n  49\n-0.5\n  74\n0\n  49\n0\n  74\n0\n  49\n-0.5\n  74\n0\n  0\nLTYPE\n  5\n22A\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nCENTER2\n  70\n0\n  3\nCenter2  ___ _ ___ _ ___ _ ___ _ ___ _ ___\n  72\n65\n  73\n4\n  40\n1.125\n  49\n0.75\n  74\n0\n  49\n-0.125\n  74\n0\n  49\n0.125\n  74\n0\n  49\n-0.125\n  74\n0\n  0\nLTYPE\n  5\n22B\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nCENTERX2\n  70\n0\n  3\nCenterx2  ________  __  ________  __  _____\n  72\n65\n  73\n4\n  40\n4\n  49\n2.5\n  74\n0\n  49\n-0.5\n  74\n0\n  49\n0.5\n  74\n0\n  49\n-0.5\n  74\n0\n  0\nLTYPE\n  5\n22C\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nDASHDOT2\n  70\n0\n  3\nDashdot2  _._._._._._._._._._._._._._._.\n  72\n65\n  73\n4\n  40\n0.5\n  49\n0.25\n  74\n0\n  49\n-0.125\n  74\n0\n  49\n0\n  74\n0\n  49\n-0.125\n  74\n0\n  0\nLTYPE\n  5\n22D\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nDASHDOTX2\n  70\n0\n  3\nDashdotx2 ____  .  ____  .  ____  .  ___\n  72\n65\n  73\n4\n  40\n2\n  49\n1\n  74\n0\n  49\n-0.5\n  74\n0\n  49\n0\n  74\n0\n  49\n-0.5\n  74\n0\n  0\nLTYPE\n  5\n22E\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nDASHED2\n  70\n0\n  3\nDashed2 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n  72\n65\n  73\n2\n  40\n0.375\n  49\n0.25\n  74\n0\n  49\n-0.125\n  74\n0\n  0\nLTYPE\n  5\n22F\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nDASHEDX2\n  70\n0\n  3\nDashedx2 ____  ____  ____  ____  ____  ___\n  72\n65\n  73\n2\n  40\n1.5\n  49\n1\n  74\n0\n  49\n-0.5\n  74\n0\n  0\nLTYPE\n  5\n230\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nDIVIDE\n  70\n0\n  3\nDivide ____ . . ____ . . ____ . . ____ . . ____\n  72\n65\n  73\n6\n  40\n1.25\n  49\n0.5\n  74\n0\n  49\n-0.25\n  74\n0\n  49\n0\n  74\n0\n  49\n-0.25\n  74\n0\n  49\n0\n  74\n0\n  49\n-0.25\n  74\n0\n  0\nLTYPE\n  5\n231\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nDIVIDE2\n  70\n0\n  3\nDivide2 __..__..__..__..__..__..__..__.._\n  72\n65\n  73\n6\n  40\n0.625\n  49\n0.25\n  74\n0\n  49\n-0.125\n  74\n0\n  49\n0\n  74\n0\n  49\n-0.125\n  74\n0\n  49\n0\n  74\n0\n  49\n-0.125\n  74\n0\n  0\nLTYPE\n  5\n232\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nDIVIDEX2\n  70\n0\n  3\nDividex2 ________  .  .  ________  .  .  _\n  72\n65\n  73\n6\n  40\n2.5\n  49\n1\n  74\n0\n  49\n-0.5\n  74\n0\n  49\n0\n  74\n0\n  49\n-0.5\n  74\n0\n  49\n0\n  74\n0\n  49\n-0.5\n  74\n0\n  0\nLTYPE\n  5\n233\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nDOT\n  70\n0\n  3\nDot . . . . . . . . . . . . . . . . . . . . . . . .\n  72\n65\n  73\n2\n  40\n0.25\n  49\n0\n  74\n0\n  49\n-0.25\n  74\n0\n  0\nLTYPE\n  5\n234\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nDOT2\n  70\n0\n  3\nDot2 ........................................\n  72\n65\n  73\n2\n  40\n0.125\n  49\n0\n  74\n0\n  49\n-0.125\n  74\n0\n  0\nLTYPE\n  5\n235\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nDOTX2\n  70\n0\n  3\nDotx2 .  .  .  .  .  .  .  .  .  .  .  .  .  .\n  72\n65\n  73\n2\n  40\n0.5\n  49\n0\n  74\n0\n  49\n-0.5\n  74\n0\n  0\nLTYPE\n  5\n236\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nHIDDENX2\n  70\n0\n  3\nHiddenx2 ____ ____ ____ ____ ____ ____ ____ \n  72\n65\n  73\n2\n  40\n0.75\n  49\n0.5\n  74\n0\n  49\n-0.25\n  74\n0\n  0\nLTYPE\n  5\n237\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nPHANTOM\n  70\n0\n  3\nPhantom ______  __  __  ______  __  __  ______ \n  72\n65\n  73\n6\n  40\n2.5\n  49\n1.25\n  74\n0\n  49\n-0.25\n  74\n0\n  49\n0.25\n  74\n0\n  49\n-0.25\n  74\n0\n  49\n0.25\n  74\n0\n  49\n-0.25\n  74\n0\n  0\nLTYPE\n  5\n238\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nPHANTOM2\n  70\n0\n  3\nPhantom2 ___ _ _ ___ _ _ ___ _ _ ___ _ _\n  72\n65\n  73\n6\n  40\n1.25\n  49\n0.625\n  74\n0\n  49\n-0.125\n  74\n0\n  49\n0.125\n  74\n0\n  49\n-0.125\n  74\n0\n  49\n0.125\n  74\n0\n  49\n-0.125\n  74\n0\n  0\nLTYPE\n  5\n239\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nPHANTOMX2\n  70\n0\n  3\nPhantomx2 ____________    ____    ____   _\n  72\n65\n  73\n6\n  40\n5\n  49\n2.5\n  74\n0\n  49\n-0.5\n  74\n0\n  49\n0.5\n  74\n0\n  49\n-0.5\n  74\n0\n  49\n0.5\n  74\n0\n  49\n-0.5\n  74\n0\n  0\nLTYPE\n  5\n23B\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nBYLAYER\n  70\n0\n  3\nBYLAYER________________________________________\n  72\n65\n  73\n0\n  40\n0\n  0\nLTYPE\n  5\n23C\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nBYBLOCK\n  70\n0\n  3\nBYBLOCK________________________________________\n  72\n65\n  73\n0\n  40\n0\n  0\nLTYPE\n  5\n23D\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nDASHED0\n  70\n0\n  3\nDashed0 __ __ __ __ __ __ __ __ __ __ __ __ __ _\n  72\n65\n  73\n2\n  40\n1\n  49\n0.5\n  74\n0\n  49\n-0.5\n  74\n0\n  0\nLTYPE\n  5\n23E\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nDOT0\n  70\n0\n  3\nDot0 ........................................\n  72\n65\n  73\n8\n  40\n1\n  49\n0\n  74\n0\n  49\n-0.25\n  74\n0\n  49\n0\n  74\n0\n  49\n-0.25\n  74\n0\n  49\n0\n  74\n0\n  49\n-0.25\n  74\n0\n  49\n0\n  74\n0\n  49\n-0.25\n  74\n0\n  0\nLTYPE\n  5\n23F\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nDASHDOT0\n  70\n0\n  3\nDashdot __ . __ . __ . __ . __ . __ . __ . __\n  72\n65\n  73\n4\n  40\n1\n  49\n0.4\n  74\n0\n  49\n-0.3\n  74\n0\n  49\n0\n  74\n0\n  49\n-0.3\n  74\n0\n  0\nLTYPE\n  5\n240\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nDASHDOTDOT0\n  70\n0\n  3\nDashdot __ . . __ . . __ . . __ . . __ . . __ . . __ . . __\n  72\n65\n  73\n6\n  40\n1\n  49\n0.3\n  74\n0\n  49\n-0.23\n  74\n0\n  49\n0\n  74\n0\n  49\n-0.24\n  74\n0\n  49\n0\n  74\n0\n  49\n-0.23\n  74\n0\n  0\nLTYPE\n  5\n241\n  330\n262\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLinetypeTableRecord\n  2\nINVISIBLE\n  70\n0\n  3\nInvisible(                        )\n  72\n65\n  73\n2\n  40\n2\n  49\n-1\n  74\n0\n  49\n-1\n  74\n0\n  0\nENDTAB\n  0\nTABLE\n  2\nLAYER\n  5\n264\n  102\n{ACAD_XDICTIONARY\n  360\n265\n  102\n}\n  330\n0\n  100\nAcDbSymbolTable\n  70\n5\n  0\nLAYER\n  5\n4\n  330\n264\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLayerTableRecord\n  2\n0\n  70\n0\n  62\n7\n  6\nContinuous\n  370\n0\n  390\n263\n  0\nLAYER\n  5\n11A\n  330\n264\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLayerTableRecord\n  2\n__LocationPoints\n  70\n1\n  62\n150\n  6\nContinuous\n  370\n0\n  390\n263\n  0\nLAYER\n  5\n12A\n  330\n264\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLayerTableRecord\n  2\n.Home\n  70\n1\n  62\n7\n  6\nContinuous\n  370\n0\n  390\n263\n  1001\nPE_VERSION\n  1070\n1\n  1001\nPE_EBENE_EBENE\n  1070\n0\n  1001\nPE_EBENE_P1\n  1010\n0\n  1020\n0\n  1030\n0\n  1001\nPE_EBENE_P2\n  1010\n0\n  1020\n0\n  1030\n0\n  1001\nPE_EBENE_P3\n  1010\n0\n  1020\n0\n  1030\n0\n  1001\nPE_UNSICHTBAR\n  1070\n0\n  0\nLAYER\n  5\n12B\n  330\n264\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLayerTableRecord\n  2\n.Home.SINGLE HORIZONTAL NEW\n  70\n0\n  62\n7\n  6\nContinuous\n  370\n0\n  390\n263\n  1001\nPE_VERSION\n  1070\n1\n  1001\nPE_EBENE_EBENE\n  1070\n1\n  1001\nPE_EBENE_P1\n  1010\n-0.83464402923635017\n  1020\n2.14510148387423\n  1030\n-1.6653345369377348E-16\n  1001\nPE_EBENE_P2\n  1010\n0.16535597076364983\n  1020\n2.14510148387423\n  1030\n-1.6653345369377348E-16\n  1001\nPE_EBENE_P3\n  1010\n-0.83464402923635017\n  1020\n3.14510148387423\n  1030\n-1.6653345369377348E-16\n  0\nLAYER\n  5\n12E\n  330\n264\n  100\nAcDbSymbolTableRecord\n  100\nAcDbLayerTableRecord\n  2\n_HOME_COUNTERTOP\n  70\n0\n  62\n7\n  6\nContinuous\n  370\n-3\n  390\n263\n  0\nENDTAB\n  0\nTABLE\n  2\nSTYLE\n  5\n266\n  330\n0\n  100\nAcDbSymbolTable\n  70\n5\n  0\nSTYLE\n  5\n5\n  330\n266\n  100\nAcDbSymbolTableRecord\n  100\nAcDbTextStyleTableRecord\n  2\nSTANDARD\n  70\n0\n  40\n2\n  41\n1\n  50\n0\n  71\n0\n  42\n0.2\n  3\narial.ttf\n  4\n\n  0\nSTYLE\n  5\nBF\n  330\n266\n  100\nAcDbSymbolTableRecord\n  100\nAcDbTextStyleTableRecord\n  2\nautodim\n  70\n0\n  40\n2\n  41\n1\n  50\n0\n  71\n0\n  42\n0.2\n  3\narial.ttf\n  4\n\n  0\nSTYLE\n  5\nF3\n  330\n266\n  100\nAcDbSymbolTableRecord\n  100\nAcDbTextStyleTableRecord\n  2\nautotext\n  70\n0\n  40\n4\n  41\n1\n  50\n0\n  71\n0\n  42\n0.2\n  3\narial.ttf\n  4\n\n  0\nSTYLE\n  5\n126\n  330\n266\n  100\nAcDbSymbolTableRecord\n  100\nAcDbTextStyleTableRecord\n  2\nStamp0001\n  70\n0\n  40\n1.5\n  41\n1\n  50\n0\n  71\n0\n  42\n0.2\n  3\narial.ttf\n  4\n\n  0\nSTYLE\n  5\n129\n  330\n266\n  100\nAcDbSymbolTableRecord\n  100\nAcDbTextStyleTableRecord\n  2\nNumber pieces\n  70\n0\n  40\n3.5\n  41\n1\n  50\n0\n  71\n0\n  42\n0.2\n  3\narial.ttf\n  4\n\n  0\nENDTAB\n  0\nTABLE\n  2\nVIEW\n  5\n267\n  330\n0\n  100\nAcDbSymbolTable\n  70\n0\n  0\nENDTAB\n  0\nTABLE\n  2\nUCS\n  5\n268\n  330\n0\n  100\nAcDbSymbolTable\n  70\n0\n  0\nENDTAB\n  0\nTABLE\n  2\nAPPID\n  5\n269\n  330\n0\n  100\nAcDbSymbolTable\n  70\n25\n  0\nAPPID\n  5\n26A\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nAcAecLayerStandard\n  70\n0\n  0\nAPPID\n  5\n26B\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nVDEXTRAPARAM\n  70\n0\n  0\nAPPID\n  5\n26C\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nACAD_DSTYLE_DIMJAG\n  70\n0\n  0\nAPPID\n  5\n26D\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nACAD_DSTYLE_DIMTALN\n  70\n0\n  0\nAPPID\n  5\n26E\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nVDEXTRASOLID2D\n  70\n0\n  0\nAPPID\n  5\n26F\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nVD_TEMPHATCH\n  70\n0\n  0\nAPPID\n  5\n270\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nACAD\n  70\n0\n  0\nAPPID\n  5\n271\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nPE_URL\n  70\n0\n  0\nAPPID\n  5\n272\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nPE_VERSION\n  70\n0\n  0\nAPPID\n  5\n273\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nPE_EBENE_EBENE\n  70\n0\n  0\nAPPID\n  5\n274\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nPE_EBENE_P1\n  70\n0\n  0\nAPPID\n  5\n275\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nPE_EBENE_P2\n  70\n0\n  0\nAPPID\n  5\n276\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nPE_EBENE_P3\n  70\n0\n  0\nAPPID\n  5\n277\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nPE_UNSICHTBAR\n  70\n0\n  0\nAPPID\n  5\n278\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nCEedFileStamp\n  70\n0\n  0\nAPPID\n  5\n279\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nVD_EX_PRINTER_NAME\n  70\n0\n  0\nAPPID\n  5\n27A\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nVD_EX_PRINTER_PAPER\n  70\n0\n  0\nAPPID\n  5\n27B\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nVD_EX_PRINTER_ORIENT\n  70\n0\n  0\nAPPID\n  5\n27C\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nVD_EX_PRINTER_SIZEX\n  70\n0\n  0\nAPPID\n  5\n27D\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nVD_EX_PRINTER_SIZEY\n  70\n0\n  0\nAPPID\n  5\n27E\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nVD_EX_PRINTER_AVSIZEX\n  70\n0\n  0\nAPPID\n  5\n27F\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nVD_EX_PRINTER_AVSIZEY\n  70\n0\n  0\nAPPID\n  5\n280\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nVD_EX_PRINTER_MARX\n  70\n0\n  0\nAPPID\n  5\n281\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nVD_EX_PRINTER_MARY\n  70\n0\n  0\nAPPID\n  5\n282\n  330\n269\n  100\nAcDbSymbolTableRecord\n  100\nAcDbRegAppTableRecord\n  2\nVD_EX_PRINTER_PAPER_NAME\n  70\n0\n  0\nENDTAB\n  0\nTABLE\n  2\nBLOCK_RECORD\n  5\n283\n  330\n0\n  100\nAcDbSymbolTable\n  70\n8\n  0\nBLOCK_RECORD\n  5\n284\n  330\n283\n  100\nAcDbSymbolTableRecord\n  100\nAcDbBlockTableRecord\n  2\n*Model_Space\n  340\n3\n  0\nBLOCK_RECORD\n  5\n285\n  330\n283\n  100\nAcDbSymbolTableRecord\n  100\nAcDbBlockTableRecord\n  2\n*Paper_Space\n  340\n247\n  0\nBLOCK_RECORD\n  5\n286\n  330\n283\n  100\nAcDbSymbolTableRecord\n  100\nAcDbBlockTableRecord\n  2\nVDDIM_DEFAULT\n  340\n0\n  70\n0\n  0\nBLOCK_RECORD\n  5\n287\n  330\n283\n  100\nAcDbSymbolTableRecord\n  100\nAcDbBlockTableRecord\n  2\nVDDIM_NONE\n  340\n0\n  70\n0\n  0\nBLOCK_RECORD\n  5\n288\n  330\n283\n  100\nAcDbSymbolTableRecord\n  100\nAcDbBlockTableRecord\n  2\nflexijetdatablock\n  340\n0\n  70\n0\n  0\nBLOCK_RECORD\n  5\n289\n  330\n283\n  100\nAcDbSymbolTableRecord\n  100\nAcDbBlockTableRecord\n  2\nblocktempBKSDraufsicht1\n  340\n0\n  70\n0\n  0\nBLOCK_RECORD\n  5\n28A\n  330\n283\n  100\nAcDbSymbolTableRecord\n  100\nAcDbBlockTableRecord\n  2\nFlexiCAD_StandortPointBlock\n  340\n0\n  70\n0\n  0\nBLOCK_RECORD\n  5\n28B\n  330\n283\n  100\nAcDbSymbolTableRecord\n  100\nAcDbBlockTableRecord\n  2\nflx_TmpExport__260924_215747\n  340\n0\n  70\n0\n  0\nENDTAB\n  0\nTABLE\n  2\nDIMSTYLE\n  5\n28C\n  330\n0\n  100\nAcDbSymbolTable\n  70\n2\n  100\nAcDbDimStyleTable\n  71\n2\n  340\n121\n  340\n122\n  0\nDIMSTYLE\n  105\n121\n  330\n28C\n  100\nAcDbSymbolTableRecord\n  100\nAcDbDimStyleTableRecord\n  2\nSTANDARD\n  70\n0\n  41\n1.5\n  3\n\n  177\n8\n  42\n1.5\n  44\n1.5\n  75\n0\n  76\n0\n  40\n1\n  172\n1\n  281\n0\n  282\n0\n  275\n0\n  275\n0\n  277\n5\n  179\n2\n  71\n0\n  47\n0\n  48\n0\n  49\n1\n  290\n0\n  78\n1\n  176\n8\n  178\n8\n  140\n2\n  147\n0.09\n  280\n0\n  77\n0\n  73\n0\n  271\n4\n  173\n1\n  340\n5\n  0\nDIMSTYLE\n  105\n122\n  330\n28C\n  100\nAcDbSymbolTableRecord\n  100\nAcDbDimStyleTableRecord\n  2\nautodim\n  70\n0\n  41\n1.5\n  3\n\n  177\n8\n  42\n1.5\n  44\n1.5\n  75\n0\n  76\n0\n  40\n1\n  172\n1\n  281\n0\n  282\n0\n  275\n0\n  275\n0\n  277\n5\n  179\n2\n  71\n0\n  47\n0\n  48\n0\n  49\n1\n  290\n0\n  78\n1\n  176\n8\n  178\n8\n  140\n2\n  147\n0.09\n  280\n0\n  77\n0\n  73\n0\n  271\n4\n  173\n1\n  340\nBF\n  0\nENDTAB\n  0\nENDSEC\n  0\nSECTION\n  2\nBLOCKS\n  0\nBLOCK\n  5\n28D\n  330\n284\n  100\nAcDbEntity\n  8\n.Home.SINGLE HORIZONTAL NEW\n  100\nAcDbBlockBegin\n  2\n*Model_Space\n  70\n0\n  71\n0\n  10\n0\n  20\n0\n  30\n0\n  3\n*Model_Space\n  1\n\n  0\nENDBLK\n  5\n28E\n  330\n284\n  100\nAcDbEntity\n  67\n1\n  8\n.Home.SINGLE HORIZONTAL NEW\n  100\nAcDbBlockEnd\n  0\nBLOCK\n  5\n28F\n  330\n285\n  100\nAcDbEntity\n  8\n.Home.SINGLE HORIZONTAL NEW\n  100\nAcDbBlockBegin\n  2\n*Paper_Space\n  70\n0\n  71\n0\n  10\n0\n  20\n0\n  30\n0\n  3\n*Paper_Space\n  1\n\n  0\nENDBLK\n  5\n290\n  330\n285\n  100\nAcDbEntity\n  67\n1\n  8\n.Home.SINGLE HORIZONTAL NEW\n  100\nAcDbBlockEnd\n  0\nBLOCK\n  5\n7\n  330\n286\n  100\nAcDbEntity\n  8\n0\n  100\nAcDbBlockBegin\n  2\nVDDIM_DEFAULT\n  70\n0\n  71\n0\n  10\n0\n  20\n0\n  30\n0\n  3\nVDDIM_DEFAULT\n  1\n\n  0\nLWPOLYLINE\n  5\n8\n  102\n{ACAD_REACTORS\n  330\n291\n  102\n}\n  330\n286\n  100\nAcDbEntity\n  8\n0\n  6\nContinuous\n  62\n0\n  440\n33554687\n  100\nAcDbPolyline\n  90\n4\n  43\n0\n  38\n0\n  10\n0\n  20\n0\n  10\n-1\n  20\n-0.1665\n  10\n-1\n  20\n0.1665\n  10\n0\n  20\n0\n  0\nHATCH\n  5\n291\n  330\n286\n  100\nAcDbEntity\n  8\n0\n  6\nContinuous\n  62\n0\n  100\nAcDbHatch\n  10\n0\n  20\n0\n  30\n0\n  210\n0\n  220\n0\n  230\n1\n  2\nSOLID\n  70\n1\n  71\n1\n  91\n1\n  92\n2\n  72\n0\n  73\n1\n  93\n3\n  10\n0\n  20\n0\n  10\n-1\n  20\n-0.1665\n  10\n-1\n  20\n0.1665\n  97\n1\n  330\n8\n  75\n0\n  76\n1\n  98\n1\n  10\n0\n  20\n0\n  1001\nVD_TEMPHATCH\n  1000\nVD_TEMPHATCH\n  0\nENDBLK\n  5\n292\n  330\n286\n  100\nAcDbEntity\n  8\n0\n  100\nAcDbBlockEnd\n  0\nBLOCK\n  5\n9\n  330\n287\n  100\nAcDbEntity\n  8\n0\n  100\nAcDbBlockBegin\n  2\nVDDIM_NONE\n  70\n0\n  71\n0\n  10\n0\n  20\n0\n  30\n0\n  3\nVDDIM_NONE\n  1\n\n  0\nENDBLK\n  5\n293\n  330\n287\n  100\nAcDbEntity\n  8\n0\n  100\nAcDbBlockEnd\n  0\nBLOCK\n  5\nA\n  330\n288\n  100\nAcDbEntity\n  8\n0\n  100\nAcDbBlockBegin\n  2\nflexijetdatablock\n  70\n0\n  71\n0\n  10\n0\n  20\n0\n  30\n0\n  3\nflexijetdatablock\n  1\n\n  0\nENDBLK\n  5\n294\n  330\n288\n  100\nAcDbEntity\n  8\n0\n  100\nAcDbBlockEnd\n  0\nBLOCK\n  5\n3F\n  330\n289\n  100\nAcDbEntity\n  8\n0\n  100\nAcDbBlockBegin\n  2\nblocktempBKSDraufsicht1\n  70\n0\n  71\n0\n  10\n0\n  20\n0\n  30\n0\n  3\nblocktempBKSDraufsicht1\n  1\n\n  0\nENDBLK\n  5\n295\n  330\n289\n  100\nAcDbEntity\n  8\n0\n  100\nAcDbBlockEnd\n  0\nBLOCK\n  5\n11B\n  330\n28A\n  100\nAcDbEntity\n  8\n0\n  100\nAcDbBlockBegin\n  2\nFlexiCAD_StandortPointBlock\n  70\n0\n  71\n0\n  10\n0\n  20\n0\n  30\n0\n  3\nFlexiCAD_StandortPointBlock\n  1\n\n  0\nPOINT\n  5\n11C\n  330\n28A\n  100\nAcDbEntity\n  8\n0\n  62\n0\n  440\n33554687\n  100\nAcDbPoint\n  10\n0\n  20\n0\n  30\n0\n  210\n1\n  220\n0\n  230\n0\n  0\nPOINT\n  5\n11D\n  330\n28A\n  100\nAcDbEntity\n  8\n0\n  62\n0\n  440\n33554687\n  100\nAcDbPoint\n  10\n0\n  20\n0\n  30\n0\n  210\n0\n  220\n1\n  230\n0\n  0\nPOINT\n  5\n11E\n  330\n28A\n  100\nAcDbEntity\n  8\n0\n  62\n0\n  440\n33554687\n  100\nAcDbPoint\n  10\n0\n  20\n0\n  30\n0\n  0\nENDBLK\n  5\n296\n  330\n28A\n  100\nAcDbEntity\n  8\n0\n  100\nAcDbBlockEnd\n  0\nBLOCK\n  5\n12D\n  330\n28B\n  100\nAcDbEntity\n  8\n0\n  100\nAcDbBlockBegin\n  2\nflx_TmpExport__260924_215747\n  70\n0\n  71\n0\n  10\n0\n  20\n0\n  30\n0\n  3\nflx_TmpExport__260924_215747\n  1\n\n  0\nARC\n  5\n12F\n  330\n28B\n  100\nAcDbEntity\n  8\n_HOME_COUNTERTOP\n  6\nCENTER\n  440\n33554687\n  100\nAcDbCircle\n  10\n-0.9375\n  20\n-1.5625\n  30\n0\n  40\n0.25\n  100\nAcDbArc\n  50\n180\n  51\n269.99999999998278\n  0\nLINE\n  5\n130\n  330\n28B\n  100\nAcDbEntity\n  8\n_HOME_COUNTERTOP\n  6\nCENTER\n  440\n33554687\n  100\nAcDbLine\n  10\n-0.9375\n  20\n-1.8125\n  30\n0\n  11\n0.9375\n  21\n-1.8125\n  31\n0\n  0\nARC\n  5\n131\n  330\n28B\n  100\nAcDbEntity\n  8\n_HOME_COUNTERTOP\n  6\nCENTER\n  440\n33554687\n  100\nAcDbCircle\n  10\n0.9375\n  20\n-1.5625\n  30\n0\n  40\n0.25\n  100\nAcDbArc\n  50\n269.99999999998278\n  51\n0\n  0\nLINE\n  5\n132\n  330\n28B\n  100\nAcDbEntity\n  8\n_HOME_COUNTERTOP\n  6\nCENTER\n  440\n33554687\n  100\nAcDbLine\n  10\n1.1875\n  20\n-1.5625\n  30\n0\n  11\n1.1875\n  21\n1.5625\n  31\n0\n  0\nARC\n  5\n133\n  330\n28B\n  100\nAcDbEntity\n  8\n_HOME_COUNTERTOP\n  6\nCENTER\n  440\n33554687\n  100\nAcDbCircle\n  10\n0.9375\n  20\n1.5625\n  30\n0\n  40\n0.25\n  100\nAcDbArc\n  50\n360\n  51\n89.999999999994259\n  0\nLINE\n  5\n134\n  330\n28B\n  100\nAcDbEntity\n  8\n_HOME_COUNTERTOP\n  6\nCENTER\n  440\n33554687\n  100\nAcDbLine\n  10\n0.9375\n  20\n1.8125\n  30\n0\n  11\n-0.9375\n  21\n1.8125\n  31\n0\n  0\nARC\n  5\n135\n  330\n28B\n  100\nAcDbEntity\n  8\n_HOME_COUNTERTOP\n  6\nCENTER\n  440\n33554687\n  100\nAcDbCircle\n  10\n-0.9375\n  20\n1.5625\n  30\n0\n  40\n0.25\n  100\nAcDbArc\n  50\n89.999999999994259\n  51\n180\n  0\nLINE\n  5\n136\n  330\n28B\n  100\nAcDbEntity\n  8\n_HOME_COUNTERTOP\n  6\nCENTER\n  440\n33554687\n  100\nAcDbLine\n  10\n-1.1875\n  20\n1.5625\n  30\n0\n  11\n-1.1875\n  21\n-1.5625\n  31\n0\n  0\nENDBLK\n  5\n297\n  330\n28B\n  100\nAcDbEntity\n  8\n0\n  100\nAcDbBlockEnd\n  0\nENDSEC\n  0\nSECTION\n  2\nENTITIES\n  0\nARC\n  5\n1D2\n  330\n284\n  100\nAcDbEntity\n  8\n.Home.SINGLE HORIZONTAL NEW\n  6\nCENTER\n  440\n33554687\n  100\nAcDbCircle\n  10\n-0.25126277667388663\n  20\n0.56815169067323268\n  30\n0\n  40\n0.25000000000000322\n  100\nAcDbArc\n  50\n269.99999999998278\n  51\n360\n  0\nLINE\n  5\n1D3\n  330\n284\n  100\nAcDbEntity\n  8\n.Home.SINGLE HORIZONTAL NEW\n  6\nCENTER\n  440\n33554687\n  100\nAcDbLine\n  10\n-0.0012627766738768642\n  20\n0.56815169067322946\n  30\n0\n  11\n-0.0012627766738768642\n  21\n2.4431516906732296\n  31\n0\n  0\nARC\n  5\n1D4\n  330\n284\n  100\nAcDbEntity\n  8\n.Home.SINGLE HORIZONTAL NEW\n  6\nCENTER\n  440\n33554687\n  100\nAcDbCircle\n  10\n-0.25126277667386887\n  20\n2.4431516906732362\n  30\n0\n  40\n0.249999999999992\n  100\nAcDbArc\n  50\n360\n  51\n89.999999999994259\n  0\nLINE\n  5\n1D5\n  330\n284\n  100\nAcDbEntity\n  8\n.Home.SINGLE HORIZONTAL NEW\n  6\nCENTER\n  440\n33554687\n  100\nAcDbLine\n  10\n-0.25126277667387686\n  20\n2.6931516906732296\n  30\n0\n  11\n-3.3762627766738769\n  21\n2.6931516906732296\n  31\n0\n  0\nARC\n  5\n1D6\n  330\n284\n  100\nAcDbEntity\n  8\n.Home.SINGLE HORIZONTAL NEW\n  6\nCENTER\n  440\n33554687\n  100\nAcDbCircle\n  10\n-3.3762627766738653\n  20\n2.4431516906732327\n  30\n0\n  40\n0.24999999999999689\n  100\nAcDbArc\n  50\n89.999999999994259\n  51\n180\n  0\nLINE\n  5\n1D7\n  330\n284\n  100\nAcDbEntity\n  8\n.Home.SINGLE HORIZONTAL NEW\n  6\nCENTER\n  440\n33554687\n  100\nAcDbLine\n  10\n-3.6262627766738769\n  20\n2.4431516906732296\n  30\n0\n  11\n-3.6262627766738769\n  21\n0.56815169067322968\n  31\n0\n  0\nARC\n  5\n1D8\n  330\n284\n  100\nAcDbEntity\n  8\n.Home.SINGLE HORIZONTAL NEW\n  6\nCENTER\n  440\n33554687\n  100\nAcDbCircle\n  10\n-3.3762627766738973\n  20\n0.56815169067322557\n  30\n0\n  40\n0.24999999999997957\n  100\nAcDbArc\n  50\n180\n  51\n269.99999999998278\n  0\nLINE\n  5\n1D9\n  330\n284\n  100\nAcDbEntity\n  8\n.Home.SINGLE HORIZONTAL NEW\n  6\nCENTER\n  440\n33554687\n  100\nAcDbLine\n  10\n-3.3762627766738769\n  20\n0.31815169067322957\n  30\n0\n  11\n-0.25126277667387686\n  21\n0.31815169067322957\n  31\n0\n  0\nARC\n  5\n1DA\n  330\n284\n  100\nAcDbEntity\n  8\n.Home.SINGLE HORIZONTAL NEW\n  6\nCENTER\n  440\n33554687\n  100\nAcDbCircle\n  10\n-0.25126277667388663\n  20\n0.56815169067323268\n  30\n0\n  40\n0.25000000000000322\n  100\nAcDbArc\n  50\n269.99999999998278\n  51\n360\n  0\nLINE\n  5\n1DB\n  330\n284\n  100\nAcDbEntity\n  8\n.Home.SINGLE HORIZONTAL NEW\n  6\nCENTER\n  440\n33554687\n  100\nAcDbLine\n  10\n-0.0012627766738768642\n  20\n0.56815169067322946\n  30\n0\n  11\n-0.0012627766738768642\n  21\n2.4431516906732296\n  31\n0\n  0\nARC\n  5\n1DC\n  330\n284\n  100\nAcDbEntity\n  8\n.Home.SINGLE HORIZONTAL NEW\n  6\nCENTER\n  440\n33554687\n  100\nAcDbCircle\n  10\n-0.25126277667386887\n  20\n2.4431516906732362\n  30\n0\n  40\n0.249999999999992\n  100\nAcDbArc\n  50\n360\n  51\n89.999999999994259\n  0\nLINE\n  5\n1DD\n  330\n284\n  100\nAcDbEntity\n  8\n.Home.SINGLE HORIZONTAL NEW\n  6\nCENTER\n  440\n33554687\n  100\nAcDbLine\n  10\n-0.25126277667387686\n  20\n2.6931516906732296\n  30\n0\n  11\n-3.3762627766738769\n  21\n2.6931516906732296\n  31\n0\n  0\nARC\n  5\n1DE\n  330\n284\n  100\nAcDbEntity\n  8\n.Home.SINGLE HORIZONTAL NEW\n  6\nCENTER\n  440\n33554687\n  100\nAcDbCircle\n  10\n-3.3762627766738653\n  20\n2.4431516906732327\n  30\n0\n  40\n0.24999999999999689\n  100\nAcDbArc\n  50\n89.999999999994259\n  51\n180\n  0\nLINE\n  5\n1DF\n  330\n284\n  100\nAcDbEntity\n  8\n.Home.SINGLE HORIZONTAL NEW\n  6\nCENTER\n  440\n33554687\n  100\nAcDbLine\n  10\n-3.6262627766738769\n  20\n2.4431516906732296\n  30\n0\n  11\n-3.6262627766738769\n  21\n0.56815169067322968\n  31\n0\n  0\nARC\n  5\n1E0\n  330\n284\n  100\nAcDbEntity\n  8\n.Home.SINGLE HORIZONTAL NEW\n  6\nCENTER\n  440\n33554687\n  100\nAcDbCircle\n  10\n-3.3762627766738973\n  20\n0.56815169067322557\n  30\n0\n  40\n0.24999999999997957\n  100\nAcDbArc\n  50\n180\n  51\n269.99999999998278\n  0\nLINE\n  5\n1E1\n  330\n284\n  100\nAcDbEntity\n  8\n.Home.SINGLE HORIZONTAL NEW\n  6\nCENTER\n  440\n33554687\n  100\nAcDbLine\n  10\n-3.3762627766738769\n  20\n0.31815169067322957\n  30\n0\n  11\n-0.25126277667387686\n  21\n0.31815169067322957\n  31\n0\n  0\nVIEWPORT\n  5\n298\n  330\n285\n  100\nAcDbEntity\n  67\n1\n  8\n0\n  100\nAcDbViewport\n  10\n105.029\n  20\n148.463\n  40\n24.97\n  41\n312.78718378906251\n  68\n1\n  69\n1\n  12\n105.029\n  22\n148.463\n  13\n0\n  23\n0\n  14\n1\n  24\n1\n  15\n1\n  25\n1\n  16\n0\n  26\n0\n  36\n1\n  17\n0\n  27\n0\n  37\n0\n  42\n50\n  43\n0\n  44\n0\n  45\n312.78718378906251\n  50\n0\n  51\n0\n  72\n1000\n  90\n32800\n  1\n\n  281\n0\n  71\n1\n  74\n0\n  110\n0\n  120\n0\n  130\n0\n  111\n1\n  121\n0\n  131\n0\n  112\n0\n  122\n1\n  132\n0\n  79\n0\n  146\n0\n  0\nENDSEC\n  0\nSECTION\n  2\nOBJECTS\n  0\nDICTIONARY\n  5\n299\n  330\n0\n  100\nAcDbDictionary\n  281\n1\n  3\nACAD_GROUP\n  350\n29A\n  3\nACAD_LAYOUT\n  350\n29B\n  3\nACAD_MLINESTYLE\n  350\n29C\n  3\nACAD_PLOTSETTINGS\n  350\n29D\n  3\nACAD_PLOTSTYLENAME\n  350\n29E\n  3\nVECTORDRAW_OBJECTS\n  350\n29F\n  3\nDWGPROPS\n  350\n2A0\n  3\nACAD_VISUALSTYLE\n  350\n2A1\n  0\nDICTIONARY\n  5\n2A1\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbDictionary\n  281\n1\n  3\n2dWireframe\n  350\n248\n  3\nBasic\n  350\n249\n  3\nBrighten\n  350\n24A\n  3\nColorChange\n  350\n24B\n  3\nConceptual\n  350\n24C\n  3\nDim\n  350\n24D\n  3\nEdgeColorOff\n  350\n24E\n  3\nFacepattern\n  350\n24F\n  3\nFlat\n  350\n250\n  3\nFlatWithEdges\n  350\n251\n  3\nGouraud\n  350\n252\n  3\nGouraudWithEdges\n  350\n253\n  3\nHidden\n  350\n254\n  3\nJitterOff\n  350\n255\n  3\nLinepattern\n  350\n256\n  3\nOverhangOff\n  350\n257\n  3\nRealistic\n  350\n258\n  3\nShaded\n  350\n259\n  3\nShaded with edges\n  350\n25A\n  3\nShades of Gray\n  350\n25B\n  3\nSketchy\n  350\n25C\n  3\nThicken\n  350\n25D\n  3\nWireframe\n  350\n25E\n  3\nX-Ray\n  350\n25F\n  0\nVISUALSTYLE\n  5\n248\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbVisualStyle\n  2\n2dWireframe\n  70\n     4\n  177\n     3\n  291\n     0\n  70\n    58\n  90\n        0\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  40\n0.6\n  176\n     1\n  40\n30.0\n  176\n     1\n  62\n     7\n  420\n 16777215\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        4\n  176\n     1\n  62\n     7\n  176\n     1\n  62\n   257\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n   257\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        6\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  90\n        5\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n0.0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  40\n0.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n    18\n  420\n        0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n        3\n  176\n     1\n  62\n     5\n  420\n      255\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  62\n   256\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        2\n  176\n     1\n  1\nstrokes_ogs.tif\n  176\n     1\n  290\n     0\n  176\n     1\n  40\n1.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  0\nVISUALSTYLE\n  5\n249\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbVisualStyle\n  2\nBasic\n  70\n     7\n  177\n     3\n  291\n     1\n  70\n    58\n  90\n        1\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        0\n  176\n     1\n  40\n0.6\n  176\n     1\n  40\n30.0\n  176\n     1\n  62\n     7\n  420\n 16777215\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        4\n  176\n     1\n  62\n     7\n  176\n     1\n  62\n   257\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        8\n  176\n     1\n  62\n     7\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        6\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  90\n        5\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n0.0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  40\n0.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n    18\n  420\n        0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n        3\n  176\n     1\n  62\n     5\n  420\n      255\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  62\n   256\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        2\n  176\n     1\n  1\nstrokes_ogs.tif\n  176\n     1\n  290\n     0\n  176\n     1\n  40\n1.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  0\nVISUALSTYLE\n  5\n24A\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbVisualStyle\n  2\nBrighten\n  70\n    12\n  177\n     3\n  291\n     1\n  70\n    58\n  90\n        2\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  40\n0.6\n  176\n     1\n  40\n30.0\n  176\n     1\n  62\n     7\n  420\n 16777215\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        4\n  176\n     1\n  62\n     7\n  176\n     1\n  62\n   257\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        8\n  176\n     1\n  62\n     7\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        6\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  90\n        5\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n50.0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  40\n0.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n    18\n  420\n        0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n        3\n  176\n     1\n  62\n     5\n  420\n      255\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  62\n   256\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        2\n  176\n     1\n  1\nstrokes_ogs.tif\n  176\n     1\n  290\n     0\n  176\n     1\n  40\n1.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  0\nVISUALSTYLE\n  5\n24B\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbVisualStyle\n  2\nColorChange\n  70\n    16\n  177\n     3\n  291\n     1\n  70\n    58\n  90\n        2\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        3\n  176\n     1\n  90\n        0\n  176\n     1\n  40\n0.6\n  176\n     1\n  40\n30.0\n  176\n     1\n  62\n     8\n  420\n  8421504\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        4\n  176\n     1\n  62\n     7\n  176\n     1\n  62\n   257\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        8\n  176\n     1\n  62\n     8\n  420\n  8421504\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        6\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  90\n        5\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n0.0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  40\n0.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n    18\n  420\n        0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n        3\n  176\n     1\n  62\n     5\n  420\n      255\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  62\n   256\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        2\n  176\n     1\n  1\nstrokes_ogs.tif\n  176\n     1\n  290\n     0\n  176\n     1\n  40\n1.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  0\nVISUALSTYLE\n  5\n24C\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbVisualStyle\n  2\nConceptual\n  70\n     9\n  177\n     3\n  291\n     0\n  70\n    58\n  90\n        3\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  40\n0.6\n  176\n     1\n  40\n30.0\n  176\n     1\n  62\n     7\n  420\n 16777215\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  62\n   257\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n179.0\n  176\n     1\n  90\n        8\n  176\n     1\n  62\n     7\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        6\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  90\n        3\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n0.0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  40\n0.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n    18\n  420\n        0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n        3\n  176\n     1\n  62\n     5\n  420\n      255\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  62\n   256\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        2\n  176\n     1\n  1\nstrokes_ogs.tif\n  176\n     1\n  290\n     0\n  176\n     1\n  40\n1.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  0\nVISUALSTYLE\n  5\n24D\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbVisualStyle\n  2\nDim\n  70\n    11\n  177\n     3\n  291\n     1\n  70\n    58\n  90\n        2\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  40\n0.6\n  176\n     1\n  40\n30.0\n  176\n     1\n  62\n     7\n  420\n 16777215\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        4\n  176\n     1\n  62\n     7\n  176\n     1\n  62\n   257\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        8\n  176\n     1\n  62\n     7\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        6\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  90\n        5\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n-50.0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  40\n0.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n    18\n  420\n        0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n        3\n  176\n     1\n  62\n     5\n  420\n      255\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  62\n   256\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        2\n  176\n     1\n  1\nstrokes_ogs.tif\n  176\n     1\n  290\n     0\n  176\n     1\n  40\n1.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  0\nVISUALSTYLE\n  5\n24E\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbVisualStyle\n  2\nEdgeColorOff\n  70\n    22\n  177\n     3\n  291\n     1\n  70\n    58\n  90\n        2\n  176\n     0\n  90\n        2\n  176\n     0\n  90\n        0\n  176\n     0\n  90\n        0\n  176\n     0\n  40\n0.6\n  176\n     0\n  40\n30.0\n  176\n     0\n  62\n     7\n  420\n 16777215\n  176\n     0\n  90\n        1\n  176\n     0\n  90\n        4\n  176\n     0\n  62\n     7\n  176\n     0\n  62\n   257\n  176\n     0\n  90\n        1\n  176\n     0\n  90\n        1\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        8\n  176\n     2\n  62\n     7\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        1\n  176\n     0\n  90\n        6\n  176\n     0\n  90\n        2\n  176\n     0\n  62\n     7\n  176\n     0\n  90\n        5\n  176\n     0\n  90\n        0\n  176\n     0\n  90\n        0\n  176\n     0\n  290\n     0\n  176\n     0\n  90\n        1\n  176\n     0\n  40\n0.0\n  176\n     0\n  90\n        0\n  176\n     0\n  290\n     0\n  176\n     0\n  290\n     1\n  176\n     0\n  290\n     1\n  176\n     0\n  290\n     0\n  176\n     0\n  290\n     0\n  176\n     0\n  290\n     0\n  176\n     0\n  290\n     0\n  176\n     0\n  290\n     0\n  176\n     0\n  290\n     0\n  176\n     0\n  90\n       50\n  176\n     0\n  40\n0.0\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        0\n  176\n     0\n  62\n    18\n  420\n        0\n  176\n     0\n  90\n       50\n  176\n     0\n  90\n        3\n  176\n     0\n  62\n     5\n  420\n      255\n  176\n     0\n  290\n     0\n  176\n     0\n  90\n       50\n  176\n     0\n  90\n       50\n  176\n     0\n  90\n       50\n  176\n     0\n  290\n     0\n  176\n     0\n  90\n       50\n  176\n     0\n  62\n   256\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        2\n  176\n     0\n  1\nstrokes_ogs.tif\n  176\n     0\n  290\n     0\n  176\n     0\n  40\n1.0\n  176\n     0\n  40\n1.0\n  176\n     0\n  0\nVISUALSTYLE\n  5\n24F\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbVisualStyle\n  2\nFacepattern\n  70\n    15\n  177\n     3\n  291\n     1\n  70\n    58\n  90\n        2\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  40\n0.6\n  176\n     1\n  40\n30.0\n  176\n     1\n  62\n     7\n  420\n 16777215\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        4\n  176\n     1\n  62\n     7\n  176\n     1\n  62\n   257\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        8\n  176\n     1\n  62\n     7\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        6\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  90\n        5\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n0.0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  40\n0.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n    18\n  420\n        0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n        3\n  176\n     1\n  62\n     5\n  420\n      255\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  62\n   256\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        2\n  176\n     1\n  1\nstrokes_ogs.tif\n  176\n     1\n  290\n     0\n  176\n     1\n  40\n1.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  0\nVISUALSTYLE\n  5\n250\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbVisualStyle\n  2\nFlat\n  70\n     0\n  177\n     3\n  291\n     1\n  70\n    58\n  90\n        2\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        2\n  176\n     1\n  40\n0.6\n  176\n     1\n  40\n30.0\n  176\n     1\n  62\n     7\n  420\n 16777215\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n     7\n  176\n     1\n  62\n   257\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        8\n  176\n     1\n  62\n     7\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        6\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  90\n        5\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       13\n  176\n     1\n  40\n0.0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  40\n0.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n    18\n  420\n        0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n        3\n  176\n     1\n  62\n     5\n  420\n      255\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  62\n   256\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        2\n  176\n     1\n  1\nstrokes_ogs.tif\n  176\n     1\n  290\n     0\n  176\n     1\n  40\n1.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  0\nVISUALSTYLE\n  5\n251\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbVisualStyle\n  2\nFlatWithEdges\n  70\n     1\n  177\n     3\n  291\n     1\n  70\n    58\n  90\n        2\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        2\n  176\n     1\n  40\n0.6\n  176\n     1\n  40\n30.0\n  176\n     1\n  62\n     7\n  420\n 16777215\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n     7\n  176\n     1\n  62\n   257\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n   257\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        6\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  90\n        5\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       13\n  176\n     1\n  40\n0.0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  40\n0.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n    18\n  420\n        0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n        3\n  176\n     1\n  62\n     5\n  420\n      255\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  62\n   256\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        2\n  176\n     1\n  1\nstrokes_ogs.tif\n  176\n     1\n  290\n     0\n  176\n     1\n  40\n1.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  0\nVISUALSTYLE\n  5\n252\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbVisualStyle\n  2\nGouraud\n  70\n     2\n  177\n     3\n  291\n     1\n  70\n    58\n  90\n        2\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        2\n  176\n     1\n  40\n0.6\n  176\n     1\n  40\n30.0\n  176\n     1\n  62\n     7\n  420\n 16777215\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n     7\n  176\n     1\n  62\n   257\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n     7\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        6\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  90\n        5\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       13\n  176\n     1\n  40\n0.0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  40\n0.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n    18\n  420\n        0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n        3\n  176\n     1\n  62\n     5\n  420\n      255\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  62\n   256\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        2\n  176\n     1\n  1\nstrokes_ogs.tif\n  176\n     1\n  290\n     0\n  176\n     1\n  40\n1.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  0\nVISUALSTYLE\n  5\n253\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbVisualStyle\n  2\nGouraudWithEdges\n  70\n     3\n  177\n     3\n  291\n     1\n  70\n    58\n  90\n        2\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        2\n  176\n     1\n  40\n0.6\n  176\n     1\n  40\n30.0\n  176\n     1\n  62\n     7\n  420\n 16777215\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n     7\n  176\n     1\n  62\n   257\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n   257\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        6\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  90\n        5\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       13\n  176\n     1\n  40\n0.0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  40\n0.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n    18\n  420\n        0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n        3\n  176\n     1\n  62\n     5\n  420\n      255\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  62\n   256\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        2\n  176\n     1\n  1\nstrokes_ogs.tif\n  176\n     1\n  290\n     0\n  176\n     1\n  40\n1.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  0\nVISUALSTYLE\n  5\n254\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbVisualStyle\n  2\nHidden\n  70\n     6\n  177\n     3\n  291\n     0\n  70\n    58\n  90\n        1\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        0\n  176\n     1\n  40\n0.6\n  176\n     1\n  40\n30.0\n  176\n     1\n  62\n     7\n  420\n 16777215\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  62\n   257\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n40.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n   257\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        6\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  90\n        3\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n0.0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  40\n0.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n    18\n  420\n        0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n        3\n  176\n     1\n  62\n     5\n  420\n      255\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  62\n   256\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        2\n  176\n     1\n  1\nstrokes_ogs.tif\n  176\n     1\n  290\n     0\n  176\n     1\n  40\n1.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  0\nVISUALSTYLE\n  5\n255\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbVisualStyle\n  2\nJitterOff\n  70\n    20\n  177\n     3\n  291\n     1\n  70\n    58\n  90\n        2\n  176\n     0\n  90\n        2\n  176\n     0\n  90\n        0\n  176\n     0\n  90\n        0\n  176\n     0\n  40\n0.6\n  176\n     0\n  40\n30.0\n  176\n     0\n  62\n     7\n  420\n 16777215\n  176\n     0\n  90\n        1\n  176\n     0\n  90\n        4\n  176\n     0\n  62\n     7\n  176\n     0\n  62\n   257\n  176\n     0\n  90\n        1\n  176\n     0\n  90\n        1\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n       10\n  176\n     2\n  62\n     7\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        1\n  176\n     0\n  90\n        6\n  176\n     0\n  90\n        2\n  176\n     0\n  62\n     7\n  176\n     0\n  90\n        5\n  176\n     0\n  90\n        0\n  176\n     0\n  90\n        0\n  176\n     0\n  290\n     0\n  176\n     0\n  90\n        1\n  176\n     0\n  40\n0.0\n  176\n     0\n  90\n        0\n  176\n     0\n  290\n     0\n  176\n     0\n  290\n     1\n  176\n     0\n  290\n     1\n  176\n     0\n  290\n     0\n  176\n     0\n  290\n     0\n  176\n     0\n  290\n     0\n  176\n     0\n  290\n     0\n  176\n     0\n  290\n     0\n  176\n     0\n  290\n     0\n  176\n     0\n  90\n       50\n  176\n     0\n  40\n0.0\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        0\n  176\n     0\n  62\n    18\n  420\n        0\n  176\n     0\n  90\n       50\n  176\n     0\n  90\n        3\n  176\n     0\n  62\n     5\n  420\n      255\n  176\n     0\n  290\n     0\n  176\n     0\n  90\n       50\n  176\n     0\n  90\n       50\n  176\n     0\n  90\n       50\n  176\n     0\n  290\n     0\n  176\n     0\n  90\n       50\n  176\n     0\n  62\n   256\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        2\n  176\n     0\n  1\nstrokes_ogs.tif\n  176\n     0\n  290\n     0\n  176\n     0\n  40\n1.0\n  176\n     0\n  40\n1.0\n  176\n     0\n  0\nVISUALSTYLE\n  5\n256\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbVisualStyle\n  2\nLinepattern\n  70\n    14\n  177\n     3\n  291\n     1\n  70\n    58\n  90\n        2\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  40\n0.6\n  176\n     1\n  40\n30.0\n  176\n     1\n  62\n     7\n  420\n 16777215\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        4\n  176\n     1\n  62\n     7\n  176\n     1\n  62\n   257\n  176\n     1\n  90\n        7\n  176\n     1\n  90\n        7\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        8\n  176\n     1\n  62\n     7\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        6\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  90\n        5\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n0.0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  40\n0.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n    18\n  420\n        0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n        3\n  176\n     1\n  62\n     5\n  420\n      255\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  62\n   256\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        2\n  176\n     1\n  1\nstrokes_ogs.tif\n  176\n     1\n  290\n     0\n  176\n     1\n  40\n1.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  0\nVISUALSTYLE\n  5\n257\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbVisualStyle\n  2\nOverhangOff\n  70\n    21\n  177\n     3\n  291\n     1\n  70\n    58\n  90\n        2\n  176\n     0\n  90\n        2\n  176\n     0\n  90\n        0\n  176\n     0\n  90\n        0\n  176\n     0\n  40\n0.6\n  176\n     0\n  40\n30.0\n  176\n     0\n  62\n     7\n  420\n 16777215\n  176\n     0\n  90\n        1\n  176\n     0\n  90\n        4\n  176\n     0\n  62\n     7\n  176\n     0\n  62\n   257\n  176\n     0\n  90\n        1\n  176\n     0\n  90\n        1\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        9\n  176\n     2\n  62\n     7\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        1\n  176\n     0\n  90\n        6\n  176\n     0\n  90\n        2\n  176\n     0\n  62\n     7\n  176\n     0\n  90\n        5\n  176\n     0\n  90\n        0\n  176\n     0\n  90\n        0\n  176\n     0\n  290\n     0\n  176\n     0\n  90\n        1\n  176\n     0\n  40\n0.0\n  176\n     0\n  90\n        0\n  176\n     0\n  290\n     0\n  176\n     0\n  290\n     1\n  176\n     0\n  290\n     1\n  176\n     0\n  290\n     0\n  176\n     0\n  290\n     0\n  176\n     0\n  290\n     0\n  176\n     0\n  290\n     0\n  176\n     0\n  290\n     0\n  176\n     0\n  290\n     0\n  176\n     0\n  90\n       50\n  176\n     0\n  40\n0.0\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        0\n  176\n     0\n  62\n    18\n  420\n        0\n  176\n     0\n  90\n       50\n  176\n     0\n  90\n        3\n  176\n     0\n  62\n     5\n  420\n      255\n  176\n     0\n  290\n     0\n  176\n     0\n  90\n       50\n  176\n     0\n  90\n       50\n  176\n     0\n  90\n       50\n  176\n     0\n  290\n     0\n  176\n     0\n  90\n       50\n  176\n     0\n  62\n   256\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        2\n  176\n     0\n  1\nstrokes_ogs.tif\n  176\n     0\n  290\n     0\n  176\n     0\n  40\n1.0\n  176\n     0\n  40\n1.0\n  176\n     0\n  0\nVISUALSTYLE\n  5\n258\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbVisualStyle\n  2\nRealistic\n  70\n     8\n  177\n     3\n  291\n     0\n  70\n    58\n  90\n        2\n  176\n     1\n  90\n        3\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        2\n  176\n     1\n  40\n0.6\n  176\n     1\n  40\n30.0\n  176\n     1\n  62\n     7\n  420\n 16777215\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n     7\n  176\n     1\n  62\n   257\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        8\n  176\n     1\n  62\n   257\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        6\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  90\n        3\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       13\n  176\n     1\n  40\n0.0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  40\n0.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n    18\n  420\n        0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n        3\n  176\n     1\n  62\n     5\n  420\n      255\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  62\n   256\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        2\n  176\n     1\n  1\nstrokes_ogs.tif\n  176\n     1\n  290\n     0\n  176\n     1\n  40\n1.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  0\nVISUALSTYLE\n  5\n259\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbVisualStyle\n  2\nShaded\n  70\n    27\n  177\n     3\n  291\n     0\n  70\n    58\n  90\n        2\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        2\n  176\n     1\n  40\n0.6\n  176\n     1\n  40\n30.0\n  176\n     1\n  62\n     7\n  420\n 16777215\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        4\n  176\n     1\n  62\n     7\n  176\n     1\n  62\n   257\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        8\n  176\n     1\n  62\n   257\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        6\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     8\n  420\n  7895160\n  176\n     1\n  90\n        3\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n        5\n  176\n     1\n  40\n0.0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  40\n0.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n    18\n  420\n        0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n        3\n  176\n     1\n  62\n     5\n  420\n      255\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  62\n   256\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        2\n  176\n     1\n  1\nstrokes_ogs.tif\n  176\n     1\n  290\n     0\n  176\n     1\n  40\n1.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  0\nVISUALSTYLE\n  5\n25A\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbVisualStyle\n  2\nShaded with edges\n  70\n    26\n  177\n     3\n  291\n     0\n  70\n    58\n  90\n        2\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        2\n  176\n     1\n  40\n0.6\n  176\n     1\n  40\n30.0\n  176\n     1\n  62\n     7\n  420\n 16777215\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  62\n   257\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        8\n  176\n     1\n  62\n   257\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        6\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  90\n        3\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n        5\n  176\n     1\n  40\n0.0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  40\n0.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n    18\n  420\n        0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n        3\n  176\n     1\n  62\n     5\n  420\n      255\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  62\n   256\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        2\n  176\n     1\n  1\nstrokes_ogs.tif\n  176\n     1\n  290\n     0\n  176\n     1\n  40\n1.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  0\nVISUALSTYLE\n  5\n25B\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbVisualStyle\n  2\nShades of Gray\n  70\n    23\n  177\n     3\n  291\n     0\n  70\n    58\n  90\n        2\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        3\n  176\n     1\n  90\n        0\n  176\n     1\n  40\n0.6\n  176\n     1\n  40\n30.0\n  176\n     1\n  62\n     7\n  420\n 16777215\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  62\n     7\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n40.0\n  176\n     1\n  90\n        8\n  176\n     1\n  62\n     7\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        6\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  90\n        3\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n0.0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  40\n0.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n    18\n  420\n        0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n        3\n  176\n     1\n  62\n     5\n  420\n      255\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  62\n   256\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        2\n  176\n     1\n  1\nstrokes_ogs.tif\n  176\n     1\n  290\n     0\n  176\n     1\n  40\n1.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  0\nVISUALSTYLE\n  5\n25C\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbVisualStyle\n  2\nSketchy\n  70\n    24\n  177\n     3\n  291\n     0\n  70\n    58\n  90\n        1\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        0\n  176\n     1\n  40\n0.6\n  176\n     1\n  40\n30.0\n  176\n     1\n  62\n     7\n  420\n 16777215\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  62\n     7\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n40.0\n  176\n     1\n  90\n       11\n  176\n     1\n  62\n     7\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        6\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  90\n        6\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n0.0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  40\n0.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n    18\n  420\n        0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n        3\n  176\n     1\n  62\n     5\n  420\n      255\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  62\n   256\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        2\n  176\n     1\n  1\nstrokes_ogs.tif\n  176\n     1\n  290\n     0\n  176\n     1\n  40\n1.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  0\nVISUALSTYLE\n  5\n25D\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbVisualStyle\n  2\nThicken\n  70\n    13\n  177\n     3\n  291\n     1\n  70\n    58\n  90\n        2\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  40\n0.6\n  176\n     1\n  40\n30.0\n  176\n     1\n  62\n     7\n  420\n 16777215\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        4\n  176\n     1\n  62\n     7\n  176\n     1\n  62\n   257\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n       12\n  176\n     1\n  62\n     7\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        6\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  90\n        5\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n0.0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  40\n0.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n    18\n  420\n        0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n        3\n  176\n     1\n  62\n     5\n  420\n      255\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  62\n   256\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        2\n  176\n     1\n  1\nstrokes_ogs.tif\n  176\n     1\n  290\n     0\n  176\n     1\n  40\n1.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  0\nVISUALSTYLE\n  5\n25E\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbVisualStyle\n  2\nWireframe\n  70\n     5\n  177\n     3\n  291\n     0\n  70\n    58\n  90\n        0\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  40\n0.6\n  176\n     1\n  40\n30.0\n  176\n     1\n  62\n     7\n  420\n 16777215\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        4\n  176\n     1\n  62\n     7\n  176\n     1\n  62\n   257\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n   257\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        6\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  90\n        3\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n0.0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  40\n0.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n    18\n  420\n        0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n        3\n  176\n     1\n  62\n     5\n  420\n      255\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  62\n   256\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        2\n  176\n     1\n  1\nstrokes_ogs.tif\n  176\n     1\n  290\n     0\n  176\n     1\n  40\n1.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  0\nVISUALSTYLE\n  5\n25F\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbVisualStyle\n  2\nX-Ray\n  70\n    25\n  177\n     3\n  291\n     0\n  70\n    58\n  90\n        2\n  176\n     1\n  90\n        2\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n0.5\n  176\n     1\n  40\n30.0\n  176\n     1\n  62\n     7\n  420\n 16777215\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n     7\n  176\n     1\n  62\n   257\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        1\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        8\n  176\n     1\n  62\n     7\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        1\n  176\n     1\n  90\n        6\n  176\n     1\n  90\n        2\n  176\n     1\n  62\n     7\n  176\n     1\n  90\n        3\n  176\n     1\n  90\n        0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       13\n  176\n     1\n  40\n0.0\n  176\n     1\n  90\n        0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     1\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  40\n0.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  90\n        0\n  176\n     1\n  62\n    18\n  420\n        0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n        3\n  176\n     1\n  62\n     5\n  420\n      255\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  90\n       50\n  176\n     1\n  290\n     0\n  176\n     1\n  90\n       50\n  176\n     1\n  62\n   256\n  176\n     0\n  40\n1.0\n  176\n     0\n  90\n        2\n  176\n     1\n  1\nstrokes_ogs.tif\n  176\n     1\n  290\n     0\n  176\n     1\n  40\n1.0\n  176\n     1\n  40\n1.0\n  176\n     1\n  0\nDICTIONARY\n  5\n265\n  330\n264\n  100\nAcDbDictionary\n  280\n1\n  281\n1\n  3\nACAD_LAYERFILTERS\n  360\n2A2\n  3\nACAD_LAYERSTATES\n  360\n2A3\n  3\nACLYDICTIONARY\n  360\n2A4\n  0\nDICTIONARY\n  5\n2A2\n  102\n{ACAD_REACTORS\n  330\n265\n  102\n}\n  330\n265\n  100\nAcDbDictionary\n  281\n1\n  0\nDICTIONARY\n  5\n2A3\n  102\n{ACAD_REACTORS\n  330\n265\n  102\n}\n  330\n265\n  100\nAcDbDictionary\n  281\n1\n  0\nDICTIONARY\n  5\n2A4\n  102\n{ACAD_REACTORS\n  330\n265\n  102\n}\n  330\n265\n  100\nAcDbDictionary\n  281\n1\n  1001\nACAD\n  1000\n<All\n  0\nDICTIONARY\n  5\n29A\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbDictionary\n  281\n1\n  0\nDICTIONARY\n  5\n29B\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbDictionary\n  281\n1\n  3\nLayout1\n  350\n247\n  3\nModel\n  350\n3\n  0\nDICTIONARY\n  5\n29C\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbDictionary\n  281\n1\n  3\nStandard\n  350\n242\n  0\nDICTIONARY\n  5\n29D\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbDictionary\n  281\n1\n  0\nACDBDICTIONARYWDFLT\n  5\n29E\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbDictionary\n  281\n1\n  3\nNormal\n  350\n263\n  100\nAcDbDictionaryWithDefault\n  340\n263\n  0\nDICTIONARY\n  5\n29F\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbDictionary\n  281\n1\n  3\nSERIALNO\n  350\n2A5\n  0\nLAYOUT\n  5\n247\n  102\n{ACAD_REACTORS\n  330\n29B\n  102\n}\n  330\n29B\n  100\nAcDbPlotSettings\n  1\n\n  2\n\n  4\n\n  6\n\n  40\n0\n  41\n0\n  42\n0\n  43\n0\n  44\n210.058\n  45\n296.926\n  46\n0\n  47\n0\n  48\n0\n  49\n0\n  140\n210.058\n  141\n296.926\n  142\n1\n  143\n1\n  70\n560\n  72\n1\n  73\n0\n  74\n4\n  75\n16\n  147\n1\n  148\n0\n  149\n0\n  100\nAcDbLayout\n  1\nLayout1\n  70\n0\n  71\n1\n  10\n0\n  20\n0\n  11\n12\n  21\n9\n  12\n0\n  22\n0\n  32\n0\n  14\n0\n  24\n0\n  34\n0\n  15\n0\n  25\n0\n  35\n0\n  146\n0\n  13\n0\n  23\n0\n  33\n0\n  16\n1\n  26\n0\n  36\n0\n  17\n0\n  27\n1\n  37\n0\n  76\n0\n  330\n285\n  0\nLAYOUT\n  5\n3\n  102\n{ACAD_REACTORS\n  330\n29B\n  102\n}\n  330\n29B\n  100\nAcDbPlotSettings\n  1\nVectorDraw Printer Drawing\n  2\n\n  4\n\n  6\n\n  40\n0\n  41\n0\n  42\n0\n  43\n0\n  44\n209.804\n  45\n296.926\n  46\n0\n  47\n0\n  48\n0\n  49\n0\n  140\n10\n  141\n10\n  142\n1000\n  143\n100\n  70\n560\n  72\n1\n  73\n0\n  74\n4\n  75\n0\n  147\n1\n  148\n0\n  149\n0\n  100\nAcDbLayout\n  1\nModel\n  70\n1\n  71\n0\n  10\n3.9370078740157481\n  20\n-3.9370078740157481\n  11\n-3.9370078740157481\n  21\n3.9370078740157481\n  12\n0\n  22\n0\n  32\n0\n  14\n-0.0012627766738768642\n  24\n0.31815169067322946\n  34\n-3.6262627766738769\n  15\n2.6931516906732296\n  25\n0\n  35\n0\n  146\n0\n  13\n0\n  23\n0\n  33\n0\n  16\n1\n  26\n0\n  36\n0\n  17\n0\n  27\n1\n  37\n0\n  76\n0\n  330\n284\n  1001\nVD_EX_PRINTER_NAME\n  1000\n\n  1001\nVD_EX_PRINTER_PAPER\n  1070\n0\n  1001\nVD_EX_PRINTER_ORIENT\n  1070\n1\n  1001\nVD_EX_PRINTER_SIZEX\n  1040\n210\n  1001\nVD_EX_PRINTER_SIZEY\n  1040\n297\n  1001\nVD_EX_PRINTER_AVSIZEX\n  1040\n210\n  1001\nVD_EX_PRINTER_AVSIZEY\n  1040\n297\n  1001\nVD_EX_PRINTER_MARX\n  1040\n0\n  1001\nVD_EX_PRINTER_MARY\n  1040\n0\n  1001\nVD_EX_PRINTER_PAPER_NAME\n  1000\n\n  0\nMLINESTYLE\n  5\n242\n  102\n{ACAD_REACTORS\n  330\n29C\n  102\n}\n  330\n29C\n  100\nAcDbMlineStyle\n  2\nStandard\n  70\n0\n  3\n\n  62\n0\n  51\n90\n  52\n90\n  71\n2\n  49\n0.5\n  62\n7\n  6\nContinuous\n  49\n-0.5\n  62\n7\n  6\nContinuous\n  0\nACDBPLACEHOLDER\n  5\n263\n  102\n{ACAD_REACTORS\n  330\n29E\n  102\n}\n  330\n29E\n  0\nXRECORD\n  5\n2A5\n  102\n{ACAD_REACTORS\n  330\n29F\n  102\n}\n  330\n29F\n  100\nAcDbXrecord\n  280\n1\n  1000\nudnjVM6OT3ptXXPNDrqErnGX8\n  1070\n5\n  1070\n1\n  0\nXRECORD\n  5\n2A0\n  102\n{ACAD_REACTORS\n  330\n299\n  102\n}\n  330\n299\n  100\nAcDbXrecord\n  280\n1\n  1\nDWGPROPS COOKIE\n  2\n\n  3\n\n  4\n\n  6\n\n  7\n\n  8\n\n  9\n\n  40\n0\n  41\n0\n  42\n0\n  1\n\n  90\n0\n  0\nENDSEC\n  999\nCreated By VectorDraw :10.1001.1.1\n  0\nEOF\n";
 let pieceNo=1, pieces=[];
+let tmWorkOrderSequence='1';
+let tmReturnFromJobSetup=null;
+let tmJobSetupReturnState=null;
+
+function tmCaptureCurrentPieceState(){
+  return {
+    returnScreen:(['piece','review','jobHome','allPieces','pieceView','finish'].find(id=>{
+      const el=document.getElementById(id); return el && !el.classList.contains('hidden');
+    }) || 'piece'),
+    pieceNo:pieceNo,
+    workOrderSequence:tmWorkOrderSequence,
+    thicknessChoice:String(document.getElementById('pthick')?.value||''),
+    thicknessOther:String(document.getElementById('pthickOther')?.value||''),
+    defaultThickness:tmDefaultThickness,
+    piece1ThicknessDecision:tmPiece1ThicknessDecision
+  };
+}
+function tmRestoreCurrentPieceState(){
+  if(!tmJobSetupReturnState) return;
+  pieceNo=tmJobSetupReturnState.pieceNo;
+  tmWorkOrderSequence=String(tmJobSetupReturnState.workOrderSequence||'1');
+  tmDefaultThickness=tmJobSetupReturnState.defaultThickness;
+  tmPiece1ThicknessDecision=tmJobSetupReturnState.piece1ThicknessDecision;
+
+  const ts=document.getElementById('pthick');
+  const to=document.getElementById('pthickOther');
+  const ow=document.getElementById('pthickOtherWrap');
+  if(ts) ts.value=tmJobSetupReturnState.thicknessChoice;
+  if(to) to.value=tmJobSetupReturnState.thicknessOther;
+  if(ow) ow.style.display=(tmJobSetupReturnState.thicknessChoice==='Other')?'block':'none';
+
+  const q=document.getElementById('tmThicknessDefaultQuestion');
+  if(q && tmPiece1ThicknessDecision) q.classList.add('hidden');
+  if(typeof refreshLivePieceDrawing==='function') refreshLivePieceDrawing();
+}
+function tmReturnToPiecesFromSetup(){
+  const returnId=tmJobSetupReturnState?.returnScreen || 'piece';
+  hideWorkScreens();
+  document.getElementById(returnId)?.classList.remove('hidden');
+  tmRestoreCurrentPieceState();
+  const b=document.getElementById('tmReturnToPiecesBtn');
+  if(b) b.style.display='none';
+  tmReturnFromJobSetup=null;
+  tmJobSetupReturnState=null;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function tmOpenOriginalJobInfo(){
+  // Job Setup is view/edit only while a job is in progress.
+  // Capture the active piece state before navigating away.
+  tmJobSetupReturnState=tmCaptureCurrentPieceState();
+  tmReturnFromJobSetup=tmJobSetupReturnState.returnScreen;
+  hideWorkScreens();
+  const job=document.getElementById('job');
+  if(job) job.classList.remove('hidden');
+
+  let back=document.getElementById('tmReturnToPiecesBtn');
+  if(!back){
+    back=document.createElement('button');
+    back.id='tmReturnToPiecesBtn';
+    back.type='button';
+    back.className='btn secondary';
+    back.textContent='RETURN TO PIECES';
+    back.style.marginTop='10px';
+    back.onclick=tmReturnToPiecesFromSetup;
+    const actions=job?.querySelector('.actions');
+    if(actions) actions.appendChild(back);
+    else if(job) job.appendChild(back);
+  }
+  back.style.display='inline-block';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
 let editingPieceIndex=null;
 const TM_PIECES_KEY='truMeasure_v1414_pieces';
 function savePieces(){
@@ -377,12 +456,13 @@ function showJobHome(){
 }
 function addNewPieceFromHome(){
   editingPieceIndex=null;
-  const nums=pieces.map(p=>Number(p.pieceNo)||0);
+  const activeWO=String(document.getElementById('wo')?.value||'');
+  const nums=pieces.filter(p=>String(p.workOrder||'')===activeWO).map(p=>Number(p.pieceNo)||0);
   pieceNo=(nums.length?Math.max(...nums):0)+1;
   hideWorkScreens();
   resetPieceForm();
   tmApplyDefaultThicknessToPiece();
-  pieceTitle.textContent='Piece '+pieceNo;
+  pieceTitle.textContent='Piece '+tmWorkOrderSequence+'-'+pieceNo;
   document.getElementById('piece')?.classList.remove('hidden');
 }
 function completeJobFromHome(){
@@ -391,7 +471,11 @@ function completeJobFromHome(){
 }
 function startPiece(){
   try{
-  pieces=[]; pieceNo=1;
+  if(tmReturnFromJobSetup){
+    tmReturnToPiecesFromSetup();
+    return;
+  }
+  pieces=[]; pieceNo=1; tmWorkOrderSequence=String(document.getElementById('wo')?.value||'1').trim()||'1';
   tmDefaultThickness='';
   tmInitialOtherAppliesToFirstOnly=false;
   tmPiece1ThicknessDecision='';
@@ -695,6 +779,110 @@ function addRadiusCorner(corner='', radius=''){
   
   refreshRadiusCornerOptions();refreshReviewDrawing();
 }
+function tmParseMeasure(v){
+  let x=String(v??'').trim().replace(/["″]/g,'').replace(/\s*in(?:ches?)?\.?$/i,'').trim();
+  if(!x)return null;
+  x=x.replace(/^(\d+)\-(\d+\/\d+)$/,'$1 $2');
+  let total=0;
+  for(const part of x.split(/\s+/)){
+    if(/^\d+\/\d+$/.test(part)){const [n,d]=part.split('/').map(Number);if(!d)return null;total+=n/d;}
+    else if(/^\d*\.?\d+$/.test(part)) total+=Number(part); else return null;
+  }
+  if(!Number.isFinite(total))return null;
+  return Math.round(total*32)/32;
+}
+function tmFmtMeasure(v){
+  const n=tmParseMeasure(v);if(n===null)return String(v??'');
+  const whole=Math.floor(n+1e-9), num=Math.round((n-whole)*32);
+  if(!num)return whole+'"';
+  const gcd=(a,b)=>b?gcd(b,a%b):a, g=gcd(num,32), nn=num/g, dd=32/g;
+  return (whole?whole+' ':'')+nn+'/'+dd+'"';
+}
+function tmNormalizeMeasureInput(el){const n=tmParseMeasure(el.value);if(n===null){el.setCustomValidity('Enter a decimal or fraction to the nearest 1/32 inch.');return false;}el.setCustomValidity('');el.value=String(n);return true;}
+function tmIsMeasureInput(el){return el&&el.tagName==='INPUT'&&(el.matches('#len,#ht,#rightHt,#topFitCustom,.ox,.oy,.pointLoc,.pointHeight,.pointAmt,.notchIn,.notchHowFar,.radiusAmt,.spDist,.fhX,.fhY,.seamX')||el.closest('.adjust,.outlet,.notch,.radiusCorner,.stopPolish,#faucetHoles'));}
+document.addEventListener('focusin',e=>{if(tmIsMeasureInput(e.target)&&e.target.type==='number')e.target.type='text';});
+document.addEventListener('change',e=>{if(tmIsMeasureInput(e.target)){tmNormalizeMeasureInput(e.target);if(typeof refreshReviewDrawing==='function')refreshReviewDrawing();if(typeof refreshLivePieceDrawing==='function')refreshLivePieceDrawing();}});
+function addSeam(value=''){
+  const box=document.getElementById('seams');if(!box)return;
+  const d=document.createElement('div');d.className='seam notice';d.style.textAlign='left';
+  d.innerHTML='<label>Seam Distance From LEFT</label><input class="seamX" inputmode="text" placeholder="e.g. 48 7/32 or 48.21875" value="'+tmEsc(value)+'"><button class="btn secondary" type="button" style="margin-top:8px">REMOVE SEAM</button>';
+  d.querySelector('.seamX').addEventListener('input',function(){refreshReviewDrawing();});
+  d.querySelector('.seamX').addEventListener('change',function(){tmNormalizeMeasureInput(this);refreshReviewDrawing();});
+  d.querySelector('button').onclick=function(){d.remove();tmUpdateSeamButton();refreshReviewDrawing();};box.appendChild(d);tmUpdateSeamButton();d.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function tmUpdateSeamButton(){const n=document.querySelectorAll('#seams .seam').length,b=document.getElementById('addSeamBtn');if(b)b.textContent=n?'+ ADD ANOTHER SEAM':'+ ADD SEAM';}
+function tmReadSeams(){return [...document.querySelectorAll('#seams .seamX')].map(x=>tmParseMeasure(x.value)).filter(x=>x!==null&&x>0);}
+function tmEditJobSetup(){tmOpenOriginalJobInfo();}
+function tmAddWorkOrder(){
+  let modal=document.getElementById('tmWorkOrderModal');
+  if(!modal){
+    modal=document.createElement('div'); modal.id='tmWorkOrderModal';
+    modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.48);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px;overflow:auto';
+    modal.innerHTML='<div style="background:#fff;width:min(520px,100%);max-height:92vh;overflow:auto;border-radius:12px;padding:20px;box-shadow:0 12px 40px rgba(0,0,0,.28)">'+
+      '<h2 style="margin-top:0">Add Another Work Order</h2>'+
+      '<div class="notice" style="margin-bottom:14px">Enter the information for the new work order before starting Piece 1.</div>'+
+      '<label>Work Order Number</label><input id="tmNewWorkOrder" inputmode="numeric" style="width:100%;box-sizing:border-box;margin:6px 0 12px">'+
+      '<label>Job Name</label><input id="tmNewJobName" style="width:100%;box-sizing:border-box;margin:6px 0 12px">'+
+      '<label>Job Number</label><input id="tmNewJobNumber" style="width:100%;box-sizing:border-box;margin:6px 0 12px">'+
+      '<label>Stone Color</label><input id="tmNewStone" style="width:100%;box-sizing:border-box;margin:6px 0 12px">'+
+      '<label>Measurement Type</label><select id="tmNewType" style="width:100%;box-sizing:border-box;margin:6px 0 16px"><option>Backsplash</option><option>Install Backsplash</option></select>'+
+      '<div class="actions"><button class="btn secondary" type="button" id="tmBackWorkOrder">BACK</button><button class="btn secondary" type="button" id="tmOriginalJobSetup">ORIGINAL JOB INFO</button><button class="btn" type="button" id="tmConfirmWorkOrder">START WORK ORDER</button></div></div>';
+    document.body.appendChild(modal);
+    document.getElementById('tmBackWorkOrder').onclick=function(){
+      modal.style.display='none';
+      document.getElementById('summary')?.classList.remove('hidden');
+      window.scrollTo({top:0,behavior:'smooth'});
+    };
+    document.getElementById('tmOriginalJobSetup').onclick=function(){
+      modal.style.display='none';
+      tmOpenOriginalJobInfo();
+    };
+    document.getElementById('tmConfirmWorkOrder').onclick=function(){
+      const wo=String(document.getElementById('tmNewWorkOrder').value||'').trim();
+      const jn=String(document.getElementById('tmNewJobName').value||'').trim();
+      const jobnum=String(document.getElementById('tmNewJobNumber').value||'').trim();
+      const stone=String(document.getElementById('tmNewStone').value||'').trim();
+      const type=String(document.getElementById('tmNewType').value||'Backsplash');
+      if(!wo){alert('Enter a Work Order Number.');document.getElementById('tmNewWorkOrder').focus();return;}
+      if(!jn){alert('Enter a Job Name.');document.getElementById('tmNewJobName').focus();return;}
+      document.getElementById('wo').value=wo;
+      document.getElementById('jobname').value=jn;
+      document.getElementById('jobnum').value=jobnum;
+      document.getElementById('stone').value=stone;
+      document.getElementById('type').value=type;
+      tmDefaultThickness=''; tmPiece1ThicknessDecision=''; editingPieceIndex=null;
+      tmWorkOrderSequence=String(wo).trim();
+      pieceNo=1;
+      resetPieceForm(); window.currentReviewPiece=null; window.editingReviewExtras=null;
+      modal.style.display='none'; hideWorkScreens(); document.getElementById('piece')?.classList.remove('hidden');
+      pieceTitle.textContent='Piece '+tmWorkOrderSequence+'-'+pieceNo; window.scrollTo({top:0,behavior:'smooth'});
+    };
+  }
+  document.getElementById('tmNewWorkOrder').value='';
+  // Carry the original job information into each additional work order.
+  document.getElementById('tmNewJobName').value=document.getElementById('jobname')?.value||'';
+  document.getElementById('tmNewJobNumber').value=document.getElementById('jobnum')?.value||'';
+  document.getElementById('tmNewStone').value=document.getElementById('stone')?.value||'';
+  document.getElementById('tmNewType').value=document.getElementById('type')?.value||'Backsplash';
+  modal.style.display='flex';
+  setTimeout(function(){document.getElementById('tmNewWorkOrder')?.focus();},50);
+}
+const tmHelpContent={
+ 'POLISHED EDGES':'Select every edge that receives a finished polish. The A designation follows the piece into production output.',
+ 'PLANE ADJUSTMENTS':'Establish the bottom plane first, then the top plane. All outlet heights reference the finished adjusted bottom plane.',
+ 'SEAMS':'Enter the seam location from the LEFT. The app shows the seam line and labels SEAM on both sides. Programming creates the final split pieces.',
+ 'OUTLETS / CUTOUTS':'Each outlet has one centerline. Enter center from LEFT and center UP from the adjusted bottom plane.',
+ 'STOP POLISH':'Enter the Stop Polish location and which side of the stop receives polish.',
+ 'FAUCET HOLES':'Enter each faucet-hole center location from the defined references.',
+ 'NOTCHES':'Describe the notch from the finished piece edges. Verify all notch dimensions before approval.',
+ 'RADIUS CORNERS':'Select the finished corner and enter the required radius.',
+ 'INSTALLATION FITTING OFFSET':'Enter the fabrication reduction from the true net top edge.',
+ 'PIECE NOTES':'Use Piece Notes for job-specific fabrication, programming, installation, or general information.'
+};
+function tmShowHelp(title){const body=tmHelpContent[title]||'Additional Tru Measure instructions can be added here.';const v=window.tmHelpVideos&&window.tmHelpVideos[title];alert(title+' — ADDITIONAL INFO\n\n'+body+(v?'\n\nInstructional video: '+v:''));}
+function tmInstallHelpButtons(){document.querySelectorAll('#reviewExtras>.detailCard').forEach(card=>{const h=card.querySelector('h3');if(!h||card.querySelector('.tmHelpBtn'))return;const b=document.createElement('button');b.type='button';b.className='btn secondary tmHelpBtn';b.style.cssText='padding:7px 10px;font-size:12px;margin:4px 0 8px';b.textContent='ⓘ ADDITIONAL INFO';b.onclick=()=>tmShowHelp(h.textContent.trim());h.insertAdjacentElement('afterend',b);});}
+document.addEventListener('DOMContentLoaded',tmInstallHelpButtons);
+
 function addOutlet(){
   let d=document.createElement('div');
   d.className='outlet';
@@ -912,10 +1100,10 @@ else if(topEntered.length){
   const last=topEntered[topEntered.length-1];
   derivedRight=last.height;
 }
-return {length:+len.value,height:leftHeight,rightHeight:derivedRight,thickness:tmCurrentPieceThickness(),adj,topFitOffset:tmTopFitOffsetValue(),
+return {length:tmParseMeasure(len.value)||0,height:leftHeight,rightHeight:derivedRight,thickness:tmCurrentPieceThickness(),adj,topFitOffset:tmTopFitOffsetValue(),seams:tmReadSeams(),
 notches:[...document.querySelectorAll('.notch')].map(x=>({end:x.querySelector('.notchEnd').value,inside:+x.querySelector('.notchIn').value,from:x.querySelector('.notchFrom').value,far:+x.querySelector('.notchHowFar').value})),
 radii:[...document.querySelectorAll('.radiusCorner')].map(x=>({corner:x.querySelector('.radiusCornerSel').value,radius:+x.querySelector('.radiusAmt').value})),
-outs:[...document.querySelectorAll('.outlet')].map(x=>({xRaw:x.querySelector('.ox').value,yRaw:x.querySelector('.oy').value,type:x.querySelector('.otype').value})).filter(o=>o.xRaw!==''&&o.yRaw!=='').map(o=>({x:+o.xRaw,y:+o.yRaw,type:o.type})),
+outs:[...document.querySelectorAll('.outlet')].map(x=>({xRaw:x.querySelector('.ox').value,yRaw:x.querySelector('.oy').value,type:x.querySelector('.otype').value})).filter(o=>o.xRaw!==''&&o.yRaw!=='').map(o=>({x:tmParseMeasure(o.xRaw)||0,y:tmParseMeasure(o.yRaw)||0,type:o.type})),
 faucetHoles:(typeof tmReadFaucetHoles==='function'?tmReadFaucetHoles():[]),
 top:(document.getElementById('topPol')?.value||'No'),side:(document.getElementById('sidePol')?.value||'None')}}
 function review(){
@@ -930,7 +1118,7 @@ try{p=data();}catch(e){alert('Unable to open Piece Details: '+(e&&e.message?e.me
     p.notes=(window.currentReviewPiece.notes||[]).map(x=>({...x}));
     p.stopPolishes=(window.currentReviewPiece.stopPolishes||[]).map(x=>({...x}));
   }
-  window.currentReviewPiece=p;
+  window.currentReviewPiece=p;tmInstallHelpButtons();
   const pn=document.getElementById('pieceNotes'); if(pn) pn.innerHTML='';
   const sp=document.getElementById('stopPolishes'); if(sp) sp.innerHTML='';
   const nb=document.getElementById('addNoteBtn'); if(nb) nb.textContent='+ ADD NOTE';
@@ -1002,7 +1190,7 @@ window.draw(p);
       p.notes=(window.currentReviewPiece.notes||[]).map(x=>({...x}));
       p.stopPolishes=(window.currentReviewPiece.stopPolishes||[]).map(x=>({...x}));
     }
-    window.currentReviewPiece=p;
+    window.currentReviewPiece=p;tmInstallHelpButtons();
     window.draw(p);
     if(typeof refreshLivePieceDrawing==='function') refreshLivePieceDrawing();
   }catch(e){}
@@ -1077,6 +1265,16 @@ function draw(p){
   });
 
   s.innerHTML=g;
+
+  // Global drawing cleanup: keep one inch designation, never doubled.
+  // This applies to original and additional work orders, live/review drawings,
+  // and any direct redraw using draw().
+  try{
+    const tmSvg=document.getElementById('drawing');
+    if(tmSvg) tmSvg.querySelectorAll('text').forEach(function(t){
+      t.textContent=String(t.textContent||'').replace(/"{2,}/g,'"');
+    });
+  }catch(e){}
 }
 function editPiece(){
   if(window.currentReviewPiece){
@@ -1104,7 +1302,7 @@ function renderCompletedPieces(){
       for(let i=0;i<pieces.length;i++){
         const p=pieces[i]||{};
         html+='<div style="border:2px solid #222;border-radius:12px;padding:14px;margin:12px 0;text-align:left;">';
-        html+='<strong>PIECE '+(p.pieceNo||i+1)+'</strong><br>';
+        html+='<strong>PIECE '+(p.pieceLabel||((p.workOrderSequence||1)+'-'+(p.pieceNo||i+1)))+'</strong><br>';
         html+='Length: '+(Number(p.length)||0)+'&quot; &nbsp; Left Height: '+(Number(p.height)||0)+'&quot;<br>';
         html+='<div class="actions"><button class="btn secondary" type="button" onclick="viewSavedPiece('+i+')">VIEW PIECE</button>';
         html+='<button class="btn" type="button" onclick="editSavedPiece('+i+')">EDIT PIECE</button></div></div>';
@@ -1127,6 +1325,9 @@ function approve(){
       p.stopPolishes=(window.currentReviewPiece.stopPolishes||[]).map(x=>({...x}));
     }
     p.pieceNo=pieceNo;
+    p.workOrderSequence=tmWorkOrderSequence;
+    p.pieceLabel=tmWorkOrderSequence+'-'+pieceNo;
+    p.workOrder=document.getElementById('wo')?.value||'';
     p._current=false;
     if(editingPieceIndex!==null && pieces[editingPieceIndex]){
       pieces[editingPieceIndex]=p;
@@ -1268,7 +1469,7 @@ function resetPieceForm(){
   const tfc=document.getElementById('topFitCustom'); if(tfc)tfc.value='';
   tmTopOffsetChanged();
   document.getElementById('rightHeightWrap')?.classList.add('hidden');
-  adjustments.innerHTML=''; outlets.innerHTML='';
+  adjustments.innerHTML=''; outlets.innerHTML=''; const sm=document.getElementById('seams');if(sm)sm.innerHTML='';tmUpdateSeamButton();
   const ba=document.getElementById('bottomAdjustments'); if(ba) ba.innerHTML='';
   const fh=document.getElementById('faucetHoles'); if(fh) fh.innerHTML='';
   const spl=document.getElementById('stopPolishes'); if(spl) spl.innerHTML='';
@@ -1282,41 +1483,104 @@ function resetPieceForm(){
   const sp=document.getElementById('sidePol'); if(sp) sp.value='None';
 }
 
+function tmClearPieceDetailsOnly(){
+  // Keep the measured piece geometry/dimensions. Remove only information added
+  // on the ADD PIECE DETAILS page.
+  var tp=document.getElementById('topPol'); if(tp) tp.value='No';
+  var sp=document.getElementById('sidePol'); if(sp) sp.value='None';
+
+  ['outlets','faucetHoles','stopPolishes','notches','radiusCorners','pieceNotes','seams'].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.innerHTML='';
+  });
+
+  var ids=['tmPolishedEdgesEntry','notchEntry','radiusEntry','outletEntry','faucetHoleEntry','stopPolishEntry','pieceNoteEntry'];
+  ids.forEach(function(id){ var el=document.getElementById(id); if(el) el.style.display='none'; });
+
+  var labels={
+    tmPolishedEdgesLauncher:'+ ADD POLISHED EDGES',
+    addNotchBtn:'+ ADD NOTCH',
+    addRadiusBtn:'+ ADD RADIUS CORNER',
+    addOutletBtn:'+ ADD OUTLET / CUTOUT',
+    addSPBtn:'+ ADD STOP POLISH',
+    addNoteBtn:'+ ADD NOTE'
+  };
+  Object.keys(labels).forEach(function(id){var b=document.getElementById(id);if(b)b.textContent=labels[id];});
+
+  window.editingReviewExtras=null;
+
+  // Rebuild the review piece from the still-present measurements and redraw it.
+  try{
+    window.currentReviewPiece=data();
+    if(typeof rebuildSPSegments==='function') rebuildSPSegments(window.currentReviewPiece);
+    window.draw(window.currentReviewPiece);
+    var rd=document.getElementById('drawing');
+    if(rd) rd.querySelectorAll('text').forEach(function(t){
+      t.textContent=String(t.textContent||'').replace(/"{2,}/g,'"');
+    });
+  }catch(e){}
+}
+
+function tmBlankEntirePiece(){
+  resetPieceForm();
+  window.currentReviewPiece=null;
+  window.editingReviewExtras=null;
+  var live=document.getElementById('liveDrawing');
+  var liveWrap=document.getElementById('livePiecePreview');
+  var reviewDrawing=document.getElementById('drawing');
+  if(live) live.innerHTML='';
+  if(liveWrap) liveWrap.style.display='none';
+  if(reviewDrawing) reviewDrawing.innerHTML='';
+}
+
 function clearCurrentPiece(){
-  if(!confirm('Clear ALL information for this piece and start it over? This cannot be undone.')) return;
-  const keepPieceNo=pieceNo;
-  resetPieceForm();
-  const ba=document.getElementById('bottomAdjustments'); if(ba) ba.innerHTML='';
-  const ta=document.getElementById('adjustments'); if(ta) ta.innerHTML='';
-  const ob=document.getElementById('outlets'); if(ob) ob.innerHTML='';
-  const sp=document.getElementById('stopPolishes'); if(sp) sp.innerHTML='';
-  window.currentReviewPiece=null;
-  window.editingReviewExtras=null;
-  pieceNo=keepPieceNo;
-  if(window.refreshLivePieceDrawing) window.refreshLivePieceDrawing();
-  window.scrollTo({top:0,behavior:'smooth'});
+  // CLEAR on ADD PIECE DETAILS removes details only; dimensions/planes stay.
+  tmClearPieceDetailsOnly();
 }
+
 function deleteCurrentPiece(){
-  const saved=(editingPieceIndex!==null && pieces[editingPieceIndex]);
-  const msg=saved?'Delete this piece completely from the job? This cannot be undone.':'Discard this piece completely? This cannot be undone.';
-  if(!confirm(msg)) return;
-  if(saved){
-    pieces.splice(editingPieceIndex,1);
-    editingPieceIndex=null;
-    // Renumber remaining pieces sequentially.
-    pieces.forEach((p,i)=>{p.pieceNo=i+1;});
+  // DELETE removes the whole piece. When deleting a saved piece, immediately
+  // renumber the remaining pieces inside that work order.
+  var deleteIndex=-1;
+  if(editingPieceIndex!==null && editingPieceIndex>=0 && pieces[editingPieceIndex]){
+    deleteIndex=editingPieceIndex;
+  }else{
+    var label=String(tmWorkOrderSequence)+'-'+String(pieceNo);
+    for(var i=0;i<pieces.length;i++){
+      var p=pieces[i]||{};
+      var pl=String(p.pieceLabel||String(p.workOrderSequence||'1')+'-'+String(p.pieceNo||i+1));
+      if(pl===label){ deleteIndex=i; break; }
+    }
   }
-  window.currentReviewPiece=null;
-  window.editingReviewExtras=null;
-  resetPieceForm();
-  const ba=document.getElementById('bottomAdjustments'); if(ba) ba.innerHTML='';
-  const ta=document.getElementById('adjustments'); if(ta) ta.innerHTML='';
-  const ob=document.getElementById('outlets'); if(ob) ob.innerHTML='';
-  const sp=document.getElementById('stopPolishes'); if(sp) sp.innerHTML='';
-  ['piece','review','finish','pieceView','allPieces'].forEach(id=>document.getElementById(id)?.classList.add('hidden'));
-  if(typeof showJobHome==='function') showJobHome();
-  else document.getElementById('piece')?.classList.remove('hidden');
+
+  if(deleteIndex>=0){
+    pieces.splice(deleteIndex,1);
+
+    var counters={};
+    pieces.forEach(function(p){
+      var w=String(p.workOrderSequence||'1');
+      counters[w]=(counters[w]||0)+1;
+      p.pieceNo=counters[w];
+      p.pieceLabel=w+'-'+p.pieceNo;
+    });
+    savePieces();
+  }
+
+  editingPieceIndex=null;
+  tmBlankEntirePiece();
+
+  // The next new piece number is always one after the remaining pieces in this WO.
+  var count=0;
+  pieces.forEach(function(p){
+    if(String(p.workOrderSequence||'1')===String(tmWorkOrderSequence)) count++;
+  });
+  pieceNo=count+1;
+
+  ['piece','review','finish','pieceView','allPieces'].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.classList.add('hidden');
+  });
+  showJobHome();
 }
+
 function nextPiece(){
   editingPieceIndex=null;
   pieceNo++;
@@ -1333,7 +1597,7 @@ function nextPiece(){
   const review=document.getElementById('review'); if(review) review.classList.add('hidden');
   document.getElementById('finish').classList.add('hidden');
   document.getElementById('piece').classList.remove('hidden');
-  pieceTitle.textContent='Piece '+pieceNo;
+  pieceTitle.textContent='Piece '+tmWorkOrderSequence+'-'+pieceNo;
   // The established default thickness is the ONLY piece-specific value carried forward.
   tmApplyDefaultThicknessToPiece();
   if(typeof refreshLivePieceDrawing==='function') refreshLivePieceDrawing();
@@ -1361,12 +1625,13 @@ function editSavedPiece(i){
   window.editingReviewExtras={notes:(p.notes||[]).map(x=>({...x})),stopPolishes:(p.stopPolishes||[]).map(x=>({...x}))};
   editingPieceIndex=i;
   pieceNo=Number(p.pieceNo)||i+1;
+  tmWorkOrderSequence=String(p.workOrderSequence||'1');
   document.getElementById('allPieces')?.classList.add('hidden');
   document.getElementById('pieceView')?.classList.add('hidden');
   document.getElementById('finish')?.classList.add('hidden');
   document.getElementById('review')?.classList.add('hidden');
   document.getElementById('piece')?.classList.remove('hidden');
-  pieceTitle.textContent='Edit Piece '+pieceNo;
+  pieceTitle.textContent='Edit Piece '+tmWorkOrderSequence+'-'+pieceNo;
   resetPieceForm();
   len.value=p.length||'';
   ht.value=p.height||'';
@@ -1431,6 +1696,7 @@ function editSavedPiece(i){
   // Rebuild radius corners.
   (p.radii||[]).forEach(r=>addRadiusCorner(r.corner||'',r.radius??''));
 
+  const sm=document.getElementById('seams');if(sm)sm.innerHTML='';(p.seams||[]).forEach(x=>addSeam(x));tmUpdateSeamButton();
   // Rebuild outlets/cutouts.
   (p.outs||[]).forEach(o=>{
     addOutlet();
@@ -1509,8 +1775,18 @@ function tmSafeName(s){
 }
 function tmDownload(name,content,type){
   const blob=new Blob([content],{type:type||'application/octet-stream'});
-  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name;
-  document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),1500);
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=name;
+  a.style.display='none';
+  document.body.appendChild(a);
+  a.click();
+  // Give Safari time to begin the download before removing the link/revoking the URL.
+  setTimeout(function(){
+    try{ a.remove(); }catch(e){}
+    try{ URL.revokeObjectURL(url); }catch(e){}
+  },10000);
 }
 function tmJobData(){
   const val=id=>document.getElementById(id)?.value||'';
@@ -1531,13 +1807,15 @@ function saveJobFile(){
   savePieces();
   const d=tmJobData();
   const suggested=[d.job.jobName,d.job.jobNumber?('#'+d.job.jobNumber):''].filter(Boolean).join(' ').trim() || d.job.workOrder || 'Tru Measure Job';
-  const entered=window.prompt('Enter Job File Name:',suggested);
-  if(entered===null)return;
-  const clean=String(entered).trim();
-  if(!clean){alert('Enter a job file name before saving.');return;}
-  const base=tmSafeName(clean);
-  tmDownload(base+'_TruMeasure.json',JSON.stringify(d,null,2),'application/json');
-  const s=document.getElementById('sendStatus'); if(s)s.textContent='Job file saved as '+clean+'. This file can be loaded back into Tru Measure later.';
+  const base=tmSafeName(suggested);
+  const filename=base+'_TruMeasure.json';
+  try{
+    tmDownload(filename,JSON.stringify(d,null,2),'application/json');
+    const s=document.getElementById('sendStatus');
+    if(s)s.textContent='JOB FILE SAVED: '+filename+' — check your Downloads folder.';
+  }catch(e){
+    alert('The job file could not be saved. '+e.message);
+  }
 }
 function loadJobFile(input){
   const f=input.files&&input.files[0]; if(!f)return;
@@ -1585,12 +1863,23 @@ function tmRenderedSvgElement(p){
     window.currentReviewPiece=null;
     window.draw(p);
 
-    // V1.7.4: make all production PDF drawing annotations 3x larger.
+    // PDF Preview already has Piece # and Material Thickness in its own header.
+    // Hide duplicate copies inside the SVG drawing before sizing the PDF drawing.
+    temp.querySelectorAll('text').forEach(function(t){
+      var txt=String(t.textContent||'').trim().toUpperCase();
+      if(txt.indexOf('PIECE ')===0 || txt.indexOf('MATERIAL THICKNESS:')===0){
+        t.setAttribute('display','none');
+      } else {
+        t.textContent=String(t.textContent||'').replace(/"{2,}/g,'"');
+      }
+    });
+
+    // V1.7.4: make all remaining production PDF drawing annotations 3x larger.
     // This changes text only; piece geometry and drawing scale remain unchanged.
     temp.querySelectorAll('text').forEach(t=>{
       const raw=t.getAttribute('font-size');
       const size=parseFloat(raw||getComputedStyle(t).fontSize||'12');
-      if(Number.isFinite(size)&&size>0)t.setAttribute('font-size',String(size*3));
+      if(Number.isFinite(size)&&size>0)t.setAttribute('font-size',String(size*2));
     });
 
     // Measure the ACTUAL rendered content rather than exporting the full 720x500 canvas.
@@ -1760,26 +2049,28 @@ function buildPDFPreview(){
   const box=document.getElementById('pdfPreviewPages');if(!box)return false;
   box.innerHTML='';
   const val=id=>document.getElementById(id)?.value||'';
-  const commonScale=tmJobCommonPdfScale();
+  const commonScale=tmJobCommonPdfScale(); // retained internally for consistent geometry sizing
 
-  for(let pageStart=0;pageStart<pieces.length;pageStart+=3){
-    const pair=pieces.slice(pageStart,pageStart+3);
+  for(let pageStart=0;pageStart<pieces.length;pageStart+=2){
+    const pair=pieces.slice(pageStart,pageStart+2);
     const fracs=pair.map(()=>1/pair.length);
     const sheet=document.createElement('div');sheet.className='tmPdfSheet';
     sheet.innerHTML='<div class="tmPdfJobHeader"><h3>TRU MEASURE — PIECE DRAWINGS</h3>'+
       '<div><strong>Work Order:</strong> '+tmEsc(val('wo'))+
       ' &nbsp; <strong>Job:</strong> '+tmEsc(val('jobname'))+
       ' &nbsp; <strong>Job Number:</strong> '+tmEsc(val('jobnum'))+
-      ' &nbsp; <strong>Stone:</strong> '+tmEsc(val('stone'))+
-      ' &nbsp; <strong>Common scale:</strong> '+commonScale.toFixed(3)+' PDF in./actual in.</div></div>';
+      ' &nbsp; <strong>Stone:</strong> '+tmEsc(val('stone'))+'</div></div>';
     box.appendChild(sheet);
 
     pair.forEach((p,j)=>{
       const i=pageStart+j;
       const piece=document.createElement('div');piece.className='tmPdfPreviewPiece tmPdfRelativePiece';
-      piece.style.height=(94*fracs[j])+'%';
-      piece.innerHTML='<div class="tmPdfPieceHead"><strong>Piece '+tmEsc(p.pieceNo||i+1)+'</strong>'+
-        '<span>REFERENCE DRAWING — DO NOT SCALE — USE DIMENSIONS SHOWN</span></div>'+
+      piece.style.flex='1 1 0';piece.style.minHeight='0';
+      const seamCount=(p.seams||[]).length;const baseLabel=String(p.pieceLabel||((p.workOrderSequence||1)+'-'+(p.pieceNo||i+1)));const pieceLabel=seamCount?Array.from({length:seamCount+1},(_,q)=>baseLabel+String.fromCharCode(65+q)).join(' / '):baseLabel;
+      const pieceThickness=String(p.thickness||p.pieceThickness||'NOT SET');
+      piece.innerHTML='<div class="tmPdfPieceHead"><strong class="tmPdfPieceNo">PIECE '+tmEsc(pieceLabel)+'</strong>'+
+        '<span class="tmPdfThickness">MATERIAL THICKNESS: '+tmEsc(pieceThickness)+'</span></div>'+
+        '<div class="tmPdfRefNote">REFERENCE DRAWING — DO NOT SCALE — USE DIMENSIONS SHOWN</div>'+
         '<div class="tmPdfScaledStage"></div>';
       sheet.appendChild(piece);
 
@@ -1792,10 +2083,10 @@ function buildPDFPreview(){
       let drawW=Math.min(10.40,geomW+0.40);
       // preview slot height follows the same relative allocation as the PDF
       const slotH=7.55*fracs[j];
-      let drawH=Math.min(Math.max(0.75,slotH-0.22),geomH+0.28);
+      let drawH=Math.min(Math.max(0.75,slotH-0.36),geomH+0.28);
       if(drawW/drawH>aspect)drawW=drawH*aspect; else drawH=drawW/aspect;
       rendered.style.width=(drawW/10.40*100)+'%';
-      rendered.style.height=(drawH/Math.max(0.75,slotH-0.22)*100)+'%';
+      rendered.style.height=(drawH/Math.max(0.75,slotH-0.36)*100)+'%';
       rendered.style.maxWidth='100%';rendered.style.maxHeight='100%';
       rendered.style.display='block';rendered.style.margin='auto';
       stage.appendChild(rendered);
@@ -2002,7 +2293,7 @@ function tmDXFForPiece(p){
 
   // Faucet holes and their center dimensions.
   (p.faucetHoles||[]).forEach((h,i)=>{
-    const fromRight=String(h.ref||'Left').toLowerCase()==='right', x=fromRight?L-(+h.x||0):(+h.x||0),y=+h.y||0,d=+h.diameter||0;
+    const fromRight=String(h.ref||'Left').toLowerCase()==='right', x=fromRight?L-(+h.x||0):(+h.x||0),y=tmBottomAt(p,x)+(+h.y||0),d=+h.diameter||0;
     e+=tmDXFCircle(x,y,d>0?d/2:.0625,'HOLES');
     e+=tmDXFText(x+(d/2+.12),y,'H'+(h.number||i+1),.16,'TEXT');
   });
@@ -2047,7 +2338,7 @@ function tmDXFForPiece(p){
   });
 
   const ys=tmDXFFinishedPerimeter(p).map(q=>q[1]), topY=(ys.length?Math.max(...ys):(+p.height||0))+1.35;
-  e+=tmDXFText(0,topY,'PIECE '+(p.pieceNo||''),.28,'TEXT');
+  e+=tmDXFText(0,topY,'PIECE '+(p.pieceLabel||((p.workOrderSequence||1)+'-'+(p.pieceNo||''))),.28,'TEXT');
   e+=tmDXFText(0,topY-.35,'MATERIAL THICKNESS: '+(p.thickness||p.pieceThickness||'NOT SET'),.18,'TEXT');
   if(fit>0)e+=tmDXFText(L/2,topY-.35,'FITTING OFFSET APPLIED',.18,'NOTES');
   let ny=topY-.7;(p.notes||[]).forEach(n=>{e+=tmDXFText(0,ny,String(n.category||'NOTE').toUpperCase()+': '+String(n.text||''),.17,'NOTES');ny-=.25;});
@@ -2202,7 +2493,7 @@ function drawPiece(){
   if(norm==='2cm'||norm==='2') thick='2 CM';
   else if(norm==='3cm'||norm==='3') thick='3 CM';
   else if(thick) thick=thick.toUpperCase();
-  g+=`<text x="${pad}" y="${vh-12}" font-size="16" font-weight="600">MATERIAL THICKNESS: ${tmEsc(thick||'NOT SET')}</text>`;
+  g+=`<text x="${vw-18}" y="24" text-anchor="end" font-size="15" font-weight="600">MATERIAL THICKNESS: ${tmEsc(thick||'NOT SET')}</text>`;
   g+=`<text x="${vw-pad}" y="${vh-12}" text-anchor="end" font-size="13">REFERENCE DRAWING — DO NOT SCALE — USE DIMENSIONS SHOWN</text>`;
 
   svg.setAttribute('viewBox',`0 0 ${vw} ${vh}`);
@@ -2752,7 +3043,7 @@ window.draw = function(p){
   g+=`<text x="${rightDimX+12}" y="${(Y(0)+Y(tmFinishedRightH))/2}" text-anchor="middle" font-size="16" font-weight="600" transform="rotate(-90 ${rightDimX+12} ${(Y(0)+Y(tmFinishedRightH))/2})">${tmEsc(tmFmtOffset(tmFinishedRightH))}"</text>`;
 
   g+=`<text x="${m}" y="24" font-size="18" font-weight="700">PIECE ${tmEsc(document.getElementById('pieceTitle')?.textContent?.replace(/[^0-9-]/g,'')||'')}</text>`;
-  g+=`<text x="${W-m}" y="24" text-anchor="end" font-size="18" font-weight="700">MATERIAL THICKNESS: ${tmEsc(thick||'NOT SET')}</text>`;
+  g+=`<text x="${W-18}" y="24" text-anchor="end" font-size="18" font-weight="700">MATERIAL THICKNESS: ${tmEsc(thick||'NOT SET')}</text>`;
   g+=`<text x="${W/2}" y="${H-10}" text-anchor="middle" font-size="13">REFERENCE DRAWING — DO NOT SCALE — USE DIMENSIONS SHOWN</text>`;
 
   s.setAttribute('viewBox',`0 0 ${W} ${H}`);
@@ -2827,7 +3118,8 @@ window.draw = function(p){
     // Faucet holes — authoritative Piece Review / Piece 1 renderer.
   (p.faucetHoles||[]).forEach((h,i)=>{
     const actualX=String(h.ref||'Left').toLowerCase()==='right' ? p.length-(+h.x||0) : (+h.x||0);
-    const yy=+h.y||0;
+    const bottomY=bottomAt(actualX);
+    const yy=bottomY+(+h.y||0);
     const dia=+h.diameter||0;
     const rr=Math.max(5,(dia>0?dia*k/2:6));
     g+=`<circle cx="${X(actualX)}" cy="${Y(yy)}" r="${rr}" fill="none" stroke="black" stroke-width="2"/>`;
@@ -2842,12 +3134,12 @@ window.draw = function(p){
     g+=`<line x1="${X(refX)}" y1="${Y(dimY)-5}" x2="${X(refX)}" y2="${Y(dimY)+5}" stroke="black"/>`;
     g+=`<line x1="${X(actualX)}" y1="${Y(dimY)-5}" x2="${X(actualX)}" y2="${Y(dimY)+5}" stroke="black"/>`;
     g+=`<text x="${(X(refX)+X(actualX))/2}" y="${Y(dimY)-5}" text-anchor="middle" font-size="11">${h.x}&quot; ${fromRight?'RIGHT':'LEFT'} TO C/L</text>`;
-    // Vertical dimension: bottom reference to hole center.
+    // Vertical dimension: always reference the finished bottom plane at the hole X location.
     const dimX=actualX+(fromRight?-0.45:0.45);
-    g+=`<line x1="${X(dimX)}" y1="${Y(0)}" x2="${X(dimX)}" y2="${Y(yy)}" stroke="black" stroke-width="1"/>`;
-    g+=`<line x1="${X(dimX)-5}" y1="${Y(0)}" x2="${X(dimX)+5}" y2="${Y(0)}" stroke="black"/>`;
+    g+=`<line x1="${X(dimX)}" y1="${Y(bottomY)}" x2="${X(dimX)}" y2="${Y(yy)}" stroke="black" stroke-width="1"/>`;
+    g+=`<line x1="${X(dimX)-5}" y1="${Y(bottomY)}" x2="${X(dimX)+5}" y2="${Y(bottomY)}" stroke="black"/>`;
     g+=`<line x1="${X(dimX)-5}" y1="${Y(yy)}" x2="${X(dimX)+5}" y2="${Y(yy)}" stroke="black"/>`;
-    g+=`<text x="${X(dimX)+(fromRight?-7:7)}" y="${(Y(0)+Y(yy))/2}" text-anchor="${fromRight?'end':'start'}" font-size="11">${h.y}&quot; BOTTOM TO C/L</text>`;
+    g+=`<text x="${X(dimX)+(fromRight?-7:7)}" y="${(Y(bottomY)+Y(yy))/2}" text-anchor="${fromRight?'end':'start'}" font-size="11">${h.y}&quot; BOTTOM TO C/L</text>`;
   });
   if(p.topFitOffset!==null && p.topFitOffset!==undefined){
     const tmFinishedTopY=Math.min(Y(interpY(topPath,0)-(+p.topFitOffset||0)),Y(interpY(topPath,p.length)-(+p.topFitOffset||0)));
@@ -2855,6 +3147,20 @@ window.draw = function(p){
     g+=`<text x="${W/2}" y="${tmOffsetNoteY}" text-anchor="middle" font-size="13" font-weight="700">${tmEsc(tmFmtOffset(+p.topFitOffset||0))} FITTING OFFSET APPLIED</text>`;
   }else{
     g+=`<text x="${W/2}" y="${H-42}" text-anchor="middle" font-size="13" font-weight="700">INSTALLATION FITTING OFFSET: NOT SELECTED</text>`;
+  }
+  // Seam indicators are annotations only; programming performs the physical split.
+  const seamXs=(p.seams||[]).map(Number).filter(x=>x>0&&x<p.length).sort((a,b)=>a-b);
+  seamXs.forEach((sx,idx)=>{
+    const by=bottomAt(sx), ty=interpY(topPath,sx)-(+p.topFitOffset||0), px=X(sx), y1=Y(by), y2=Y(ty);
+    g+=`<line x1="${px}" y1="${y1}" x2="${px}" y2="${y2}" stroke="black" stroke-width="2"/>`;
+    const mid=(y1+y2)/2;
+    g+=`<text x="${px-8}" y="${mid-5}" text-anchor="end" font-size="13" font-weight="700">SEAM</text>`;
+    g+=`<text x="${px+8}" y="${mid-5}" text-anchor="start" font-size="13" font-weight="700">SEAM</text>`;
+    g+=`<text x="${px}" y="${y1+18}" text-anchor="middle" font-size="11">${tmFmtMeasure(sx)} FROM LEFT</text>`;
+  });
+  if(seamXs.length){
+    const base=String(p.pieceNo||pieceNo), labels=Array.from({length:seamXs.length+1},(_,i)=>base+String.fromCharCode(65+i));
+    g+=`<text x="${W/2}" y="22" text-anchor="middle" font-size="14" font-weight="700">PIECES ${labels.join(' / ')}</text>`;
   }
 s.innerHTML=g;
 };
@@ -2868,8 +3174,8 @@ document.addEventListener('change',function(e){
 });
 
 function tmBuildCanonicalPieceFromForm(){
-  const L=+(document.getElementById('len')?.value||0);
-  const H=+(document.getElementById('ht')?.value||0);
+  const L=tmParseMeasure(document.getElementById('len')?.value)||0;
+  const H=tmParseMeasure(document.getElementById('ht')?.value)||0;
   if(!(L>0&&H>0)) return null;
   let adj=[];
   document.querySelectorAll('.adjust[data-edge="Bottom"]').forEach(group=>{
@@ -2918,7 +3224,7 @@ function tmBuildCanonicalPieceFromForm(){
   const faucetHoles=typeof tmReadFaucetHoles==='function'?tmReadFaucetHoles():[];
   return {length:L,height:H,rightHeight:Number.isFinite(RH)&&RH>0?RH:H,thickness:tmCurrentPieceThickness(),adj,
     topFitOffset:typeof tmTopFitOffsetValue==='function'?tmTopFitOffsetValue():null,
-    notches,radii,outs,faucetHoles,notes,stopPolishes,
+    notches,radii,outs,faucetHoles,notes,stopPolishes,seams:tmReadSeams(),
     top:(document.getElementById('topPol')?.value||shared.top||'No'),
     side:(document.getElementById('sidePol')?.value||shared.side||'None')};
 }
@@ -2928,7 +3234,13 @@ function tmDrawToTarget(p,target){
   const oldId=target.id;
   if(canonical && canonical!==target) canonical.id='drawingCanonicalHold';
   target.id='drawing';
-  try{ window.draw(p); }
+  try{
+    window.draw(p);
+    // Normalize inch marks on every drawing render/re-render.
+    target.querySelectorAll('text').forEach(function(t){
+      t.textContent=String(t.textContent||'').replace(/"{2,}/g,'"');
+    });
+  }
   finally{
     target.id=oldId;
     if(canonical && canonical!==target) canonical.id='drawing';
@@ -2942,6 +3254,10 @@ function refreshLivePieceDrawing(){
   if(!p){wrap.style.display='none';live.innerHTML='';return;}
   wrap.style.display='block';
   tmDrawToTarget(p,live);
+  // Preserve one inch mark, but collapse accidental doubled inch marks on live drawing.
+  live.querySelectorAll('text').forEach(function(t){
+    t.textContent=String(t.textContent||'').replace(/"{2,}/g,'"');
+  });
 }
 document.addEventListener('input',function(e){
   if(e.target && e.target.closest && e.target.closest('#piece')) refreshLivePieceDrawing();
@@ -3065,12 +3381,12 @@ function tmSyncFaucetDrawing(){
     let p=window.currentReviewPiece;
     if(!p){
       p=data();
-      window.currentReviewPiece=p;
+      window.currentReviewPiece=p;tmInstallHelpButtons();
     }
     p.faucetHoles=holes;
     const status=document.getElementById("tmFaucetStatus");
     if(status) status.textContent=holes.length ? (holes.length+" faucet hole"+(holes.length===1?"":"s")+" shown on Piece Review drawing.") : "No positioned faucet holes yet.";
-    window.currentReviewPiece=p;
+    window.currentReviewPiece=p;tmInstallHelpButtons();
     window.draw(p);
     if(typeof refreshLivePieceDrawing==="function") refreshLivePieceDrawing();
   }catch(e){ console.error("Faucet drawing update failed",e); }
