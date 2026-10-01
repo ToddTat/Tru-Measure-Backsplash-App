@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/><meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
 <!-- Tru Measure V1.8.2: solid seams; faucet vertical references finished bottom plane -->
-<title>Tru Measure Digital Cutsheet App — V1.8.0</title>
+<title>Tru Measure Digital Cutsheet App — V1.9.38</title>
 <style>
 :root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#111;background:#f5f5f5}
 *{box-sizing:border-box} body{margin:0}.app{max-width:760px;margin:auto;padding:18px}.card{background:white;border:1px solid #ddd;border-radius:16px;padding:18px;margin:12px 0}
@@ -142,20 +142,63 @@ input:focus,select:focus,textarea:focus{outline:2px solid rgba(215,25,32,.22);bo
 svg{border-radius:8px}#review h2{background:#fff;border-left:5px solid var(--tm-red);padding-left:10px}#review #drawing{border-color:#999}
 #jobHome{border-top:4px solid var(--tm-red)}
 @media(max-width:520px){.tmBrandName{font-size:25px}.tmBrandProduct{font-size:13px;letter-spacing:1.4px}.app{padding:10px}.card{padding:15px}}
-</style></head><body><div class="app">
+
+/* V1.9.29 workflow/detail simplification */
+#reviewExtras .tmPrimaryDetail{padding:0;overflow:hidden}
+#reviewExtras .tmPrimaryDetail>h3{cursor:pointer;margin:0;padding:16px;position:relative}
+#reviewExtras .tmPrimaryDetail>h3:after{content:"OPEN";float:right;font-size:11px;letter-spacing:.5px;color:#666}
+#reviewExtras .tmPrimaryDetail.tmOpen>h3:after{content:"CLOSE"}
+#reviewExtras .tmPrimaryDetail>.tmDetailBody{padding:0 16px 16px}
+#tmAdditionalDetailsList button{width:100%;margin:5px 0;text-align:left}
+
+/* V1.9.38 — Piece Review layout: keep the complete drawing panel pinned and keep active detail sections below it. */
+#review h2{position:static!important;top:auto!important;z-index:auto!important;}
+#review #activePieceReview{
+  position:sticky!important;
+  top:8px!important;
+  z-index:80!important;
+  background:#fff!important;
+  box-shadow:0 4px 14px rgba(0,0,0,.14)!important;
+}
+#review #drawing{position:static!important;top:auto!important;z-index:auto!important;max-height:min(430px,42vh)!important;box-shadow:none!important;}
+#review #reviewExtras .detailCard,
+#review #tmAdditionalDetailsWrap,
+#review #pieceManagementActions{scroll-margin-top:var(--tm-review-pinned-height,360px)!important;}
+@media(max-width:520px){
+  #review #activePieceReview{top:4px!important;}
+  #review #drawing{max-height:34vh!important;}
+}
+</style>
+<style id="tmMobileDrawingV1937">
+/* V1.9.38 — compact pinned Piece Review drawing on phones so detail inputs remain usable with the keyboard open. */
+@media(max-width:520px){
+  #review #activePieceReview{max-height:32vh!important;padding:8px!important;margin-bottom:10px!important;}
+  #review #activePieceReview .notice{padding:5px!important;margin:4px 0!important;font-size:10px!important;}
+  #review #drawing{max-height:calc(32vh - 38px)!important;}
+  #review #reviewExtras .tmPrimaryDetail{scroll-margin-top:35vh!important;}
+}
+</style>
+</head><body><div class="app">
 <header class="tmBrandHeader"><div class="tmBrandName">TRU <span>MEASURE</span></div><div class="tmBrandProduct">DIGITAL CUTSHEET APP</div><div class="tmBrandTag">When Millimeters Matter.</div></header>
-<section class="card" id="job"><h2>Job Setup</h2>
+<section class="card" id="tmWorkflowChooser"><h2>What Are We Measuring Today?</h2>
+<div class="muted" style="margin-bottom:14px">Choose the measuring workflow for this job.</div>
+<div class="actions" style="display:grid;grid-template-columns:1fr;gap:10px">
+<button class="btn" type="button" onclick="tmChooseWorkflow('standard')">STANDARD BACKSPLASH</button>
+<button class="btn secondary" type="button" onclick="tmChooseWorkflow('wedged')">STANDARD WITH WEDGE</button>
+<button class="btn secondary" type="button" onclick="tmChooseWorkflow('custom')">COMPLETE CUSTOM BACKSPLASH</button>
+</div></section>
+<section class="card hidden" id="job"><h2>Job Setup</h2>
 <label>Work Order Number</label><input id="wo" inputmode="numeric"/>
 <label>Job Name</label><input id="jobname"/>
 <label>Job Number</label><input id="jobnum"/>
 <label>Stone Color</label><input id="stone"/>
-<label>Measurement Type</label><select id="type"><option>Backsplash</option><option>Install Backsplash</option></select>
+<input id="type" type="hidden" value="Backsplash"/>
 <input id="thick" type="hidden" value=""/>
 <input id="jobThickOther" type="hidden" value=""/>
 <div id="jobThickOtherWrap" style="display:none"></div>
 <input id="allsame" type="hidden" value="Yes"/>
 <div class="actions">
-<button class="btn" id="continuePiece1Btn" type="button">Continue to Piece 1</button>
+<button class="btn" id="continuePiece1Btn" type="button">CONTINUE TO FIRST PIECE</button>
 <button class="btn secondary" onclick="document.getElementById('loadJobInputHome').click()" type="button">LOAD SAVED JOB</button>
 </div></section>
 <section class="card hidden" id="jobHome">
@@ -170,6 +213,8 @@ svg{border-radius:8px}#review h2{background:#fff;border-left:5px solid var(--tm-
 </section>
 <input accept=".json,application/json" class="hidden" id="loadJobInputHome" onchange="loadJobFile(this)" type="file"/>
 <section class="card hidden" id="piece"><h2 id="pieceTitle">Piece 1</h2>
+<label>Piece Number / Designation</label><input id="pieceDesignation" inputmode="text" placeholder="e.g. 1, 4, 3A, 7B" required/>
+<div class="muted" style="margin:4px 0 10px">Enter the piece designation used on the job. Pieces do not have to be numbered in order.</div>
 <div class="row"><div><label>Overall Length (in.)</label><input id="len" inputmode="decimal" oninput="refreshLivePieceDrawing()" required step=".0625" type="number"/></div><div><label>Left Height (in.)</label><input id="ht" inputmode="decimal" oninput="refreshLivePieceDrawing()" required step=".0625" type="number"/></div><div class="hidden" id="rightHeightWrap"><label>Confirm Right Height (in.)</label><input id="rightHt" inputmode="decimal" type="text"/><div class="muted">Required when plane adjustments are used.</div></div></div>
 <div id="pieceThickness">
 <label>Piece Thickness</label>
@@ -198,7 +243,7 @@ svg{border-radius:8px}#review h2{background:#fff;border-left:5px solid var(--tm-
 </div>
 <div id="addPieceDetailsAction" style="margin-top:22px;padding:16px;border:2px solid #111;border-radius:10px;text-align:center">
 <div style="font-weight:700;margin-bottom:8px">Plane measurements complete?</div>
-<button class="btn" onclick="review()" style="width:100%;font-size:18px;padding:14px" type="button">ADD PIECE DETAILS</button>
+<button class="btn" onclick="review()" style="width:100%;font-size:18px;padding:14px" type="button">ADD PIECE DETAILS (Tap to OPEN)</button>
 <div class="muted" style="margin-top:8px">Continue to polished edges, notches, radius corners, outlets/cutouts, Stop Polish, and piece notes.</div>
 </div>
 <div class="actions"><button class="btn secondary" onclick="tmEditJobSetup()" type="button">JOB SETUP</button><button class="btn secondary" onclick="viewAllPieces('piece')" type="button">View Completed Pieces</button><button class="btn secondary" onclick="completeJobFromWork()" type="button">Complete Job</button></div></section>
@@ -207,7 +252,7 @@ svg{border-radius:8px}#review h2{background:#fff;border-left:5px solid var(--tm-
 <div class="notice">REFERENCE DRAWING — DO NOT SCALE — USE DIMENSIONS SHOWN</div>
 <svg id="drawing" viewbox="0 0 720 500"></svg>
 </div>
-<div class="notice" style="margin-top:12px"><strong>ADD PIECE DETAILS</strong><br/>Choose each type of detail below. Every section uses the same layout.</div>
+<div class="notice" style="margin-top:12px"><strong>ADD PIECE DETAILS</strong><br/>(Tap to OPEN)<br/><span style="font-weight:700">(Tap to OPEN)</span></div>
 <div id="pieceManagementActions" style="margin:12px 0;padding:8px 10px;border:1px solid #ccc;border-radius:8px;background:#fafafa">
   <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
     <div style="font-size:12px;font-weight:800;letter-spacing:.04em">PIECE CONTROLS</div>
@@ -215,7 +260,7 @@ svg{border-radius:8px}#review h2{background:#fff;border-left:5px solid var(--tm-
     <button id="tmDeletePieceBtn" class="btn secondary" onclick="deleteCurrentPiece()" type="button" style="padding:6px 9px;font-size:12px">DELETE PIECE</button>
   </div>
 </div>
-<div class="detailsGrid" id="reviewExtras"><div class="detailCard" style="margin-top:0;border-top:2px solid #111;border-radius:0 0 8px 8px">
+<div class="detailsGrid" id="reviewExtras"><div class="detailCard" id="polishedPanel" style="margin-top:0;border-top:2px solid #111;border-radius:0 0 8px 8px">
 <h3>POLISHED EDGES</h3>
 <div class="muted">Designate the finished edges to be polished.</div><button class="btn detailAdd" id="tmPolishedEdgesLauncher" onclick="var e=document.getElementById('tmPolishedEdgesEntry');var o=e.style.display==='none';e.style.display=o?'block':'none';this.textContent=o?'CLOSE POLISHED EDGES':'+ ADD POLISHED EDGES';if(o)setTimeout(function(){e.scrollIntoView({behavior:'smooth',block:'start'});},60);" type="button">+ ADD POLISHED EDGES</button><div id="tmPolishedEdgesEntry" style="display:none;margin-top:12px"><div class="row">
 <div><label>Top Edge</label><select id="topPol" onchange="refreshReviewDrawing()"><option value="No">Not Polished</option><option value="Yes">Polished</option></select></div>
@@ -238,7 +283,7 @@ svg{border-radius:8px}#review h2{background:#fff;border-left:5px solid var(--tm-
 <div class="detailSubsection" id="topPlaneBlock" style="margin-top:18px"><h3>TOP PLANE</h3><div class="muted">Establish the top plane after the bottom plane.</div><div id="adjustments"></div><button class="btn detailAdd" onclick="addAdjustment('Top')" type="button">+ ADD TOP PLANE ADJUSTMENT</button></div>
 </div>
 </div><div class="detailCard" id="seamPanel">
-<h3>SEAMS</h3>
+<h3>SEAM</h3>
 <div class="muted">Add a seam by entering its centerline location from the LEFT. The drawing labels SEAM on both sides and updates the piece designation.</div>
 <div id="seams"></div>
 <button class="btn detailAdd" id="addSeamBtn" onclick="addSeam()" type="button">+ ADD SEAM</button>
@@ -247,7 +292,7 @@ svg{border-radius:8px}#review h2{background:#fff;border-left:5px solid var(--tm-
 <div class="muted">Locate cutout centers from LEFT and from the adjusted BOTTOM.</div>
 <div id="outlets"></div>
 <button class="btn detailAdd" id="addOutletBtn" onclick="addOutlet()" type="button">+ ADD OUTLET / CUTOUT</button>
-</div><div class="detailCard">
+</div><div class="detailCard" id="stopPolishPanel">
 <h3>STOP POLISH</h3>
 <div class="muted">Add dimensioned Stop Polish locations and designate the polished side of each SP.</div>
 <div id="stopPolishes"></div>
@@ -264,7 +309,7 @@ svg{border-radius:8px}#review h2{background:#fff;border-left:5px solid var(--tm-
 <div class="muted" id="tmFaucetStatus" style="margin-top:8px">No positioned faucet holes yet.</div>
 </div>
 </div><div class="detailCard" id="notchPanel">
-<h3>NOTCHES</h3>
+<h3>NOTCH</h3>
 <div class="muted">Add and dimension any notch in the finished piece.</div>
 <div id="notches"></div>
 <button class="btn detailAdd" id="addNotchBtn" onclick="addNotch()" type="button">+ ADD NOTCH</button>
@@ -292,12 +337,16 @@ svg{border-radius:8px}#review h2{background:#fff;border-left:5px solid var(--tm-
 <input id="topFitCustom" min="0" oninput="refreshReviewDrawing();refreshLivePieceDrawing()" placeholder="Enter offset" step=".001" type="number"/>
 </div>
 </div>
-</div><div class="detailCard">
+</div><div class="detailCard" id="pieceNotesPanel">
 <h3>PIECE NOTES</h3>
 <div class="muted">Add fabrication, programming, installation, or general notes.</div>
 <div id="pieceNotes"></div>
 <button class="btn detailAdd" id="addNoteBtn" onclick="addPieceNote()" type="button">+ ADD NOTE</button>
 </div></div>
+<div id="tmAdditionalDetailsWrap" style="margin-top:16px">
+<button class="btn secondary" id="tmAdditionalDetailsBtn" type="button" onclick="tmToggleAdditionalDetails()" style="width:100%;font-weight:900">+ ADD ADDITIONAL DETAILS</button>
+<div id="tmAdditionalDetailsList" class="hidden" style="margin-top:10px;border:1px solid #bbb;border-radius:9px;padding:10px;background:#fafafa"></div>
+</div>
 <div class="actions"><button class="btn secondary" onclick="tmEditJobSetup()" type="button">JOB SETUP</button><button class="btn secondary" onclick="editPiece()" type="button">EDIT SHAPE</button><button class="btn secondary" onclick="viewAllPieces('review')" type="button">VIEW COMPLETED PIECES</button><button class="btn" onclick="approve()" type="button">APPROVE PIECE</button></div>
 </section>
 <section class="card hidden" id="finish"><h2>Piece Approved</h2><div class="notice" id="approvedCount"></div>
@@ -462,7 +511,8 @@ function addNewPieceFromHome(){
   hideWorkScreens();
   resetPieceForm();
   tmApplyDefaultThicknessToPiece();
-  pieceTitle.textContent='Piece '+tmWorkOrderSequence+'-'+pieceNo;
+  pieceTitle.textContent='New Piece';
+  const pd=document.getElementById('pieceDesignation'); if(pd) pd.value='';
   document.getElementById('piece')?.classList.remove('hidden');
 }
 function completeJobFromHome(){
@@ -490,6 +540,8 @@ function startPiece(){
   jobEl.classList.add('hidden');
   if(thicknessEl) thicknessEl.classList.remove('hidden');
   tmApplyDefaultThicknessToPiece();
+  pieceTitle.textContent='New Piece';
+  const pd=document.getElementById('pieceDesignation'); if(pd) pd.value='';
   try{ window.scrollTo({top:0,left:0,behavior:'auto'}); }
   catch(e){ window.scrollTo(0,0); }
   }catch(err){
@@ -805,13 +857,14 @@ document.addEventListener('change',e=>{if(tmIsMeasureInput(e.target)){tmNormaliz
 function addSeam(value=''){
   const box=document.getElementById('seams');if(!box)return;
   const d=document.createElement('div');d.className='seam notice';d.style.textAlign='left';
-  d.innerHTML='<label>Seam Distance From LEFT</label><input class="seamX" inputmode="text" placeholder="e.g. 48 7/32 or 48.21875" value="'+tmEsc(value)+'"><button class="btn secondary" type="button" style="margin-top:8px">REMOVE SEAM</button>';
+  d.innerHTML='<label>Seam Distance From LEFT</label><input class="seamX" inputmode="text" placeholder="e.g. 48 7/32 or 48.21875" value="'+tmEsc(value)+'"><label>New Piece Number / Designation Created By This Seam</label><input class="seamPieceNo" inputmode="text" placeholder="Enter piece number, e.g. 2 or 1B" required><button class="btn secondary" type="button" style="margin-top:8px">REMOVE SEAM</button>';
   d.querySelector('.seamX').addEventListener('input',function(){refreshReviewDrawing();});
   d.querySelector('.seamX').addEventListener('change',function(){tmNormalizeMeasureInput(this);refreshReviewDrawing();});
-  d.querySelector('button').onclick=function(){d.remove();tmUpdateSeamButton();refreshReviewDrawing();};box.appendChild(d);tmUpdateSeamButton();d.scrollIntoView({behavior:'smooth',block:'nearest'});
+  d.querySelector('button').onclick=function(){d.remove();tmUpdateSeamButton();refreshReviewDrawing();};box.appendChild(d);tmUpdateSeamButton();d.scrollIntoView({behavior:'smooth',block:'nearest'});setTimeout(()=>d.querySelector('.seamPieceNo')?.focus(),80);
 }
 function tmUpdateSeamButton(){const n=document.querySelectorAll('#seams .seam').length,b=document.getElementById('addSeamBtn');if(b)b.textContent=n?'+ ADD ANOTHER SEAM':'+ ADD SEAM';}
 function tmReadSeams(){return [...document.querySelectorAll('#seams .seamX')].map(x=>tmParseMeasure(x.value)).filter(x=>x!==null&&x>0);}
+function tmReadSeamPieceNumbers(){return [...document.querySelectorAll('#seams .seam')].map(r=>String(r.querySelector('.seamPieceNo')?.value||'').trim());}
 function tmEditJobSetup(){tmOpenOriginalJobInfo();}
 function tmAddWorkOrder(){
   let modal=document.getElementById('tmWorkOrderModal');
@@ -825,7 +878,7 @@ function tmAddWorkOrder(){
       '<label>Job Name</label><input id="tmNewJobName" style="width:100%;box-sizing:border-box;margin:6px 0 12px">'+
       '<label>Job Number</label><input id="tmNewJobNumber" style="width:100%;box-sizing:border-box;margin:6px 0 12px">'+
       '<label>Stone Color</label><input id="tmNewStone" style="width:100%;box-sizing:border-box;margin:6px 0 12px">'+
-      '<label>Measurement Type</label><select id="tmNewType" style="width:100%;box-sizing:border-box;margin:6px 0 16px"><option>Backsplash</option><option>Install Backsplash</option></select>'+
+      '<input id="tmNewType" type="hidden" value="Backsplash">'+
       '<div class="actions"><button class="btn secondary" type="button" id="tmBackWorkOrder">BACK</button><button class="btn secondary" type="button" id="tmOriginalJobSetup">ORIGINAL JOB INFO</button><button class="btn" type="button" id="tmConfirmWorkOrder">START WORK ORDER</button></div></div>';
     document.body.appendChild(modal);
     document.getElementById('tmBackWorkOrder').onclick=function(){
@@ -960,6 +1013,8 @@ function addStopPolish(edge='Top', ref='Left', distance='', polish=''){
   d.querySelector('.spEdge').value=edge||'Top';
   syncSPReference(d,ref,polish);
   const b=document.getElementById('addSPBtn'); if(b)b.textContent='+ ADD ANOTHER STOP POLISH';
+  let done=document.getElementById('tmStopPolishDoneBtn');
+  if(!done){done=document.createElement('button');done.id='tmStopPolishDoneBtn';done.type='button';done.className='btn secondary';done.style.cssText='width:100%;margin-top:10px';done.textContent='DONE — RETURN TO DETAILS';done.onclick=function(){const card=document.getElementById('stopPolishPanel');if(card){card.classList.remove('tmOpen');const body=card.querySelector(':scope > .tmDetailBody');if(body)body.style.display='none';card.scrollIntoView({behavior:"smooth",block:"start"});}};box.parentElement.appendChild(done);}
 }
 function syncSPReference(row, wanted, wantedPolish){
   const edge=row.querySelector('.spEdge').value, s=row.querySelector('.spRef');
@@ -1100,7 +1155,7 @@ else if(topEntered.length){
   const last=topEntered[topEntered.length-1];
   derivedRight=last.height;
 }
-return {length:tmParseMeasure(len.value)||0,height:leftHeight,rightHeight:derivedRight,thickness:tmCurrentPieceThickness(),adj,topFitOffset:tmTopFitOffsetValue(),seams:tmReadSeams(),
+return {length:tmParseMeasure(len.value)||0,height:leftHeight,rightHeight:derivedRight,thickness:tmCurrentPieceThickness(),pieceLabel:String(document.getElementById('pieceDesignation')?.value||'').trim(),workOrder:String(document.getElementById('wo')?.value||'').trim(),workOrderSequence:tmWorkOrderSequence,adj,topFitOffset:tmTopFitOffsetValue(),seams:tmReadSeams(),seamPieceNumbers:tmReadSeamPieceNumbers(),
 notches:[...document.querySelectorAll('.notch')].map(x=>({end:x.querySelector('.notchEnd').value,inside:+x.querySelector('.notchIn').value,from:x.querySelector('.notchFrom').value,far:+x.querySelector('.notchHowFar').value})),
 radii:[...document.querySelectorAll('.radiusCorner')].map(x=>({corner:x.querySelector('.radiusCornerSel').value,radius:+x.querySelector('.radiusAmt').value})),
 outs:[...document.querySelectorAll('.outlet')].map(x=>({xRaw:x.querySelector('.ox').value,yRaw:x.querySelector('.oy').value,type:x.querySelector('.otype').value})).filter(o=>o.xRaw!==''&&o.yRaw!=='').map(o=>({x:tmParseMeasure(o.xRaw)||0,y:tmParseMeasure(o.yRaw)||0,type:o.type})),
@@ -1313,7 +1368,26 @@ function renderCompletedPieces(){
     box.textContent='Piece list error: '+(err && err.message ? err.message : err);
   }
 }
+function tmRequirePieceDesignation(){
+  const el=document.getElementById('pieceDesignation');
+  const v=String(el?.value||'').trim();
+  if(!v){alert('PIECE NUMBER / DESIGNATION REQUIRED\n\nEnter the piece number or designation for this piece before approving it.');el?.focus();return null;}
+  return v;
+}
+function tmRequireSeamDesignations(){
+  const rows=[...document.querySelectorAll('#seams .seam')].filter(r=>{
+    const x=tmParseMeasure(r.querySelector('.seamX')?.value);
+    return x!==null && x>0;
+  });
+  for(let i=0;i<rows.length;i++){
+    const el=rows[i].querySelector('.seamPieceNo');
+    if(!String(el?.value||'').trim()){alert('SEAM PIECE DESIGNATION REQUIRED\n\nEnter the piece number / designation for the new section created by seam '+(i+1)+'.');el?.focus();return false;}
+  }
+  return true;
+}
 function approve(){
+  const tmEnteredPieceDesignation=tmRequirePieceDesignation(); if(!tmEnteredPieceDesignation) return;
+  if(!tmRequireSeamDesignations()) return;
   if(!tmRequirePieceThickness()) return;
   if(!tmRequireThicknessDefaultDecision()) return;
   if(window.currentReviewPiece) collectReviewExtras(window.currentReviewPiece);
@@ -1326,7 +1400,7 @@ function approve(){
     }
     p.pieceNo=pieceNo;
     p.workOrderSequence=tmWorkOrderSequence;
-    p.pieceLabel=tmWorkOrderSequence+'-'+pieceNo;
+    p.pieceLabel=tmEnteredPieceDesignation;
     p.workOrder=document.getElementById('wo')?.value||'';
     p._current=false;
     if(editingPieceIndex!==null && pieces[editingPieceIndex]){
@@ -1597,7 +1671,8 @@ function nextPiece(){
   const review=document.getElementById('review'); if(review) review.classList.add('hidden');
   document.getElementById('finish').classList.add('hidden');
   document.getElementById('piece').classList.remove('hidden');
-  pieceTitle.textContent='Piece '+tmWorkOrderSequence+'-'+pieceNo;
+  pieceTitle.textContent='New Piece';
+  const pd=document.getElementById('pieceDesignation'); if(pd) pd.value='';
   // The established default thickness is the ONLY piece-specific value carried forward.
   tmApplyDefaultThicknessToPiece();
   if(typeof refreshLivePieceDrawing==='function') refreshLivePieceDrawing();
@@ -1631,8 +1706,9 @@ function editSavedPiece(i){
   document.getElementById('finish')?.classList.add('hidden');
   document.getElementById('review')?.classList.add('hidden');
   document.getElementById('piece')?.classList.remove('hidden');
-  pieceTitle.textContent='Edit Piece '+tmWorkOrderSequence+'-'+pieceNo;
+  pieceTitle.textContent='Edit Piece '+String(p.pieceLabel||'');
   resetPieceForm();
+  const pd=document.getElementById('pieceDesignation'); if(pd) pd.value=String(p.pieceLabel||'');
   len.value=p.length||'';
   ht.value=p.height||'';
   rightHt.value=p.rightHeight||p.height||'';
@@ -1874,12 +1950,17 @@ function tmRenderedSvgElement(p){
       }
     });
 
-    // V1.7.4: make all remaining production PDF drawing annotations 3x larger.
-    // This changes text only; piece geometry and drawing scale remain unchanged.
+    // V1.9.40: PDF production text calibrated from the shop CAD standard.
+    // CAD dimension / annotation text height reference = 2.0.  SVG and PDF use
+    // different units, so keep the established drawing proportions while applying
+    // one consistent 2.0-reference visual scale to production annotations.
+    // Text changes only; piece geometry, dimensions and DXF coordinates are untouched.
+    const TM_CAD_TEXT_HEIGHT = 2.0;
+    const TM_PDF_TEXT_SCALE = TM_CAD_TEXT_HEIGHT;
     temp.querySelectorAll('text').forEach(t=>{
       const raw=t.getAttribute('font-size');
       const size=parseFloat(raw||getComputedStyle(t).fontSize||'12');
-      if(Number.isFinite(size)&&size>0)t.setAttribute('font-size',String(size*2));
+      if(Number.isFinite(size)&&size>0)t.setAttribute('font-size',String(size*TM_PDF_TEXT_SCALE));
     });
 
     // Measure the ACTUAL rendered content rather than exporting the full 720x500 canvas.
@@ -2066,9 +2147,9 @@ function buildPDFPreview(){
       const i=pageStart+j;
       const piece=document.createElement('div');piece.className='tmPdfPreviewPiece tmPdfRelativePiece';
       piece.style.flex='1 1 0';piece.style.minHeight='0';
-      const seamCount=(p.seams||[]).length;const baseLabel=String(p.pieceLabel||((p.workOrderSequence||1)+'-'+(p.pieceNo||i+1)));const pieceLabel=seamCount?Array.from({length:seamCount+1},(_,q)=>baseLabel+String.fromCharCode(65+q)).join(' / '):baseLabel;
+      const seamCount=(p.seams||[]).length;const baseLabel=String(p.pieceLabel||((p.workOrderSequence||1)+'-'+(p.pieceNo||i+1)));const enteredSeamLabels=(p.seamPieceNumbers||[]).map(x=>String(x||'').trim());const pieceLabel=seamCount?[baseLabel,...Array.from({length:seamCount},(_,q)=>enteredSeamLabels[q]||baseLabel+String.fromCharCode(66+q))].join(' / '):baseLabel;
       const pieceThickness=String(p.thickness||p.pieceThickness||'NOT SET');
-      piece.innerHTML='<div class="tmPdfPieceHead"><strong class="tmPdfPieceNo">PIECE '+tmEsc(pieceLabel)+'</strong>'+
+      piece.innerHTML='<div class="tmPdfPieceHead"><strong class="tmPdfPieceNo">'+tmEsc(pieceLabel)+'</strong>'+
         '<span class="tmPdfThickness">MATERIAL THICKNESS: '+tmEsc(pieceThickness)+'</span></div>'+
         '<div class="tmPdfRefNote">REFERENCE DRAWING — DO NOT SCALE — USE DIMENSIONS SHOWN</div>'+
         '<div class="tmPdfScaledStage"></div>';
@@ -2076,6 +2157,7 @@ function buildPDFPreview(){
 
       const stage=piece.querySelector('.tmPdfScaledStage');
       const rendered=tmRenderedSvgElement(p);
+      rendered.querySelectorAll('text').forEach(t=>{const s=String(t.textContent||'').trim();if(/^PIECES?(?:\s|$)/i.test(s)||/^WORK ORDER(?:\s|$)/i.test(s))t.remove();});
       const vb=(rendered.getAttribute('viewBox')||'0 0 720 500').trim().split(/\s+/).map(Number);
       const aspect=(vb[2]>0&&vb[3]>0)?vb[2]/vb[3]:720/500;
       const phys=tmPiecePhysicalBounds(p);
@@ -2185,8 +2267,9 @@ function tmDXFLine(a,b,layer='CUT'){
 }
 function tmDXFText(x,y,text,height=0.22,layer='TEXT',rot=0){
   const clean=String(text??'').replace(/[\r\n]+/g,' ').replace(/[^\x20-\x7E]/g,'');
-  // V1.7.4: production DXF annotation text is intentionally 3x larger.
-  const productionTextHeight=(Number(height)||0.22)*3;
+  // V1.9.42: use the user's normal CAD annotation/text height.
+  // This affects DXF text only; PDF sizing is intentionally unchanged.
+  const productionTextHeight=2.0;
   return '0\nTEXT\n8\n'+layer+'\n10\n'+x+'\n20\n'+y+'\n30\n0\n40\n'+productionTextHeight+'\n1\n'+clean+'\n50\n'+rot+'\n';
 }
 function tmDXFCircle(x,y,r,layer='HOLES'){
@@ -2334,14 +2417,18 @@ function tmDXFForPiece(p){
   // Radius identification at the corresponding finished corner/notch corner.
   (p.radii||[]).forEach(r=>{const R=+r.radius||0;if(!R)return;let x=L/2,y=(leftT+rightT)/2;
     if(r.corner==='Top Left'){x=0;y=leftT;} else if(r.corner==='Top Right'){x=L;y=rightT;} else if(r.corner==='Bottom Right'){x=L;y=rightB;} else if(r.corner==='Bottom Left'){x=0;y=leftB;}
-    e+=tmDXFText(x+(x===0?.25:x===L?-.95:.2),y+(String(r.corner).startsWith('Bottom')?.28:-.42),'RADIUS',.16,'RADIUS');
+    const rx=x+(x===0?2.5:x===L?-9.0:2.5);
+    const ry=y+(String(r.corner).startsWith('Bottom')?-3.0:3.0);
+    e+=tmDXFText(rx,ry,'RADIUS',.16,'RADIUS');
   });
 
-  const ys=tmDXFFinishedPerimeter(p).map(q=>q[1]), topY=(ys.length?Math.max(...ys):(+p.height||0))+1.35;
+  const ys=tmDXFFinishedPerimeter(p).map(q=>q[1]), pieceTop=(ys.length?Math.max(...ys):(+p.height||0));
+  // V1.9.43: DXF text remains 2.0 high, so reserve full 2.5-unit rows to prevent overlap.
+  const topY=pieceTop+7.5;
   e+=tmDXFText(0,topY,'PIECE '+(p.pieceLabel||((p.workOrderSequence||1)+'-'+(p.pieceNo||''))),.28,'TEXT');
-  e+=tmDXFText(0,topY-.35,'MATERIAL THICKNESS: '+(p.thickness||p.pieceThickness||'NOT SET'),.18,'TEXT');
-  if(fit>0)e+=tmDXFText(L/2,topY-.35,'FITTING OFFSET APPLIED',.18,'NOTES');
-  let ny=topY-.7;(p.notes||[]).forEach(n=>{e+=tmDXFText(0,ny,String(n.category||'NOTE').toUpperCase()+': '+String(n.text||''),.17,'NOTES');ny-=.25;});
+  e+=tmDXFText(0,topY-2.5,'MATERIAL THICKNESS: '+(p.thickness||p.pieceThickness||'NOT SET'),.18,'TEXT');
+  if(fit>0)e+=tmDXFText(Math.max(L/2,18),topY-2.5,'FITTING OFFSET APPLIED',.18,'NOTES');
+  let ny=topY-5.0;(p.notes||[]).forEach(n=>{e+=tmDXFText(0,ny,String(n.category||'NOTE').toUpperCase()+': '+String(n.text||''),.17,'NOTES');ny-=2.5;});
   return '0\nSECTION\n2\nHEADER\n9\n$ACADVER\n1\nAC1009\n9\n$INSUNITS\n70\n1\n0\nENDSEC\n0\nSECTION\n2\nENTITIES\n'+e+'0\nENDSEC\n0\nEOF\n';
 }
 function tmUseLastTestDrawing(){
@@ -2375,7 +2462,7 @@ function tmDXFForJob(){
     const pts=tmDXFFinishedPerimeter(p);
     const xs=pts.map(q=>q[0]);
     const width=xs.length?Math.max(...xs)-Math.min(...xs):(+p.length||0);
-    xOffset+=Math.max(width,+p.length||0)+6;
+    xOffset+=Math.max(width,+p.length||0)+18;
   });
   return '0\nSECTION\n2\nHEADER\n9\n$ACADVER\n1\nAC1009\n9\n$INSUNITS\n70\n1\n0\nENDSEC\n0\nSECTION\n2\nENTITIES\n'+body+'0\nENDSEC\n0\nEOF\n';
 }
@@ -3159,9 +3246,16 @@ window.draw = function(p){
     g+=`<text x="${px}" y="${y1+18}" text-anchor="middle" font-size="11">${tmFmtMeasure(sx)} FROM LEFT</text>`;
   });
   if(seamXs.length){
-    const base=String(p.pieceNo||pieceNo), labels=Array.from({length:seamXs.length+1},(_,i)=>base+String.fromCharCode(65+i));
-    g+=`<text x="${W/2}" y="22" text-anchor="middle" font-size="14" font-weight="700">PIECES ${labels.join(' / ')}</text>`;
+    const firstLabel=String(p.pieceLabel||document.getElementById('pieceDesignation')?.value||p.pieceNo||pieceNo).trim();
+    const enteredSeamLabels=(p.seamPieceNumbers||[]).map(x=>String(x||'').trim());
+    const labels=[firstLabel,...seamXs.map((_,i)=>enteredSeamLabels[i]||((firstLabel||String(pieceNo))+String.fromCharCode(66+i)))];
+    g+=`<text x="${W/2}" y="22" text-anchor="middle" font-size="14" font-weight="700">PIECES ${labels.map(tmEsc).join(' / ')}</text>`;
+  }else{
+    const identity=String(p.pieceLabel||document.getElementById('pieceDesignation')?.value||'').trim();
+    if(identity) g+=`<text x="${W/2}" y="22" text-anchor="middle" font-size="14" font-weight="700">PIECE ${tmEsc(identity)}</text>`;
   }
+  const woLabel=String(p.workOrder||document.getElementById('wo')?.value||'').trim();
+  if(woLabel) g+=`<text x="${W/2}" y="39" text-anchor="middle" font-size="11" font-weight="700">WORK ORDER ${tmEsc(woLabel)}</text>`;
 s.innerHTML=g;
 };
 
@@ -3222,9 +3316,9 @@ function tmBuildCanonicalPieceFromForm(){
   const radii=[...document.querySelectorAll('.radiusCorner')].map(x=>({corner:x.querySelector('.radiusCornerSel')?.value||'',radius:+(x.querySelector('.radiusAmt')?.value||0)}));
   const outs=[...document.querySelectorAll('.outlet')].map(x=>({x:+(x.querySelector('.ox')?.value||0),y:+(x.querySelector('.oy')?.value||0),type:x.querySelector('.otype')?.value||''}));
   const faucetHoles=typeof tmReadFaucetHoles==='function'?tmReadFaucetHoles():[];
-  return {length:L,height:H,rightHeight:Number.isFinite(RH)&&RH>0?RH:H,thickness:tmCurrentPieceThickness(),adj,
+  return {length:L,height:H,rightHeight:Number.isFinite(RH)&&RH>0?RH:H,thickness:tmCurrentPieceThickness(),pieceLabel:String(document.getElementById('pieceDesignation')?.value||shared.pieceLabel||'').trim(),workOrder:String(document.getElementById('wo')?.value||shared.workOrder||'').trim(),workOrderSequence:tmWorkOrderSequence,adj,
     topFitOffset:typeof tmTopFitOffsetValue==='function'?tmTopFitOffsetValue():null,
-    notches,radii,outs,faucetHoles,notes,stopPolishes,seams:tmReadSeams(),
+    notches,radii,outs,faucetHoles,notes,stopPolishes,seams:tmReadSeams(),seamPieceNumbers:tmReadSeamPieceNumbers(),
     top:(document.getElementById('topPol')?.value||shared.top||'No'),
     side:(document.getElementById('sidePol')?.value||shared.side||'None')};
 }
@@ -3289,6 +3383,39 @@ const _tmOldAddAdjustment=addAdjustment;
 addAdjustment=function(edge='Top'){const r=_tmOldAddAdjustment(edge);setTimeout(refreshLivePieceDrawing,0);return r;};
 const _tmOldAddNextPlanePoint=addNextPlanePoint;
 addNextPlanePoint=function(btn){const r=_tmOldAddNextPlanePoint(btn);setTimeout(refreshLivePieceDrawing,0);return r;};
+
+
+// V1.9.38 — reserve the pinned drawing height when navigating among detail sections.
+function tmSyncPinnedReviewHeight(){
+  const panel=document.getElementById('activePieceReview');
+  if(!panel)return;
+  const h=Math.ceil(panel.getBoundingClientRect().height)+24;
+  document.documentElement.style.setProperty('--tm-review-pinned-height',h+'px');
+}
+function tmPositionReviewAtStart(){
+  const reviewEl=document.getElementById('review');
+  if(!reviewEl)return;
+  tmSyncPinnedReviewHeight();
+  requestAnimationFrame(()=>{
+    const y=reviewEl.getBoundingClientRect().top+window.scrollY;
+    window.scrollTo({top:Math.max(0,y-4),behavior:'auto'});
+  });
+}
+window.addEventListener('resize',tmSyncPinnedReviewHeight);
+const tmReviewV1934=review;
+review=function(){
+  const r=tmReviewV1934.apply(this,arguments);
+  setTimeout(()=>{tmSyncPinnedReviewHeight();tmPositionReviewAtStart();},0);
+  return r;
+};
+const tmShowAdditionalPanelV1934=tmShowAdditionalPanel;
+tmShowAdditionalPanel=function(id){
+  const card=document.getElementById(id); if(!card)return;
+  card.style.display='block';
+  tmSyncPinnedReviewHeight();
+  setTimeout(()=>card.scrollIntoView({behavior:'smooth',block:'start'}),0);
+};
+
 </script>
 <script>
 function tmSet(id,v){
@@ -3391,4 +3518,172 @@ function tmSyncFaucetDrawing(){
     if(typeof refreshLivePieceDrawing==="function") refreshLivePieceDrawing();
   }catch(e){ console.error("Faucet drawing update failed",e); }
 }
+
+
+function tmCleanDoubleInchMarks(root){
+  if(!root)return;
+  root.querySelectorAll('text').forEach(t=>{
+    const before=t.textContent||'';
+    const after=before.replace(/[”″]{2,}/g,'"').replace(/"{2,}/g,'"').replace(/"[”″]|[”″]"/g,'"');
+    if(after!==before)t.textContent=after;
+  });
+}
+function tmInstallInchMarkGuard(){
+  ['drawing','liveDrawing','pieceViewDrawing','pdfPreviewPages'].forEach(id=>{
+    const root=document.getElementById(id); if(!root||root.dataset.tmInchGuard==='1')return;
+    root.dataset.tmInchGuard='1';
+    tmCleanDoubleInchMarks(root);
+    new MutationObserver(()=>tmCleanDoubleInchMarks(root)).observe(root,{childList:true,subtree:true,characterData:true});
+  });
+}
+setTimeout(tmInstallInchMarkGuard,0);
+const tmOldRefreshReviewDrawingV1930=typeof refreshReviewDrawing==='function'?refreshReviewDrawing:null;
+if(tmOldRefreshReviewDrawingV1930) refreshReviewDrawing=function(){const r=tmOldRefreshReviewDrawingV1930.apply(this,arguments);tmInstallInchMarkGuard();tmCleanDoubleInchMarks(document.getElementById('drawing'));return r;};
+const tmOldRefreshLivePieceDrawingV1930=typeof refreshLivePieceDrawing==='function'?refreshLivePieceDrawing:null;
+if(tmOldRefreshLivePieceDrawingV1930) refreshLivePieceDrawing=function(){const r=tmOldRefreshLivePieceDrawingV1930.apply(this,arguments);tmInstallInchMarkGuard();tmCleanDoubleInchMarks(document.getElementById('liveDrawing'));return r;};
+
+// V1.9.38 — workflow chooser and Standard Backsplash detail menu
+let tmMeasurementWorkflow='standard';
+function tmConfigureWorkflowPieceForm(){
+  const rightWrap=document.getElementById('rightHeightWrap');
+  const rightLabel=rightWrap?.querySelector('label');
+  const rightHelp=rightWrap?.querySelector('.muted');
+  if(tmMeasurementWorkflow==='wedged'){
+    rightWrap?.classList.remove('hidden');
+    if(rightLabel) rightLabel.textContent='Right Height (in.)';
+    if(rightHelp) rightHelp.textContent='Enter the finished height at the right end of the piece.';
+  }else{
+    rightWrap?.classList.add('hidden');
+    if(rightLabel) rightLabel.textContent='Confirm Right Height (in.)';
+    if(rightHelp) rightHelp.textContent='Required when plane adjustments are used.';
+  }
+}
+function tmChooseWorkflow(kind){
+  tmMeasurementWorkflow=kind||'standard';
+  tmConfigureWorkflowPieceForm();
+  document.getElementById('tmWorkflowChooser')?.classList.add('hidden');
+  document.getElementById('job')?.classList.remove('hidden');
+  try{window.scrollTo(0,0)}catch(e){}
+}
+function tmTogglePrimaryCard(card){
+  if(!card)return;
+  const opening=!card.classList.contains('tmOpen');
+  card.classList.toggle('tmOpen',opening);
+  const body=card.querySelector(':scope > .tmDetailBody');
+  if(body) body.style.display=opening?'block':'none';
+  if(opening){
+    tmOpenPrimaryControls(card);
+    setTimeout(()=>tmPlaceOpenedDetailBelowDrawing(card),80);
+  }
+}
+function tmPlaceOpenedDetailBelowDrawing(card){
+  if(!card)return;
+  tmSyncPinnedReviewHeight();
+  const panel=document.getElementById('activePieceReview');
+  const pinnedH=panel?Math.ceil(panel.getBoundingClientRect().height):0;
+  const stickyTop=window.matchMedia('(max-width:520px)').matches?4:8;
+  const target=card.getBoundingClientRect().top+window.scrollY-pinnedH-stickyTop-12;
+  window.scrollTo({top:Math.max(0,target),behavior:'smooth'});
+}
+function tmOpenPrimaryControls(card){
+  if(!card)return;
+  const id=card.id||'';
+  if(id==='polishedPanel'){
+    const entry=document.getElementById('tmPolishedEdgesEntry');
+    if(entry && entry.style.display==='none') document.getElementById('tmPolishedEdgesLauncher')?.click();
+  }else if(id==='seamPanel'){
+    if(!card.querySelector('#seams .seam')) document.getElementById('addSeamBtn')?.click();
+  }else if(id==='stopPolishPanel'){
+    if(!card.querySelector('#stopPolishes .stopPolish')) document.getElementById('addSPBtn')?.click();
+  }else if(id==='notchPanel'){
+    if(!card.querySelector('#notches .notch')) document.getElementById('addNotchBtn')?.click();
+  }else if(id==='pieceNotesPanel'){
+    if(!card.querySelector('#pieceNotes .pieceNote, #pieceNotes textarea, #pieceNotes input')) document.getElementById('addNoteBtn')?.click();
+  }else if(tmMeasurementWorkflow==='custom' && id==='bowPanel'){
+    const entry=document.getElementById('planeAdjustmentEntry');
+    if(entry && entry.style.display==='none') tmOpenPlaneAdjustments();
+    const launch=document.getElementById('addPlaneAdjustmentBtn'); if(launch) launch.style.display='none';
+  }else if(tmMeasurementWorkflow==='custom' && id==='cutPanel'){
+    if(!card.querySelector('#outlets .outlet')) document.getElementById('addOutletBtn')?.click();
+  }else if(tmMeasurementWorkflow==='custom' && id==='faucetPanel'){
+    const entry=document.getElementById('tmFaucetEntry');
+    if(entry && entry.style.display==='none') tmOpenFaucetEntry();
+    const launch=document.getElementById('openFaucetBtn'); if(launch) launch.style.display='none';
+    const holes=document.getElementById('faucetHoles');
+    if(holes && !holes.querySelector('.tmFaucetHoleRow')){
+      const count=document.getElementById('tmFaucetCount'); if(count && !count.value) count.value='1';
+      tmBuildFaucetHoles();
+    }
+  }else if(tmMeasurementWorkflow==='custom' && id==='radiusPanel'){
+    if(!card.querySelector('#radiusCorners .radiusCorner')) document.getElementById('addRadiusBtn')?.click();
+  }else if(tmMeasurementWorkflow==='custom' && id==='topFitOffsetPanel'){
+    const entry=document.getElementById('tmOffsetEntry');
+    if(entry && entry.style.display==='none') tmOpenOffsetEntry();
+    const launch=document.getElementById('tmOffsetLauncher'); if(launch) launch.style.display='none';
+  }
+}
+function tmPreparePrimaryCard(id){
+  const card=document.getElementById(id); if(!card||card.dataset.tmPrepared==='1')return;
+  card.dataset.tmPrepared='1'; card.classList.add('tmPrimaryDetail');
+  const h=card.querySelector(':scope > h3'); if(!h)return;
+  const body=document.createElement('div'); body.className='tmDetailBody'; body.style.display='none';
+  while(h.nextSibling) body.appendChild(h.nextSibling);
+  card.appendChild(body);
+  h.setAttribute('role','button'); h.setAttribute('tabindex','0');
+  h.onclick=()=>tmTogglePrimaryCard(card);
+  h.onkeydown=(e)=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();tmTogglePrimaryCard(card)}};
+}
+function tmShowAdditionalPanel(id){
+  const card=document.getElementById(id); if(!card)return;
+  card.style.display='block';
+  card.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function tmToggleAdditionalDetails(){
+  const list=document.getElementById('tmAdditionalDetailsList'); if(!list)return;
+  list.classList.toggle('hidden');
+}
+function tmResetDetailCards(){
+  ['polishedPanel','bowPanel','seamPanel','cutPanel','stopPolishPanel','faucetPanel','notchPanel','radiusPanel','topFitOffsetPanel','pieceNotesPanel'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.style.display='block';
+  });
+}
+function tmApplyStandardDetails(){
+  tmResetDetailCards();
+  const primary=['polishedPanel','seamPanel','stopPolishPanel','notchPanel','pieceNotesPanel'];
+  const additional=[
+    ['bowPanel','PLANE ADJUSTMENTS'],['cutPanel','OUTLETS / CUTOUTS'],['faucetPanel','FAUCET HOLES'],
+    ['radiusPanel','RADIUS CORNERS'],['topFitOffsetPanel','INSTALLATION FITTING OFFSET']
+  ];
+  primary.forEach(id=>tmPreparePrimaryCard(id));
+  additional.forEach(([id])=>{const el=document.getElementById(id);if(el)el.style.display='none'});
+  const list=document.getElementById('tmAdditionalDetailsList');
+  if(list){
+    list.innerHTML=additional.map(([id,label])=>`<button class="btn secondary" type="button" onclick="tmShowAdditionalPanel('${id}')">${label}</button>`).join('');
+    list.classList.add('hidden');
+  }
+  const wrap=document.getElementById('tmAdditionalDetailsWrap'); if(wrap)wrap.style.display='block';
+}
+function tmApplyCustomDetails(){
+  tmResetDetailCards();
+  const all=['polishedPanel','bowPanel','seamPanel','cutPanel','stopPolishPanel','faucetPanel','notchPanel','radiusPanel','topFitOffsetPanel','pieceNotesPanel'];
+  all.forEach(id=>tmPreparePrimaryCard(id));
+  const wrap=document.getElementById('tmAdditionalDetailsWrap'); if(wrap)wrap.style.display='none';
+}
+const tmOriginalReviewV1929=review;
+review=function(){
+  tmOriginalReviewV1929();
+  const reviewEl=document.getElementById('review');
+  if(!reviewEl || reviewEl.classList.contains('hidden')) return;
+  if(tmMeasurementWorkflow==='custom') tmApplyCustomDetails();
+  else tmApplyStandardDetails();
+};
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>{document.getElementById('job')?.classList.add('hidden')});
+else document.getElementById('job')?.classList.add('hidden');
+
+document.addEventListener('input',function(e){
+  if(e.target && (e.target.id==='pieceDesignation' || e.target.classList?.contains('seamPieceNo'))){
+    try{refreshLivePieceDrawing();}catch(_){}
+    try{refreshReviewDrawing();}catch(_){}
+  }
+});
 </script></body></html>
